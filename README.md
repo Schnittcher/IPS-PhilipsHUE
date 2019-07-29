@@ -15,8 +15,7 @@
    
 ## 1. Voraussetzungen
 
-* mindestens IPS Version 5.1 Ninja
-* MQTT Server (IPS Modul) 
+* mindestens IPS Version 5.1
 
 
 ## 2. Enthaltene Module
