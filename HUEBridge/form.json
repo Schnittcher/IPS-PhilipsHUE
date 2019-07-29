@@ -9,5 +9,9 @@
       "type": "IntervalBox",
       "caption": "Seconds"
     }
+  ],
+  "actions":
+  [
+    { "type": "Button", "label": "Register IP-Symcon", "onClick": "PHUE_registerUser($id);" }
   ]
 }

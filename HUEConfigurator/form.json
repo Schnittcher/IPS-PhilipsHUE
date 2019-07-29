@@ -1,0 +1,52 @@
+{
+  "elements":
+  [
+    { "type": "Label", "caption": "Configurator to find all HUE lights" }
+  ],
+  "actions":
+  [
+    {
+      "type": "Configurator",
+      "name": "Configurator",
+      "caption": "Configurator",
+      "delete": false,
+      "sort": {
+        "column": "ID",
+        "direction": "ascending"
+      },
+      "columns": [
+        {
+          "caption": "ID",
+          "name": "ID",
+          "width": "100px"
+        },
+        {
+          "caption": "Name",
+          "name": "Name",
+          "width": "auto"
+        },
+        {
+          "caption": "Type",
+          "name": "Type",
+          "width": "350px"
+        },
+        {
+          "caption": "Model ID",
+          "name": "ModelID",
+          "width": "250px"
+        },
+        {
+          "caption": "Manufacturername",
+          "name": "Manufacturername",
+          "width": "250px"
+        },
+        {
+          "caption": "Productname",
+          "name": "Productname",
+          "width": "250px"
+        }
+      ],
+      "values": []
+    }
+  ]
+}

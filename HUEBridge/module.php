@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-class IPS_Shelly1 extends IPSModule
+class HUEBridge extends IPSModule
 {
     public function Create()
     {
         //Never delete this line!
         parent::Create();
         $this->RegisterPropertyString('Host', '');
-        $this->RegisterPropertyInteger('UpdateInterval', 60);
+        $this->RegisterPropertyInteger('UpdateInterval', 10);
 
+        $this->RegisterTimer('PHUE_UpdateLightsState', 0, 'PHUE_UpdateLightsState($_IPS[\'TARGET\']);');
         $this->RegisterAttributeString('User','');
     }
 
@@ -18,17 +19,42 @@ class IPS_Shelly1 extends IPSModule
     {
         //Never delete this line!
         parent::ApplyChanges();
+
+        $this->SetTimerInterval('PHUE_UpdateLightsState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
+
+    }
+
+    public function ForwardData($JSONString)
+    {
+        $this->SendDebug(__FUNCTION__, $JSONString, 0);
+        $data = json_decode($JSONString);
+        switch ($data->Buffer->Command) {
+            case 'getAllLights':
+                $result = $this->getAllLights();
+                break;
+            case 'state':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->sendRequest($this->ReadAttributeString('User'),'lights/'.$data->Buffer->DeviceID.'/state', $params, 'PUT');
+                break;
+            default:
+                $this->SendDebug(__FUNCTION__,'Invalid Command: '.$data->Buffer->Command,0);
+                break;
+        }
+        $this->SendDebug(__FUNCTION__, json_encode($result), 0);
+        return json_encode($result);
     }
 
 
-    private function sendRequest(string $User = '', string $endpoint, array $params = array(), string $method = 'GET')
+        private function sendRequest(string $User = '', string $endpoint, array $params = array(), string $method = 'GET')
     {
+        $this->SendDebug('User', $User,0);
         $ch = curl_init();
-        $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
         if ($User != '') {
-            curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
-        } else {
+            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/'.$User.'/'. $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/'.$User.'/'. $endpoint);
+        } else {
+            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
+            curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
         }
         curl_setopt($ch, CURLOPT_USERAGENT, 'Symcon');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -46,17 +72,27 @@ class IPS_Shelly1 extends IPSModule
         }
 
         $apiResult = curl_exec($ch);
+        $this->SendDebug(__FUNCTION__ . ' Result', $apiResult, 0);
         $headerInfo = curl_getinfo($ch);
-        $apiResultJson = json_decode($apiResult, true);
         curl_close($ch);
+        $result = json_decode($apiResult, false);
+        return $result;
+
     }
 
-    private function registerUser()
+    public function UpdateLightsState() {
+        $Data['DataID'] = '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}';
+        $Data['Buffer'] = $this->getAllLights();
+        $Data = json_encode($Data);
+        $this->SendDataToChildren($Data);
+    }
+
+    public function registerUser()
     {
         $params['devicetype'] = 'Symcon';
-        $result = $this->sendRequest('', $params, 'POST');
-
-        if (@isset($result[0]->success->username) && $result[0]->success->username != '') {
+        $result = $this->sendRequest('','', $params, 'POST');
+        if (@isset($result[0]->success->username)) {
+            $this->SendDebug('Register User', 'OK: '.$result[0]->success->username,0);
             $this->WriteAttributeString('User', $result[0]->success->username);
         } else {
             IPS_LogMessage('PhilipsHUE', 'Register User failed');
@@ -65,62 +101,61 @@ class IPS_Shelly1 extends IPSModule
 
     //Functions for Lights
 
-    private function getAllLights() {
-        return $this->sendRequest($this->ReadAttributeString(),'lights', [], 'GET');
+    public function getAllLights() {
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights', array(), 'GET');
     }
 
     private function getNewLights() {
-        return $this->sendRequest($this->ReadAttributeString(),'lights/new', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights/new', [], 'GET');
     }
 
     private function scanNewLights() {
-        return $this->sendRequest($this->ReadAttributeString(),'lights', [], 'POST');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights', [], 'POST');
     }
 
     private function getLight($id) {
-        return $this->sendRequest($this->ReadAttributeString(),'lights/'.$id, [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights/'.$id, [], 'GET');
     }
 
     private function renameLight($id,$name) {
         $params['name'] = $name;
-        return $this->sendRequest($this->ReadAttributeString(),'lights/'.$id, $params, 'PUT');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights/'.$id, $params, 'PUT');
     }
 
     private function setLightState($id,$state) {
-        return $this->sendRequest($this->ReadAttributeString(),'lights/'.$id, $state, 'PUT');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights/'.$id, $state, 'PUT');
     }
 
     private function deleteLight($id) {
-        return $this->sendRequest($this->ReadAttributeString(),'lights/'.$id, [], 'DELETE');
+        return $this->sendRequest($this->ReadAttributeString('User'),'lights/'.$id, [], 'DELETE');
     }
 
     //Functions for Groups
 
 
     private function getAllGroups() {
-        return $this->sendRequest($this->ReadAttributeString(),'groups', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'groups', [], 'GET');
     }
 
     //Functions for Schedules
 
     private function getAllSchedules() {
-        return $this->sendRequest($this->ReadAttributeString(),'schedules', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'schedules', [], 'GET');
     }
 
     //Functions for Scenes
 
     private function getAllScenes() {
-        return $this->sendRequest($this->ReadAttributeString(),'scenes', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'scenes', [], 'GET');
     }
 
     private function getAllSensors() {
-        return $this->sendRequest($this->ReadAttributeString(),'sensors', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'sensors', [], 'GET');
     }
 
     //Functions for Rules
 
     private function getAllRules() {
-        return $this->sendRequest($this->ReadAttributeString(),'rules', $params, 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'),'rules', $params, 'GET');
     }
-
 }

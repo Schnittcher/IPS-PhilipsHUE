@@ -1,0 +1,6 @@
+{
+  "elements":
+  [
+    {"type": "ValidationTextBox", "name": "HUEDeviceID", "caption": "HUE Device ID"}
+  ]
+}

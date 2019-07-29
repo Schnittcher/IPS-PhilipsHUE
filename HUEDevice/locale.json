@@ -1,0 +1,10 @@
+{
+  "translations": {
+    "de": {
+      "State": "Status",
+      "Brightness": "Helligkeit",
+      "Color": "Farbe",
+      "HUE Device ID": "HUE Geräte ID"
+    }
+  }
+}
