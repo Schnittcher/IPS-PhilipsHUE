@@ -1,7 +1,7 @@
 <?php
 
-trait ColorHelper {
-
+trait ColorHelper
+{
     private function convertRGBToXY($red, $green, $blue)
     {
         // Normalize the values to 1
@@ -59,11 +59,12 @@ trait ColorHelper {
         return $color;
     }
 
-    private function decToRGB($Value) {
-    $rgb['r'] = (($Value >> 16) & 0xFF);
-    $rgb['g'] = (($Value >> 8) & 0xFF);
-    $rgb['b'] = ($Value & 0xFF);
+    private function decToRGB($Value)
+    {
+        $rgb['r'] = (($Value >> 16) & 0xFF);
+        $rgb['g'] = (($Value >> 8) & 0xFF);
+        $rgb['b'] = ($Value & 0xFF);
 
-    return $rgb;
+        return $rgb;
     }
 }
