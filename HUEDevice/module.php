@@ -35,13 +35,16 @@ class HUEDevice extends IPSModule
         $Data = json_decode($JSONString);
         $DeviceState = $Data->Buffer->{$this->ReadPropertyString('HUEDeviceID')}->state;
 
-        //Convervt XY to RGB
-        $RGB = $this->convertXYToRGB($DeviceState->xy[0], $DeviceState->xy[1], $DeviceState->bri);
-        $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
+
+        //Convervt XY to RGB an set Color if Color Lamp
+        If (property_exists($DeviceState,'xy')) {
+            $RGB = $this->convertXYToRGB($DeviceState->xy[0], $DeviceState->xy[1], $DeviceState->bri);
+            $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
+            $this->SetValue('HUE_Color', $Color);
+        }
 
         $this->SetValue('HUE_State', $DeviceState->on);
         $this->SetValue('HUE_Brightness', $DeviceState->bri);
-        $this->SetValue('HUE_Color', $Color);
     }
 
     public function SwitchMode(bool $Value)
