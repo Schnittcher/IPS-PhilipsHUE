@@ -33,10 +33,10 @@ Bitte den einzelnen Modulen entnehmen.
 
 Vorläufige Doku:
 
-Splitter (HUEBridge) anlegen, dort die IP Adresse der HUE Bridge hinterlegen, den Button auf der HUE Bridge betätigen und den Buttun "Registriere IP-Symcon" anklicken.
+Splitter (HUEBridge) anlegen, dort die IP Adresse der HUE Bridge hinterlegen, den Button auf der HUE Bridge betätigen und den Button "Registriere IP-Symcon" anklicken.
 Danach sollte die HUE Bridge mit IP-Symocn gekoppelt sein.
 
-Danach den HUEConfigurator anlegen, dort sollten alle HUE Lampen aufgelistet werden.
+Nachdem die HUE Bridge mit IP-Symcon gekoppelt ist, den HUEConfigurator anlegen, dort sollten alle HUE Lampen aufgelistet werden.
 Mit dem Konfigurator können die Instanzen (HUEDevice) für die Lampen erstellt werden.
 
 ## 5. Spenden
