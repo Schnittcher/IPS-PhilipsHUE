@@ -21,18 +21,18 @@ class HUEConfigurator extends IPSModule
     {
         $data = json_decode(file_get_contents(__DIR__ . '/form.json'));
         $Devices = $this->getHUELights();
-        $this->SendDebug(__FUNCTION__,json_encode($Devices),0);
+        $this->SendDebug(__FUNCTION__, json_encode($Devices), 0);
         if (count($Devices) > 0) {
             foreach ($Devices as $key => $device) {
                 $instanceID = $this->getHUEDeviceInstances($key);
                 $data->actions[0]->values[] = array(
-                    'ID'                => $key,
-                    'Name'              => $device['name'],
-                    'Type'              => $device['type'],
-                    'ModelID'           => $device['modelid'],
-                    'Manufacturername'  => $device['manufacturername'],
-                    'Productname'       => $device['productname'],
-                    'instanceID'        => $instanceID,
+                    'ID'                    => $key,
+                    'Name'                  => $device['name'],
+                    'Type'                  => $device['type'],
+                    'ModelID'               => $device['modelid'],
+                    'Manufacturername'      => $device['manufacturername'],
+                    'Productname'           => $device['productname'],
+                    'instanceID'            => $instanceID,
                     'create'                => array(
                         'HUEDevice'     => array(
                             'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
@@ -58,7 +58,8 @@ class HUEConfigurator extends IPSModule
         return 0;
     }
 
-    private function getHUELights() {
+    private function getHUELights()
+    {
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = 'getAllLights';
         $Buffer['Params'] = '';
@@ -70,5 +71,4 @@ class HUEConfigurator extends IPSModule
         }
         return $Data;
     }
-
 }
