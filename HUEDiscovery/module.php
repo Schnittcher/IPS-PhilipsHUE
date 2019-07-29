@@ -24,35 +24,35 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        IPS_LogMessage('Bridges',print_r($Bridges,true));
+        IPS_LogMessage('Bridges', print_r($Bridges, true));
 
-        $Values = [];
+        $Values = array();
 
         if (count($Bridges) > 0) {
             foreach ($Bridges as $IPAddress => $Bridge) {
                 $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
-                $AddValue = [
+                $AddValue = array(
                     'IPAddress'             => $IPAddress,
                     'Devicename'            => $Bridge['devicename'],
                     'ModelName'             => $Bridge['modelName'],
                     'ModelNumber'           => $Bridge['modelNumber'],
                     'SerialNumber'          => $Bridge['serialNumber'],
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValue['create'] = [
+                $AddValue['create'] = array(
                         'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
-                        'configuration' => [
+                        'configuration' => array(
                             'Host' => $IPAddress
-                        ]
-                ];
+                        )
+                );
 
                 $Values[] = $AddValue;
             }
             $Form['actions'][0]['values'] = $Values;
         }
-        IPS_LogMessage('Formn',json_encode($Form));
+        IPS_LogMessage('Formn', json_encode($Form));
         return json_encode($Form);
     }
 
@@ -71,29 +71,29 @@ class HUEDiscovery extends IPSModule
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if (!$socket) {
-            return [];
+            return array();
         }
-        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array("sec" => 2, "usec" => 100000));
+        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 2, 'usec' => 100000));
         socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_bind($socket, '0.0.0.0', 0);
-        $message = [
+        $message = array(
             'M-SEARCH * HTTP/1.1',
             'ST: ssdp:all',
             'MX: 3',
             'MAN: "ssdp:discover"',
             'HOST: 239.255.255.250:1900'
-        ];
+        );
         $SendData = implode("\r\n", $message) . "\r\n\r\n";
         $this->SendDebug('Serach', $SendData, 0);
         if (@socket_sendto($socket, $SendData, strlen($SendData), 0, '239.255.255.250', 1900) === false) {
-            return [];
+            return array();
         }
         usleep(100000);
         $i = 50;
         $IPAddress = '';
         $Port = 0;
-        $BridgeData = [];
-        while($i) {
+        $BridgeData = array();
+        while ($i) {
             $ret = @socket_recvfrom($socket, $buf, 2048, 0, $IPAddress, $Port);
             if ($ret === false) {
                 break;
@@ -110,7 +110,7 @@ class HUEDiscovery extends IPSModule
         }
         socket_close($socket);
 
-        $Bridge = [];
+        $Bridge = array();
         foreach ($BridgeData as $IPAddress => $Url) {
             $XMLData = @Sys_GetURLContent($Url);
             $this->SendDebug('XML', $XMLData, 0);
@@ -120,20 +120,19 @@ class HUEDiscovery extends IPSModule
 
             $Xml = new SimpleXMLElement($XMLData);
 
-            IPS_LogMessage('modelName',(string) $Xml->device->modelName);
+            IPS_LogMessage('modelName', (string) $Xml->device->modelName);
             $modelName = (string) $Xml->device->modelName;
             if (strpos($modelName, 'Philips hue bridge') === false) {
                 continue;
             }
-            $Bridge[$IPAddress] = [
-                'devicename' => (string) $Xml->device->friendlyName,
-                'modelName' => (string) $Xml->device->modelName,
-                'modelNumber' => (string) $Xml->device->modelNumber,
+            $Bridge[$IPAddress] = array(
+                'devicename'   => (string) $Xml->device->friendlyName,
+                'modelName'    => (string) $Xml->device->modelName,
+                'modelNumber'  => (string) $Xml->device->modelNumber,
                 'serialNumber' => (string) $Xml->device->serialNumber
-            ];
+            );
         }
         return $Bridge;
-
     }
 
     private function parseHeader(string $Data): array
@@ -141,12 +140,11 @@ class HUEDiscovery extends IPSModule
         $Lines = explode("\r\n", $Data);
         array_shift($Lines);
         array_pop($Lines);
-        $Header = [];
+        $Header = array();
         foreach ($Lines as $Line) {
             $line_array = explode(':', $Line);
             $Header[strtoupper(trim(array_shift($line_array)))] = trim(implode(':', $line_array));
         }
         return $Header;
     }
-
 }
