@@ -21,6 +21,8 @@ class HUEConfigurator extends IPSModule
     {
         $data = json_decode(file_get_contents(__DIR__ . '/form.json'));
         $Devices = $this->getHUELights();
+
+        IPS_LogMessage('test',print_r($Devices,true));
         $this->SendDebug(__FUNCTION__, json_encode($Devices), 0);
         if (count($Devices) > 0) {
             foreach ($Devices as $key => $device) {
@@ -67,7 +69,7 @@ class HUEConfigurator extends IPSModule
         $Data = json_encode($Data);
         $Data = json_decode($this->SendDataToParent($Data), true);
         if (!$Data) {
-            return false;
+            return [];
         }
         return $Data;
     }

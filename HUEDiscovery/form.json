@@ -1,0 +1,46 @@
+{
+  "elements":
+  [
+  ],
+  "actions":
+  [
+    {
+      "type": "Configurator",
+      "name": "Configurator",
+      "caption": "HUE Bridge Disocvery",
+      "delete": false,
+      "sort": {
+        "column": "IPAddress",
+        "direction": "ascending"
+      },
+      "columns": [
+        {
+          "caption": "IP Address",
+          "name": "IPAddress",
+          "width": "250px"
+        },
+        {
+          "caption": "Devicename",
+          "name": "Devicename",
+          "width": "auto"
+        },
+        {
+          "caption": "Model Name",
+          "name": "ModelName",
+          "width": "250px"
+        },
+        {
+          "caption": "Model Number",
+          "name": "ModelNumber",
+          "width": "250px"
+        },
+        {
+          "caption": "Serial Number",
+          "name": "SerialNumber",
+          "width": "250px"
+        }
+      ],
+      "values": []
+    }
+  ]
+}

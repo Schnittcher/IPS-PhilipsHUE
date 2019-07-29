@@ -45,15 +45,22 @@ class HUEBridge extends IPSModule
 
     private function sendRequest(string $User, string $endpoint, array $params = array(), string $method = 'GET')
     {
+        if ($this->ReadPropertyString('Host') == '') {
+            return false;
+        }
+
         $this->SendDebug('User', $User, 0);
         $ch = curl_init();
-        if ($User != '') {
+        if ($User != '' && $endpoint != '') {
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint);
-        } else {
-            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
-            curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
-        }
+        } elseif ($endpoint != '') {
+                return [];
+            } else {
+                $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
+                curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
+            }
+
         curl_setopt($ch, CURLOPT_USERAGENT, 'Symcon');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
         curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -166,5 +173,12 @@ class HUEBridge extends IPSModule
     private function getAllRules()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'rules', $params, 'GET');
+    }
+
+    private function BridgePaired() {
+        if ($this->ReadAttributeString('User)') != '') {
+            return true;
+        }
+        return false;
     }
 }
