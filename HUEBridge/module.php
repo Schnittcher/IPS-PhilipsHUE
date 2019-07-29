@@ -55,11 +55,11 @@ class HUEBridge extends IPSModule
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint);
         } elseif ($endpoint != '') {
-                return [];
-            } else {
-                $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
-                curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
-            }
+            return array();
+        } else {
+            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
+            curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
+        }
 
         curl_setopt($ch, CURLOPT_USERAGENT, 'Symcon');
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -175,7 +175,8 @@ class HUEBridge extends IPSModule
         return $this->sendRequest($this->ReadAttributeString('User'), 'rules', $params, 'GET');
     }
 
-    private function BridgePaired() {
+    private function BridgePaired()
+    {
         if ($this->ReadAttributeString('User)') != '') {
             return true;
         }
