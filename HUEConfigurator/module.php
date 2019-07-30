@@ -55,7 +55,7 @@ class HUEConfigurator extends IPSModule
                 );
 
                 $AddValue['create'] = array(
-                    'HUEDevice' => array(
+                    $light['name'] => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => array(
                             'HUEDeviceID'    => $key,
@@ -98,7 +98,7 @@ class HUEConfigurator extends IPSModule
                 );
 
                 $AddValue['create'] = array(
-                    'HUEDevice' => array(
+                    $group['name'] => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => array(
                             'HUEDeviceID'    => $key,
