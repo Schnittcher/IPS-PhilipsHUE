@@ -24,34 +24,34 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        $Values = [];
+        $Values = array();
 
         if (count($Bridges) > 0) {
             foreach ($Bridges as $IPAddress => $Bridge) {
                 $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
-                $AddValue = [
+                $AddValue = array(
                     'IPAddress'             => $IPAddress,
-                    'name'            => $Bridge['devicename'],
+                    'name'                  => $Bridge['devicename'],
                     'ModelName'             => $Bridge['modelName'],
                     'ModelNumber'           => $Bridge['modelNumber'],
                     'SerialNumber'          => $Bridge['serialNumber'],
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValue['create'] = [
-                    [
+                $AddValue['create'] = array(
+                    array(
                         'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
                         'configuration' => new stdClass()
-                    ],
-                    [
+                    ),
+                    array(
                         'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
-                        'configuration' => [
+                        'configuration' => array(
                             'Host' => $IPAddress
-                        ]
-                    ]
+                        )
+                    )
 
-                ];
+                );
 
                 $Values[] = $AddValue;
             }
