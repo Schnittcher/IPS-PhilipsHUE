@@ -36,11 +36,11 @@ class HUEBridge extends IPSModule
                 break;
             case 'state':
                 $params = (array) $data->Buffer->Params;
-                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint. '/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
+                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
                 break;
             case 'action':
                 $params = (array) $data->Buffer->Params;
-                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint. '/' . $data->Buffer->DeviceID . '/action', $params, 'PUT');
+                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/action', $params, 'PUT');
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Command: ' . $data->Buffer->Command, 0);

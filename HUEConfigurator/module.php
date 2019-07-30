@@ -19,31 +19,31 @@ class HUEConfigurator extends IPSModule
 
     public function GetConfigurationForm()
     {
-        $Form = json_decode(file_get_contents(__DIR__ . '/form.json'),true);
+        $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Lights = $this->getHUELights();
         $Groups = $this->getHUEGroups();
 
         $this->SendDebug(__FUNCTION__, json_encode($Lights), 0);
 
-        $Values = [];
+        $Values = array();
 
         //Lights
         if (count($Lights) > 0) {
-            $AddValue = [
-                "id" => 1,
-                "ID" => '',
-                "name"=> "Lights",
-                "Name"=> "Lights",
+            $AddValue = array(
+                'id'                    => 1,
+                'ID'                    => '',
+                'name'                  => 'Lights',
+                'Name'                  => 'Lights',
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-            ];
+            );
             $Values[] = $AddValue;
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
 
-                $AddValue = [
+                $AddValue = array(
                     'parent'                => 1,
                     'ID'                    => $key,
                     'Name'                  => $light['name'],
@@ -52,17 +52,17 @@ class HUEConfigurator extends IPSModule
                     'Manufacturername'      => $light['manufacturername'],
                     'Productname'           => $light['productname'],
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValue['create'] = [
-                    'HUEDevice' => [
+                $AddValue['create'] = array(
+                    'HUEDevice' => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
+                        'configuration' => array(
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'lights'
-                        ]
-                    ]
-                ];
+                        )
+                    )
+                );
 
                 $Values[] = $AddValue;
             }
@@ -72,21 +72,21 @@ class HUEConfigurator extends IPSModule
         //Groups
 
         if (count($Groups) > 0) {
-            $AddValue = [
-                "id" => 3,
-                "ID" => '',
-                "name"=> 'Groups',
-                "Name"=> 'Groups',
+            $AddValue = array(
+                'id'                    => 3,
+                'ID'                    => '',
+                'name'                  => 'Groups',
+                'Name'                  => 'Groups',
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-                ];
+                );
             $Values[] = $AddValue;
             foreach ($Groups as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
 
-                $AddValue = [
+                $AddValue = array(
                     'parent'                => 3,
                     'ID'                    => $key,
                     'Name'                  => $group['name'],
@@ -95,17 +95,17 @@ class HUEConfigurator extends IPSModule
                     'Manufacturername'      => '-',
                     'Productname'           => '-',
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValue['create'] = [
-                    'HUEDevice' => [
+                $AddValue['create'] = array(
+                    'HUEDevice' => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
+                        'configuration' => array(
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'groups'
-                        ]
-                    ]
-                ];
+                        )
+                    )
+                );
 
                 $Values[] = $AddValue;
             }
@@ -118,7 +118,7 @@ class HUEConfigurator extends IPSModule
     {
         $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}');
         foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType ) {
+            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
                 return $id;
             }
         }

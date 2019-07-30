@@ -13,7 +13,7 @@ class HUEDevice extends IPSModule
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
         $this->RegisterPropertyString('HUEDeviceID', '');
-        $this->RegisterPropertyString('DeviceType',"");
+        $this->RegisterPropertyString('DeviceType', '');
 
         $this->RegisterVariableBoolean('HUE_State', $this->Translate('State'), '~Switch');
         $this->RegisterVariableInteger('HUE_Brightness', $this->Translate('Brightness'), '~Intensity.255');
@@ -32,19 +32,17 @@ class HUEDevice extends IPSModule
 
     public function ReceiveData($JSONString)
     {
-        $this->SendDebug(__FUNCTION__ .' Device Type', $this->ReadPropertyString('DeviceType'), 0);
-        $this->SendDebug(__FUNCTION__ .' Device ID', $this->ReadPropertyString('HUEDeviceID'), 0);
+        $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
+        $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('HUEDeviceID'), 0);
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
-        if($this->ReadPropertyString('DeviceType') != 'groups') {
-            if (property_exists( $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+        if ($this->ReadPropertyString('DeviceType') != 'groups') {
+            if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
                 $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
-
             }
         } else {
-
-            if (property_exists( $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
+            if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
                 $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
             } else {
                 return;
@@ -64,7 +62,7 @@ class HUEDevice extends IPSModule
 
     public function SwitchMode(bool $Value)
     {
-        if($this->ReadPropertyString('DeviceType') == 'groups') {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
         } else {
             $command = 'state';
@@ -76,7 +74,7 @@ class HUEDevice extends IPSModule
 
     public function DimSet(int $Value)
     {
-        if($this->ReadPropertyString('DeviceType') == 'groups') {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
         } else {
             $command = 'state';
@@ -88,7 +86,7 @@ class HUEDevice extends IPSModule
 
     public function ColorSet($Value)
     {
-        if($this->ReadPropertyString('DeviceType') == 'groups') {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
         } else {
             $command = 'state';
