@@ -24,35 +24,43 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        IPS_LogMessage('Bridges', print_r($Bridges, true));
+        IPS_LogMessage('Bridges',print_r($Bridges,true));
 
-        $Values = array();
+        $Values = [];
 
         if (count($Bridges) > 0) {
             foreach ($Bridges as $IPAddress => $Bridge) {
                 $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
-                $AddValue = array(
+                $AddValue = [
                     'IPAddress'             => $IPAddress,
                     'Devicename'            => $Bridge['devicename'],
                     'ModelName'             => $Bridge['modelName'],
                     'ModelNumber'           => $Bridge['modelNumber'],
                     'SerialNumber'          => $Bridge['serialNumber'],
                     'instanceID'            => $instanceID
-                );
+                ];
 
-                $AddValue['create'] = array(
+                $AddValue['create'] = [
+                    [
+                        'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
+                        'configuration' => new stdClass()
+                    ],
+                    [
                         'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
-                        'configuration' => array(
+                        'configuration' => [
                             'Host' => $IPAddress
-                        )
-                );
+                        ]
+                    ]
+
+                ];
 
                 $Values[] = $AddValue;
             }
             $Form['actions'][0]['values'] = $Values;
+            IPS_LogMessage('Form',print_r($Form,true));
         }
-        IPS_LogMessage('Formn', json_encode($Form));
+        IPS_LogMessage('Formn',json_encode($Form));
         return json_encode($Form);
     }
 
