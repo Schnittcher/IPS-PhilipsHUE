@@ -1,6 +1,14 @@
 {
   "elements":
   [
-    {"type": "ValidationTextBox", "name": "HUEDeviceID", "caption": "HUE Device ID"}
+    {"type": "ValidationTextBox", "name": "HUEDeviceID", "caption": "HUE Device ID"},
+    { "type": "Select", "name": "DeviceType", "caption": "Device Type",
+      "options": [
+        { "caption": "Select a Device", "value": "" },
+        { "caption": "Light", "value": "lights" },
+        { "caption": "Sensor", "value": "sensors" },
+        { "caption": "Group", "value": "groups" }
+      ]
+    }
   ]
 }

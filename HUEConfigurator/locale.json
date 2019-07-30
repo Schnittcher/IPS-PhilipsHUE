@@ -3,7 +3,11 @@
     "de": {
       "Configurator to find all HUE lights": "Konfigurator, um alle HUE-Lichter zu finden",
       "Manufacturername": "Herstellername",
-      "Productname": "Produktname"
+      "Productname": "Produktname",
+      "Lights": "Lampen",
+      "Sensors": "Sensoren",
+      "Groups": "Gruppen",
+      "Scenes": "Szenen"
     }
   }
 }

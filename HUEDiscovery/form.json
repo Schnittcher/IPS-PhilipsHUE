@@ -18,7 +18,7 @@
         },
         {
           "caption": "Devicename",
-          "name": "Devicename",
+          "name": "name",
           "width": "auto"
         },
         {

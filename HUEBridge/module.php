@@ -11,7 +11,7 @@ class HUEBridge extends IPSModule
         $this->RegisterPropertyString('Host', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
 
-        $this->RegisterTimer('PHUE_UpdateLightsState', 0, 'PHUE_UpdateLightsState($_IPS[\'TARGET\']);');
+        $this->RegisterTimer('PHUE_UpdateState', 0, 'PHUE_UpdateState($_IPS[\'TARGET\']);');
         $this->RegisterAttributeString('User', '');
     }
 
@@ -20,7 +20,7 @@ class HUEBridge extends IPSModule
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->SetTimerInterval('PHUE_UpdateLightsState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
+        $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
     }
 
     public function ForwardData($JSONString)
@@ -31,9 +31,16 @@ class HUEBridge extends IPSModule
             case 'getAllLights':
                 $result = $this->getAllLights();
                 break;
+            case 'getAllGroups':
+                $result = $this->getAllGroups();
+                break;
             case 'state':
                 $params = (array) $data->Buffer->Params;
-                $result = $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
+                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint. '/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
+                break;
+            case 'action':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint. '/' . $data->Buffer->DeviceID . '/action', $params, 'PUT');
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Command: ' . $data->Buffer->Command, 0);
@@ -84,10 +91,15 @@ class HUEBridge extends IPSModule
         return $result;
     }
 
-    public function UpdateLightsState()
+    public function UpdateState()
     {
         $Data['DataID'] = '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}';
-        $Data['Buffer'] = $this->getAllLights();
+
+        $Buffer['Lights'] = $this->getAllLights();
+        $Buffer['Groups'] = $this->getAllGroups();
+
+        $Data['Buffer'] = json_encode($Buffer);
+
         $Data = json_encode($Data);
         $this->SendDataToChildren($Data);
     }

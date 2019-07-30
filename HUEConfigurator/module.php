@@ -19,41 +19,106 @@ class HUEConfigurator extends IPSModule
 
     public function GetConfigurationForm()
     {
-        $data = json_decode(file_get_contents(__DIR__ . '/form.json'));
-        $Devices = $this->getHUELights();
+        $Form = json_decode(file_get_contents(__DIR__ . '/form.json'),true);
+        $Lights = $this->getHUELights();
+        $Groups = $this->getHUEGroups();
 
-        IPS_LogMessage('test', print_r($Devices, true));
-        $this->SendDebug(__FUNCTION__, json_encode($Devices), 0);
-        if (count($Devices) > 0) {
-            foreach ($Devices as $key => $device) {
-                $instanceID = $this->getHUEDeviceInstances($key);
-                $data->actions[0]->values[] = array(
+        $this->SendDebug(__FUNCTION__, json_encode($Lights), 0);
+
+        $Values = [];
+
+        //Lights
+        if (count($Lights) > 0) {
+            $AddValue = [
+                "id" => 1,
+                "ID" => '',
+                "name"=> "Lights",
+                "Name"=> "Lights",
+                'Type'                  => '',
+                'ModelID'               => '',
+                'Manufacturername'      => '',
+                'Productname'           => ''
+            ];
+            $Values[] = $AddValue;
+            foreach ($Lights as $key => $light) {
+                $instanceID = $this->getHUEDeviceInstances($key, 'lights');
+
+                $AddValue = [
+                    'parent'                => 1,
                     'ID'                    => $key,
-                    'Name'                  => $device['name'],
-                    'Type'                  => $device['type'],
-                    'ModelID'               => $device['modelid'],
-                    'Manufacturername'      => $device['manufacturername'],
-                    'Productname'           => $device['productname'],
-                    'instanceID'            => $instanceID,
-                    'create'                => array(
-                        'HUEDevice'     => array(
-                            'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                            'configuration' => array(
-                                'HUEDeviceID'    => $key
-                            )
-                        )
-                    )
-                );
+                    'Name'                  => $light['name'],
+                    'Type'                  => $light['type'],
+                    'ModelID'               => $light['modelid'],
+                    'Manufacturername'      => $light['manufacturername'],
+                    'Productname'           => $light['productname'],
+                    'instanceID'            => $instanceID
+                ];
+
+                $AddValue['create'] = [
+                    'HUEDevice' => [
+                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'configuration' => [
+                            'HUEDeviceID'    => $key,
+                            'DeviceType'     => 'lights'
+                        ]
+                    ]
+                ];
+
+                $Values[] = $AddValue;
+            }
+            //$Form['actions'][0]['values'] = $Values;
+        }
+
+        //Groups
+
+        if (count($Groups) > 0) {
+            $AddValue = [
+                "id" => 3,
+                "ID" => '',
+                "name"=> 'Groups',
+                "Name"=> 'Groups',
+                'Type'                  => '',
+                'ModelID'               => '',
+                'Manufacturername'      => '',
+                'Productname'           => ''
+                ];
+            $Values[] = $AddValue;
+            foreach ($Groups as $key => $group) {
+                $instanceID = $this->getHUEDeviceInstances($key, 'groups');
+
+                $AddValue = [
+                    'parent'                => 3,
+                    'ID'                    => $key,
+                    'Name'                  => $group['name'],
+                    'Type'                  => $group['type'],
+                    'ModelID'               => '-',
+                    'Manufacturername'      => '-',
+                    'Productname'           => '-',
+                    'instanceID'            => $instanceID
+                ];
+
+                $AddValue['create'] = [
+                    'HUEDevice' => [
+                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'configuration' => [
+                            'HUEDeviceID'    => $key,
+                            'DeviceType'     => 'groups'
+                        ]
+                    ]
+                ];
+
+                $Values[] = $AddValue;
             }
         }
-        return json_encode($data);
+        $Form['actions'][0]['values'] = $Values;
+        return json_encode($Form);
     }
 
-    private function getHUEDeviceInstances($HueDeviceID)
+    private function getHUEDeviceInstances($HueDeviceID, $DeviceType)
     {
         $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}');
         foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID) {
+            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType ) {
                 return $id;
             }
         }
@@ -64,6 +129,20 @@ class HUEConfigurator extends IPSModule
     {
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = 'getAllLights';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $Data = json_decode($this->SendDataToParent($Data), true);
+        if (!$Data) {
+            return array();
+        }
+        return $Data;
+    }
+
+    private function getHUEGroups()
+    {
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getAllGroups';
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);

@@ -24,8 +24,6 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        IPS_LogMessage('Bridges',print_r($Bridges,true));
-
         $Values = [];
 
         if (count($Bridges) > 0) {
@@ -34,7 +32,7 @@ class HUEDiscovery extends IPSModule
 
                 $AddValue = [
                     'IPAddress'             => $IPAddress,
-                    'Devicename'            => $Bridge['devicename'],
+                    'name'            => $Bridge['devicename'],
                     'ModelName'             => $Bridge['modelName'],
                     'ModelNumber'           => $Bridge['modelNumber'],
                     'SerialNumber'          => $Bridge['serialNumber'],
@@ -58,9 +56,7 @@ class HUEDiscovery extends IPSModule
                 $Values[] = $AddValue;
             }
             $Form['actions'][0]['values'] = $Values;
-            IPS_LogMessage('Form',print_r($Form,true));
         }
-        IPS_LogMessage('Formn',json_encode($Form));
         return json_encode($Form);
     }
 
@@ -128,7 +124,6 @@ class HUEDiscovery extends IPSModule
 
             $Xml = new SimpleXMLElement($XMLData);
 
-            IPS_LogMessage('modelName', (string) $Xml->device->modelName);
             $modelName = (string) $Xml->device->modelName;
             if (strpos($modelName, 'Philips hue bridge') === false) {
                 continue;

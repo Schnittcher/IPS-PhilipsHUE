@@ -13,6 +13,7 @@ class HUEDevice extends IPSModule
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
         $this->RegisterPropertyString('HUEDeviceID', '');
+        $this->RegisterPropertyString('DeviceType',"");
 
         $this->RegisterVariableBoolean('HUE_State', $this->Translate('State'), '~Switch');
         $this->RegisterVariableInteger('HUE_Brightness', $this->Translate('Brightness'), '~Intensity.255');
@@ -31,9 +32,24 @@ class HUEDevice extends IPSModule
 
     public function ReceiveData($JSONString)
     {
+        $this->SendDebug(__FUNCTION__ .' Device Type', $this->ReadPropertyString('DeviceType'), 0);
+        $this->SendDebug(__FUNCTION__ .' Device ID', $this->ReadPropertyString('HUEDeviceID'), 0);
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $Data = json_decode($JSONString);
-        $DeviceState = $Data->Buffer->{$this->ReadPropertyString('HUEDeviceID')}->state;
+        $Buffer = json_decode($Data->Buffer);
+        if($this->ReadPropertyString('DeviceType') != 'groups') {
+            if (property_exists( $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+
+            }
+        } else {
+
+            if (property_exists( $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
+                $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
+            } else {
+                return;
+            }
+        }
 
         //Convervt XY to RGB an set Color if Color Lamp
         if (property_exists($DeviceState, 'xy')) {
@@ -48,18 +64,35 @@ class HUEDevice extends IPSModule
 
     public function SwitchMode(bool $Value)
     {
+        if($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
+
         $params = array('on' => $Value);
-        return $this->sendData('state', $params);
+        return $this->sendData($command, $params);
     }
 
     public function DimSet(int $Value)
     {
+        if($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
+
         $params = array('bri' => $Value, 'on' => true);
-        return $this->sendData('state', $params);
+        return $this->sendData($command, $params);
     }
 
     public function ColorSet($Value)
     {
+        if($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
 
         //If $Value Hex Color convert to Decimal
         if (preg_match('/^#[a-f0-9]{6}$/i', strval($Value))) {
@@ -75,7 +108,7 @@ class HUEDevice extends IPSModule
         $xy[1] = $ConvertedXY['y'];
 
         $params = array('bri' => $ConvertedXY['bri'], 'xy' => $xy, 'on' => true);
-        return $this->sendData('state', $params);
+        return $this->sendData($command, $params);
     }
 
     public function RequestAction($Ident, $Value)
@@ -119,6 +152,7 @@ class HUEDevice extends IPSModule
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = $command;
         $Buffer['DeviceID'] = $this->ReadPropertyString('HUEDeviceID');
+        $Buffer['Endpoint'] = $this->ReadPropertyString('DeviceType');
         $Buffer['Params'] = $params;
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
