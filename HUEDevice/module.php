@@ -26,9 +26,9 @@ class HUEDevice extends IPSModule
             return;
         }
         if ($this->ReadPropertyString('DeviceType') == 'sensors') {
-            switch($this->ReadPropertyString('SensorType')) {
+            switch ($this->ReadPropertyString('SensorType')) {
                 case 'Daylight':
-                    $this->SendDebug(__FUNCTION__ .$this->ReadPropertyString('DeviceType'), 'To do' ,0);
+                    $this->SendDebug(__FUNCTION__ . $this->ReadPropertyString('DeviceType'), 'To do', 0);
                     break;
                 case 'ZLLPresence':
                     $this->RegisterVariableBoolean('HUE_Presence', $this->Translate('Presence'), '~Presence');
@@ -45,9 +45,8 @@ class HUEDevice extends IPSModule
                     $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
                     break;
                 default:
-                    $this->SendDebug(__FUNCTION__ .' Sensor Type', $this->ReadPropertyString('DeviceType'),0);
+                    $this->SendDebug(__FUNCTION__ . ' Sensor Type', $this->ReadPropertyString('DeviceType'), 0);
             }
-
         } else {
             $this->RegisterVariableBoolean('HUE_State', $this->Translate('State'), '~Switch');
             $this->RegisterVariableInteger('HUE_Brightness', $this->Translate('Brightness'), '~Intensity.255');
@@ -57,7 +56,6 @@ class HUEDevice extends IPSModule
             $this->EnableAction('HUE_Brightness');
             $this->EnableAction('HUE_Color');
         }
-
     }
 
     public function ReceiveData($JSONString)
@@ -90,7 +88,7 @@ class HUEDevice extends IPSModule
                 }
                 break;
             default:
-                $this->SendDebug(__FUNCTION__, 'Invalid Device Type',0);
+                $this->SendDebug(__FUNCTION__, 'Invalid Device Type', 0);
                 return;
         }
 
@@ -124,7 +122,6 @@ class HUEDevice extends IPSModule
         if (property_exists($DeviceState, 'temperature')) {
             $this->SetValue('HUE_Temperature', $DeviceState->temperature);
         }
-
     }
 
     public function SwitchMode(bool $Value)
