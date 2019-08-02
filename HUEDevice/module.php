@@ -14,20 +14,50 @@ class HUEDevice extends IPSModule
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
         $this->RegisterPropertyString('HUEDeviceID', '');
         $this->RegisterPropertyString('DeviceType', '');
-
-        $this->RegisterVariableBoolean('HUE_State', $this->Translate('State'), '~Switch');
-        $this->RegisterVariableInteger('HUE_Brightness', $this->Translate('Brightness'), '~Intensity.255');
-        $this->RegisterVariableInteger('HUE_Color', $this->Translate('Color'), 'HexColor');
-
-        $this->EnableAction('HUE_State');
-        $this->EnableAction('HUE_Brightness');
-        $this->EnableAction('HUE_Color');
+        $this->RegisterPropertyString('SensorType', '');
     }
 
     public function ApplyChanges()
     {
+
         //Never delete this line!
         parent::ApplyChanges();
+        if ($this->ReadPropertyString('DeviceType') == '') {
+            return;
+        }
+        if ($this->ReadPropertyString('DeviceType') == 'sensors') {
+            switch($this->ReadPropertyString('SensorType')) {
+                case 'Daylight':
+                    $this->SendDebug(__FUNCTION__ .$this->ReadPropertyString('DeviceType'), 'To do' ,0);
+                    break;
+                case 'ZLLPresence':
+                    $this->RegisterVariableBoolean('HUE_Presence', $this->Translate('Presence'), '~Presence');
+                    $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
+                    break;
+                case 'ZLLLightLevel':
+                    $this->RegisterVariableInteger('HUE_Lightlevel', $this->Translate('Lightlevel'), '');
+                    $this->RegisterVariableBoolean('HUE_Dark', $this->Translate('Dark'), '');
+                    $this->RegisterVariableBoolean('HUE_Daylight', $this->Translate('Daylight'), '');
+                    $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
+                    break;
+                case 'ZLLTemperature':
+                    $this->RegisterVariableFloat('HUE_Temperature', $this->Translate('Temperature'), '');
+                    $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
+                    break;
+                default:
+                    $this->SendDebug(__FUNCTION__ .' Sensor Type', $this->ReadPropertyString('DeviceType'),0);
+            }
+
+        } else {
+            $this->RegisterVariableBoolean('HUE_State', $this->Translate('State'), '~Switch');
+            $this->RegisterVariableInteger('HUE_Brightness', $this->Translate('Brightness'), '~Intensity.255');
+            $this->RegisterVariableInteger('HUE_Color', $this->Translate('Color'), 'HexColor');
+
+            $this->EnableAction('HUE_State');
+            $this->EnableAction('HUE_Brightness');
+            $this->EnableAction('HUE_Color');
+        }
+
     }
 
     public function ReceiveData($JSONString)
@@ -37,16 +67,31 @@ class HUEDevice extends IPSModule
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
-        if ($this->ReadPropertyString('DeviceType') != 'groups') {
-            if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
-                $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
-            }
-        } else {
-            if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
-                $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
-            } else {
+
+        $DeviceConfig = new stdClass();
+
+        switch ($this->ReadPropertyString('DeviceType')) {
+            case 'groups':
+                if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
+                    $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
+                    //$DeviceConfig = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                }
+                break;
+            case 'lights':
+                if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                    $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                    $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                }
+                break;
+            case 'sensors':
+                if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                    $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                    $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                }
+                break;
+            default:
+                $this->SendDebug(__FUNCTION__, 'Invalid Device Type',0);
                 return;
-            }
         }
 
         //Convervt XY to RGB an set Color if Color Lamp
@@ -55,9 +100,31 @@ class HUEDevice extends IPSModule
             $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
             $this->SetValue('HUE_Color', $Color);
         }
+        if (property_exists($DeviceState, 'on')) {
+            $this->SetValue('HUE_State', $DeviceState->on);
+        }
+        if (property_exists($DeviceState, 'bri')) {
+            $this->SetValue('HUE_Brightness', $DeviceState->bri);
+        }
+        if (property_exists($DeviceState, 'presence')) {
+            $this->SetValue('HUE_Presence', $DeviceState->presence);
+        }
+        if (property_exists($DeviceConfig, 'battery')) {
+            $this->SetValue('HUE_Battery', $DeviceConfig->battery);
+        }
+        if (property_exists($DeviceState, 'lightlevel')) {
+            $this->SetValue('HUE_Lightlevel', $DeviceState->lightlevel);
+        }
+        if (property_exists($DeviceState, 'dark')) {
+            $this->SetValue('HUE_Dark', $DeviceState->dark);
+        }
+        if (property_exists($DeviceState, 'daylight')) {
+            $this->SetValue('HUE_Daylight', $DeviceState->daylight);
+        }
+        if (property_exists($DeviceState, 'temperature')) {
+            $this->SetValue('HUE_Temperature', $DeviceState->temperature);
+        }
 
-        $this->SetValue('HUE_State', $DeviceState->on);
-        $this->SetValue('HUE_Brightness', $DeviceState->bri);
     }
 
     public function SwitchMode(bool $Value)

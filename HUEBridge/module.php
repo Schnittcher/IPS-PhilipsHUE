@@ -100,6 +100,7 @@ class HUEBridge extends IPSModule
 
         $Buffer['Lights'] = $this->getAllLights();
         $Buffer['Groups'] = $this->getAllGroups();
+        $Buffer['Sensors'] = $this->getAllSensors();
 
         $Data['Buffer'] = json_encode($Buffer);
 
