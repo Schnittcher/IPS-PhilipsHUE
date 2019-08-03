@@ -17,7 +17,8 @@
         { "caption": "Daylight", "value": "Daylight" },
         { "caption": "Presence Sensor", "value": "ZLLPresence" },
         { "caption": "Light Sensor", "value": "ZLLLightLevel" },
-        { "caption": "Temperature Sensor", "value": "ZLLTemperature" }
+        { "caption": "Temperature Sensor", "value": "ZLLTemperature" },
+        { "caption": "Switch", "value": "ZLLSwitch" }
       ]
     }
   ]

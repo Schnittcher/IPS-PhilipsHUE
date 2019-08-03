@@ -44,6 +44,10 @@ class HUEDevice extends IPSModule
                     $this->RegisterVariableFloat('HUE_Temperature', $this->Translate('Temperature'), '');
                     $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
                     break;
+                case 'ZLLSwitch':
+                    $this->RegisterVariableFloat('HUE_Buttonevent', $this->Translate('Buttonevent'), '');
+                    $this->RegisterVariableInteger('HUE_Battery', $this->Translate('Battery'), '~Battery.100');
+                    break;
                 default:
                     $this->SendDebug(__FUNCTION__ . ' Sensor Type', $this->ReadPropertyString('DeviceType'), 0);
             }
@@ -121,6 +125,9 @@ class HUEDevice extends IPSModule
         }
         if (property_exists($DeviceState, 'temperature')) {
             $this->SetValue('HUE_Temperature', $DeviceState->temperature);
+        }
+        if (property_exists($DeviceState, 'buttonevent')) {
+            $this->SetValue('HUE_Buttonevent', $DeviceState->buttonevent);
         }
     }
 
