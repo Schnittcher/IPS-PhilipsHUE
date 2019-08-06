@@ -58,17 +58,12 @@ trait ColorHelper
             $g /= $maxValue;
             $b /= $maxValue;
         }
-        $color['red'] = (int)max(0, min(255, $r * 255));
-        $color['green'] = (int)max(0, min(255, $g * 255));
-        $color['blue'] = (int)max(0, min(255, $b * 255));
+        $color['red'] = (int) max(0, min(255, $r * 255));
+        $color['green'] = (int) max(0, min(255, $g * 255));
+        $color['blue'] = (int) max(0, min(255, $b * 255));
 
         return $color;
-
     }
-
-
-
-
 
     private function decToRGB($Value)
     {
