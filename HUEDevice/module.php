@@ -191,6 +191,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Brightness':
                 $result = $this->DimSet($Value);
+
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue('HUE_State', true);
                 }
@@ -200,12 +201,9 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Color':
                 $result = $this->ColorSet($Value);
-
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue('HUE_State', true);
                 }
-
-                IPS_LogMessage('success Color', print_r($result, true));
 
                 if ($this->ReadPropertyString('DeviceType') == 'groups') {
                     //If DeviceType Group Key 1 is Brightness

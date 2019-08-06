@@ -35,29 +35,40 @@ trait ColorHelper
         );
     }
 
-    private function convertXYToRGB($x, $y, $bri = 255)
+    private function convertXYToRGB($x, $y, $bri)
     {
-        // Calculate XYZ
+        // Calculate XYZ values Convert using the following formulas
         $z = 1.0 - $x - $y;
-        $xyz['y'] = $bri / 255;
-        $xyz['x'] = ($xyz['y'] / $y) * $x;
-        $xyz['z'] = ($xyz['y'] / $y) * $z;
+        $Y = $bri;
+        $X = ($Y / $y) * $x;
+        $Z = ($Y / $y) * $z;
+
         // Convert to RGB using Wide RGB D65 conversion
-        $color['red'] = $xyz['x'] * 1.656492 - $xyz['y'] * 0.354851 - $xyz['z'] * 0.255038;
-        $color['green'] = -$xyz['x'] * 0.707196 + $xyz['y'] * 1.655397 + $xyz['z'] * 0.036152;
-        $color['blue'] = $xyz['x'] * 0.051713 - $xyz['y'] * 0.121364 + $xyz['z'] * 1.011530;
-        foreach ($color as $key => $normalized) {
-            // Apply reverse gamma correction
-            if ($normalized <= 0.0031308) {
-                $color[$key] = 12.92 * $normalized;
-            } else {
-                $color[$key] = (1.0 + 0.055) * pow($normalized, 1.0 / 2.4) - 0.055;
-            }
-            // Scale back from a maximum of 1 to a maximum of 255
-            $color[$key] = round($color[$key] * 255);
+        $r = $X * 1.656492 - $Y * 0.354851 - $Z * 0.255038;
+        $g = -$X * 0.707196 + $Y * 1.655397 + $Z * 0.036152;
+        $b = $X * 0.051713 - $Y * 0.121364 + $Z * 1.011530;
+
+        // Apply reverse gamma correction
+        $r = $r <= 0.0031308 ? 12.92 * $r : (1.0 + 0.055) * pow($r, (1.0 / 2.4)) - 0.055;
+        $g = $g <= 0.0031308 ? 12.92 * $g : (1.0 + 0.055) * pow($g, (1.0 / 2.4)) - 0.055;
+        $b = $b <= 0.0031308 ? 12.92 * $b : (1.0 + 0.055) * pow($b, (1.0 / 2.4)) - 0.055;
+
+        if (($maxValue = max($r, $g, $b)) && $maxValue > 1) {
+            $r /= $maxValue;
+            $g /= $maxValue;
+            $b /= $maxValue;
         }
+        $color['red'] = (int)max(0, min(255, $r * 255));
+        $color['green'] = (int)max(0, min(255, $g * 255));
+        $color['blue'] = (int)max(0, min(255, $b * 255));
+
         return $color;
+
     }
+
+
+
+
 
     private function decToRGB($Value)
     {
