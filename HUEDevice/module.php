@@ -200,14 +200,31 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Color':
                 $result = $this->ColorSet($Value);
+
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue('HUE_State', true);
                 }
-                if (array_key_exists('success', $result[1])) {
-                    $this->SetValue($Ident, $Value);
-                }
-                if (array_key_exists('success', $result[2])) {
-                    $this->SetValue('HUE_Brightness', $result[2]['success']['/lights/' . $this->ReadPropertyString('HUEDeviceID') . '/state/bri']);
+
+                IPS_LogMessage('success Color', print_r($result,true));
+
+                if ($this->ReadPropertyString('DeviceType') == 'groups') {
+                    //If DeviceType Group Key 1 is Brightness
+                    if (array_key_exists('success', $result[1])) {
+                        $this->SetValue('HUE_Brightness', $result[1]['success']['/groups/' . $this->ReadPropertyString('HUEDeviceID') . '/action/bri']);
+                    }
+                    //If DeviceType is Group Key 2 is Color
+                    if (array_key_exists('success', $result[2])) {
+                        $this->SetValue($Ident, $Value);
+                    }
+                } elseif ($this->ReadPropertyString('DeviceType') == 'lights') {
+                    //If DeviceType is Lights Key 1 is Color
+                    if (array_key_exists('success', $result[1])) {
+                        $this->SetValue($Ident, $Value);
+                    }
+                    //If DeviceType is Lights Key 2 is Brightness
+                    if (array_key_exists('success', $result[2])) {
+                        $this->SetValue('HUE_Brightness', $result[2]['success']['/lights/' . $this->ReadPropertyString('HUEDeviceID') . '/state/bri']);
+                    }
                 }
                 break;
             default:
