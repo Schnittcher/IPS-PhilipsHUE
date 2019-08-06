@@ -205,7 +205,7 @@ class HUEDevice extends IPSModule
                     $this->SetValue('HUE_State', true);
                 }
 
-                IPS_LogMessage('success Color', print_r($result,true));
+                IPS_LogMessage('success Color', print_r($result, true));
 
                 if ($this->ReadPropertyString('DeviceType') == 'groups') {
                     //If DeviceType Group Key 1 is Brightness
