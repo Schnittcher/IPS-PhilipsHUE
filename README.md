@@ -20,23 +20,16 @@
 
 ## 2. Enthaltene Module
 
-* [HUEBridge](HUEBridge/README.md)
-* [HUEConfigurator](HUEConfigurator/README.md)
-* [HUEDevice](HUEDevice/README.md)
+* HUEBridge
+* HUEConfigurator
+* HUEDevice
+* HUEDiscovery
 
 ## 3. Installation
 Über den IP-Symcon Module Store.
 
 ## 4. Konfiguration in IP-Symcon
-Bitte den einzelnen Modulen entnehmen.
-
-Vorläufige Doku:
-
-Splitter (HUEBridge) anlegen, dort die IP Adresse der HUE Bridge hinterlegen, den Button auf der HUE Bridge betätigen und den Button "Registriere IP-Symcon" anklicken.
-Danach sollte die HUE Bridge mit IP-Symocn gekoppelt sein.
-
-Nachdem die HUE Bridge mit IP-Symcon gekoppelt ist, den HUEConfigurator anlegen, dort sollten alle HUE Lampen aufgelistet werden.
-Mit dem Konfigurator können die Instanzen (HUEDevice) für die Lampen erstellt werden.
+Die Doku zu diesem Modul ist hier zu finden: [Dokumentation](https://deinsmarthome.info)
 
 ## 5. Spenden
 

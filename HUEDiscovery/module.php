@@ -24,9 +24,8 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        $Values = array();
+        $Values = [];
 
-        if (count($Bridges) > 0) {
             foreach ($Bridges as $IPAddress => $Bridge) {
                 $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
@@ -56,7 +55,6 @@ class HUEDiscovery extends IPSModule
                 $Values[] = $AddValue;
             }
             $Form['actions'][0]['values'] = $Values;
-        }
         return json_encode($Form);
     }
 
@@ -88,7 +86,7 @@ class HUEDiscovery extends IPSModule
             'HOST: 239.255.255.250:1900'
         );
         $SendData = implode("\r\n", $message) . "\r\n\r\n";
-        $this->SendDebug('Serach', $SendData, 0);
+        $this->SendDebug('Search', $SendData, 0);
         if (@socket_sendto($socket, $SendData, strlen($SendData), 0, '239.255.255.250', 1900) === false) {
             return array();
         }
