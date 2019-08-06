@@ -24,12 +24,12 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        $Values = [];
+        $Values = array();
 
-            foreach ($Bridges as $IPAddress => $Bridge) {
-                $instanceID = $this->getHUEBridgeInstances($IPAddress);
+        foreach ($Bridges as $IPAddress => $Bridge) {
+            $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
-                $AddValue = array(
+            $AddValue = array(
                     'IPAddress'             => $IPAddress,
                     'name'                  => $Bridge['devicename'],
                     'ModelName'             => $Bridge['modelName'],
@@ -38,7 +38,7 @@ class HUEDiscovery extends IPSModule
                     'instanceID'            => $instanceID
                 );
 
-                $AddValue['create'] = array(
+            $AddValue['create'] = array(
                     array(
                         'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
                         'configuration' => new stdClass()
@@ -52,9 +52,9 @@ class HUEDiscovery extends IPSModule
 
                 );
 
-                $Values[] = $AddValue;
-            }
-            $Form['actions'][0]['values'] = $Values;
+            $Values[] = $AddValue;
+        }
+        $Form['actions'][0]['values'] = $Values;
         return json_encode($Form);
     }
 
