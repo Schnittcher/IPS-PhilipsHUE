@@ -22,7 +22,7 @@
         },
         {
           "caption": "Name",
-          "name": "Name",
+          "name": "DisplayName",
           "width": "auto"
         },
         {
