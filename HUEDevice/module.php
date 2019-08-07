@@ -23,7 +23,6 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileAssociation('HUE.ColorMode', 1, $this->Translate('Color Temperature'), '', 0x000000);
         IPS_SetVariableProfileIcon('HUE.ColorMode', 'ArrowRight');
 
-
         if (!IPS_VariableProfileExists('HUE.ColorTemperature')) {
             IPS_CreateVariableProfile('HUE.ColorTemperature', 1);
         }
@@ -31,7 +30,6 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileIcon('HUE.ColorTemperature', 'Bulb');
         IPS_SetVariableProfileText('HUE.ColorTemperature', '', ' Mired');
         IPS_SetVariableProfileValues('HUE.ColorTemperature', 153, 500, 1);
-
 
         if (!IPS_VariableProfileExists('HUE.Intensity')) {
             IPS_CreateVariableProfile('HUE.Intensity', 1);
@@ -51,25 +49,25 @@ class HUEDevice extends IPSModule
             return;
         }
         //Sensors
-        $this->MaintainVariable("HUE_Battery", $this->Translate('Battery'), 1 , '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable("HUE_Presence", $this->Translate('Presence'), 0, '~Presence', 0, $this->ReadPropertyString("SensorType") == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable("HUE_Lightlevel", $this->Translate('Lightlevel'), 1, '', 0, $this->ReadPropertyString("SensorType") == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable("HUE_Dark", $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString("SensorType") == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable("HUE_Daylight", $this->Translate('Daylight'), 0, '', 0, $this->ReadPropertyString("SensorType") == 'ZLLLightLevel'&& $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable("HUE_Temperature", $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString("SensorType") == 'ZLLTemperature'&& $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Temperature', $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString('SensorType') == 'ZLLTemperature' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable("HUE_Buttonevent", $this->Translate('Buttonevent'), 1, '', 0, $this->ReadPropertyString("SensorType") == 'ZLLSwitch'&& $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLSwitch' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
         //Lights and Groups
-        $this->MaintainVariable("HUE_ColorMode", $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable("HUE_State", $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable("HUE_Brightness", $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable("HUE_Color", $this->Translate('Color'), 1, 'HexColor', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable("HUE_Saturation", $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable("HUE_ColorTemperature", $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_Brightness', $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
 
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             $this->EnableAction('HUE_ColorMode');
@@ -78,7 +76,7 @@ class HUEDevice extends IPSModule
             $this->EnableAction('HUE_Color');
             $this->EnableAction('HUE_Saturation');
             $this->EnableAction('HUE_ColorTemperature');
-            $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode',$this->InstanceID));
+            $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
             $this->hideVariables($ColorMode);
         }
     }
@@ -282,7 +280,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Saturation':
                 $result = $this->SatSet($Value);
-                IPS_LogMessage('Saturation success',print_r($result,true));
+                IPS_LogMessage('Saturation success', print_r($result, true));
 
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
@@ -290,7 +288,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_ColorTemperature':
                 $result = $this->CTSet($Value);
-                IPS_LogMessage('Color Temperature success',print_r($result,true));
+                IPS_LogMessage('Color Temperature success', print_r($result, true));
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
                 }
@@ -305,19 +303,20 @@ class HUEDevice extends IPSModule
         }
     }
 
-    private function hideVariables($Value) {
+    private function hideVariables($Value)
+    {
         switch ($Value) {
             case 0:
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation',$this->InstanceID),true);
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature',$this->InstanceID),true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation', $this->InstanceID), true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature', $this->InstanceID), true);
 
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color',$this->InstanceID),false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color', $this->InstanceID), false);
                 break;
             case 1:
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color',$this->InstanceID),true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color', $this->InstanceID), true);
 
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation',$this->InstanceID),false);
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature',$this->InstanceID),false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation', $this->InstanceID), false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature', $this->InstanceID), false);
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Color Mode: ' . $Value, 0);

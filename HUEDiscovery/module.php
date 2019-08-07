@@ -95,7 +95,7 @@ class HUEDiscovery extends IPSModule
         $Port = 0;
         $BridgeData = array();
         do {
-            $buf   = null;
+            $buf = null;
             $bytes = @socket_recvfrom($socket, $buf, 2048, 0, $IPAddress, $Port);
             if ($bytes === false) {
                 break;
@@ -106,7 +106,7 @@ class HUEDiscovery extends IPSModule
                 if (!array_key_exists('HUE-BRIDGEID', $Data)) {
                     continue;
                 }
-                $this->SendDebug('IPAddress',$IPAddress,0);
+                $this->SendDebug('IPAddress', $IPAddress, 0);
                 $BridgeData[$IPAddress] = $Data['LOCATION'];
             }
         } while (!is_null($buf));
