@@ -30,27 +30,27 @@ class HUEDiscovery extends IPSModule
             $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
             $AddValue = array(
-                    'IPAddress'             => $IPAddress,
-                    'name'                  => $Bridge['devicename'],
-                    'ModelName'             => $Bridge['modelName'],
-                    'ModelNumber'           => $Bridge['modelNumber'],
-                    'SerialNumber'          => $Bridge['serialNumber'],
-                    'instanceID'            => $instanceID
-                );
+                'IPAddress'             => $IPAddress,
+                'name'                  => $Bridge['devicename'],
+                'ModelName'             => $Bridge['modelName'],
+                'ModelNumber'           => $Bridge['modelNumber'],
+                'SerialNumber'          => $Bridge['serialNumber'],
+                'instanceID'            => $instanceID
+            );
 
             $AddValue['create'] = array(
-                    array(
-                        'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
-                        'configuration' => new stdClass()
-                    ),
-                    array(
-                        'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
-                        'configuration' => array(
-                            'Host' => $IPAddress
-                        )
+                array(
+                    'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
+                    'configuration' => new stdClass()
+                ),
+                array(
+                    'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
+                    'configuration' => array(
+                        'Host' => $IPAddress
                     )
+                )
 
-                );
+            );
 
             $Values[] = $AddValue;
         }
@@ -75,7 +75,7 @@ class HUEDiscovery extends IPSModule
         if (!$socket) {
             return array();
         }
-        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 2, 'usec' => 100000));
+        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 3, 'usec' => 100000));
         socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_bind($socket, '0.0.0.0', 0);
         $message = array(
@@ -91,25 +91,25 @@ class HUEDiscovery extends IPSModule
             return array();
         }
         usleep(100000);
-        $i = 50;
         $IPAddress = '';
         $Port = 0;
         $BridgeData = array();
-        while ($i) {
-            $ret = @socket_recvfrom($socket, $buf, 2048, 0, $IPAddress, $Port);
-            if ($ret === false) {
+        do {
+            $buf   = null;
+            $bytes = @socket_recvfrom($socket, $buf, 2048, 0, $IPAddress, $Port);
+            if ($bytes === false) {
                 break;
             }
-            if ($ret === 0) {
-                $i--;
-                continue;
+
+            if (!is_null($buf)) {
+                $Data = $this->parseHeader($buf);
+                if (!array_key_exists('HUE-BRIDGEID', $Data)) {
+                    continue;
+                }
+                $this->SendDebug('IPAddress',$IPAddress,0);
+                $BridgeData[$IPAddress] = $Data['LOCATION'];
             }
-            $Data = $this->parseHeader($buf);
-            if (!array_key_exists('HUE-BRIDGEID', $Data)) {
-                continue;
-            }
-            $BridgeData[$IPAddress] = $Data['LOCATION'];
-        }
+        } while (!is_null($buf));
         socket_close($socket);
 
         $Bridge = array();
