@@ -4,7 +4,16 @@
       "State": "Status",
       "Brightness": "Helligkeit",
       "Color": "Farbe",
-      "HUE Device ID": "HUE Geräte ID"
+      "HUE Device ID": "HUE Geräte ID",
+      "Color Temperature": "Farbtemperatur",
+      "Color Mode": "Farbmodus",
+      "Saturation": "Sättigung",
+      "Battery": "Batterie",
+      "Dark": "Dunkel",
+      "Daylight": "Tageslicht",
+      "Lightlevel": "Lichtniveau",
+      "Presence": "Anwesenheit",
+      "Temperature": "Temperatur"
     }
   }
 }
