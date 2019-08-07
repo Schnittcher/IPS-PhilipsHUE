@@ -23,7 +23,6 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileAssociation('HUE.ColorMode', 1, $this->Translate('Color Temperature'), '', 0x000000);
         IPS_SetVariableProfileIcon('HUE.ColorMode', 'ArrowRight');
 
-
         if (!IPS_VariableProfileExists('HUE.ColorTemperature')) {
             IPS_CreateVariableProfile('HUE.ColorTemperature', 1);
         }
@@ -31,7 +30,6 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileIcon('HUE.ColorTemperature', 'Bulb');
         IPS_SetVariableProfileText('HUE.ColorTemperature', '', ' Mired');
         IPS_SetVariableProfileValues('HUE.ColorTemperature', 153, 500, 1);
-
 
         if (!IPS_VariableProfileExists('HUE.Intensity')) {
             IPS_CreateVariableProfile('HUE.Intensity', 1);
@@ -41,7 +39,7 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileText('HUE.Intensity', '', '%');
         //153 (6500K) to 500 (2000K)
         IPS_SetVariableProfileValues('HUE.Intensity', 0, 254, 1);
-   }
+    }
 
     public function ApplyChanges()
     {
@@ -96,7 +94,7 @@ class HUEDevice extends IPSModule
             $this->EnableAction('HUE_Saturation');
             $this->EnableAction('HUE_ColorTemperature');
 
-            $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode',$this->InstanceID));
+            $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
             $this->hideVariables($ColorMode);
         }
     }
@@ -300,7 +298,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Saturation':
                 $result = $this->SatSet($Value);
-                IPS_LogMessage('Saturation success',print_r($result,true));
+                IPS_LogMessage('Saturation success', print_r($result, true));
 
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
@@ -308,7 +306,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_ColorTemperature':
                 $result = $this->CTSet($Value);
-                IPS_LogMessage('Color Temperature success',print_r($result,true));
+                IPS_LogMessage('Color Temperature success', print_r($result, true));
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
                 }
@@ -323,19 +321,20 @@ class HUEDevice extends IPSModule
         }
     }
 
-    private function hideVariables($Value) {
+    private function hideVariables($Value)
+    {
         switch ($Value) {
             case 0:
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation',$this->InstanceID),true);
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature',$this->InstanceID),true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation', $this->InstanceID), true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature', $this->InstanceID), true);
 
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color',$this->InstanceID),false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color', $this->InstanceID), false);
                 break;
             case 1:
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color',$this->InstanceID),true);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Color', $this->InstanceID), true);
 
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation',$this->InstanceID),false);
-                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature',$this->InstanceID),false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_Saturation', $this->InstanceID), false);
+                IPS_SetHidden(IPS_GetObjectIDByIdent('HUE_ColorTemperature', $this->InstanceID), false);
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Color Mode: ' . $Value, 0);
