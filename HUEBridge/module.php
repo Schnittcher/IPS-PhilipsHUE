@@ -116,7 +116,7 @@ class HUEBridge extends IPSModule
             $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
             $this->WriteAttributeString('User', $result[0]->success->username);
         } else {
-            $this->SendDebug(__FUNCTION__. 'Pairing failed', json_encode($result));
+            $this->SendDebug(__FUNCTION__. 'Pairing failed', json_encode($result),0);
             IPS_LogMessage('PhilipsHUE', 'Register User failed');
         }
     }
