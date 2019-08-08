@@ -24,22 +24,22 @@ class HUEConfigurator extends IPSModule
         $Groups = $this->getHUEGroups();
         $Sensors = $this->getHUESensors();
 
-        if (array_key_exists('error',$Lights)) {
-            IPS_LogMessage('HUE Configuration Error',$Lights['error']['type'] . ': '. $Lights['error']['description']);
+        if (array_key_exists('error', $Lights)) {
+            IPS_LogMessage('HUE Configuration Error', $Lights['error']['type'] . ': ' . $Lights['error']['description']);
             return $Form;
         }
-        if (array_key_exists('error',$Groups)) {
-            IPS_LogMessage('HUE Configuration Error',$Groups['error']['type'] . ': '. $Groups['error']['description']);
+        if (array_key_exists('error', $Groups)) {
+            IPS_LogMessage('HUE Configuration Error', $Groups['error']['type'] . ': ' . $Groups['error']['description']);
             return $Form;
         }
-        if (array_key_exists('error',$Sensors)) {
-            IPS_LogMessage('HUE Configuration Error',$Sensors['error']['type'] . ': '. $Sensors['error']['description']);
+        if (array_key_exists('error', $Sensors)) {
+            IPS_LogMessage('HUE Configuration Error', $Sensors['error']['type'] . ': ' . $Sensors['error']['description']);
             return $Form;
         }
 
-        $this->SendDebug(__FUNCTION__.' Lights', json_encode($Lights), 0);
-        $this->SendDebug(__FUNCTION__.' Groups', json_encode($Groups), 0);
-        $this->SendDebug(__FUNCTION__.' Sensors', json_encode($Sensors), 0);
+        $this->SendDebug(__FUNCTION__ . ' Lights', json_encode($Lights), 0);
+        $this->SendDebug(__FUNCTION__ . ' Groups', json_encode($Groups), 0);
+        $this->SendDebug(__FUNCTION__ . ' Sensors', json_encode($Sensors), 0);
 
         $Values = [];
 
