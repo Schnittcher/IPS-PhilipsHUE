@@ -43,7 +43,7 @@ class HUEConfigurator extends IPSModule
             $Values[] = $AddValueLights;
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
-                
+
                 $AddValueLights = [
                     'parent'                => 1,
                     'ID'                    => $key,

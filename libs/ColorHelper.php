@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 trait ColorHelper
 {
     private function convertRGBToXY($red, $green, $blue)
@@ -28,11 +30,11 @@ trait ColorHelper
             $x = $xyz['x'] / array_sum($xyz);
             $y = $xyz['y'] / array_sum($xyz);
         }
-        return array(
+        return [
             'x'   => $x,
             'y'   => $y,
             'bri' => round($xyz['y'] * 255)
-        );
+        ];
     }
 
     private function convertXYToRGB($x, $y, $bri)
