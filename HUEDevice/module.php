@@ -168,7 +168,7 @@ class HUEDevice extends IPSModule
             $command = 'state';
         }
 
-        $params = ['on' => $Value];
+        $params = array('on' => $Value);
         return $this->sendData($command, $params);
     }
 
@@ -180,7 +180,7 @@ class HUEDevice extends IPSModule
             $command = 'state';
         }
 
-        $params = ['bri' => $Value, 'on' => true];
+        $params = array('bri' => $Value, 'on' => true);
         return $this->sendData($command, $params);
     }
 
@@ -205,7 +205,7 @@ class HUEDevice extends IPSModule
         $xy[0] = $ConvertedXY['x'];
         $xy[1] = $ConvertedXY['y'];
 
-        $params = ['bri' => $ConvertedXY['bri'], 'xy' => $xy, 'on' => true];
+        $params = array('bri' => $ConvertedXY['bri'], 'xy' => $xy, 'on' => true);
         return $this->sendData($command, $params);
     }
 
@@ -217,7 +217,7 @@ class HUEDevice extends IPSModule
             $command = 'state';
         }
 
-        $params = ['sat' => $Value];
+        $params = array('sat' => $Value);
         return $this->sendData($command, $params);
     }
 
@@ -229,7 +229,7 @@ class HUEDevice extends IPSModule
             $command = 'state';
         }
 
-        $params = ['ct' => $Value];
+        $params = array('ct' => $Value);
         return $this->sendData($command, $params);
     }
 

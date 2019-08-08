@@ -53,7 +53,7 @@ class HUEBridge extends IPSModule
         return json_encode($result);
     }
 
-    private function sendRequest(string $User, string $endpoint, array $params = [], string $method = 'GET')
+    private function sendRequest(string $User, string $endpoint, array $params = array(), string $method = 'GET')
     {
         if ($this->ReadPropertyString('Host') == '') {
             return false;
@@ -65,7 +65,7 @@ class HUEBridge extends IPSModule
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint);
         } elseif ($endpoint == '') {
-            return [];
+            return array();
         } else {
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
@@ -124,22 +124,22 @@ class HUEBridge extends IPSModule
 
     public function getAllLights()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', array(), 'GET');
     }
 
     private function getNewLights()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/new', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/new', array(), 'GET');
     }
 
     private function scanNewLights()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', [], 'POST');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', array(), 'POST');
     }
 
     private function getLight($id)
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, array(), 'GET');
     }
 
     private function renameLight($id, $name)
@@ -155,35 +155,35 @@ class HUEBridge extends IPSModule
 
     private function deleteLight($id)
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, [], 'DELETE');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, array(), 'DELETE');
     }
 
     //Functions for Sensors
 
     public function getAllSensors()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'sensors', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'sensors', array(), 'GET');
     }
 
     //Functions for Groups
 
     private function getAllGroups()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'groups', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'groups', array(), 'GET');
     }
 
     //Functions for Schedules
 
     private function getAllSchedules()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'schedules', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'schedules', array(), 'GET');
     }
 
     //Functions for Scenes
 
     private function getAllScenes()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', [], 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', array(), 'GET');
     }
 
     //Functions for Rules

@@ -26,11 +26,11 @@ class HUEConfigurator extends IPSModule
 
         $this->SendDebug(__FUNCTION__, json_encode($Lights), 0);
 
-        $Values = [];
+        $Values = array();
 
         //Lights
         if (count($Lights) > 0) {
-            $AddValueLights = [
+            $AddValueLights = array(
                 'id'                    => 1,
                 'ID'                    => '',
                 'name'                  => 'Lights',
@@ -39,12 +39,12 @@ class HUEConfigurator extends IPSModule
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-            ];
+            );
             $Values[] = $AddValueLights;
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
-                
-                $AddValueLights = [
+
+                $AddValueLights = array(
                     'parent'                => 1,
                     'ID'                    => $key,
                     'DisplayName'           => $light['name'],
@@ -53,17 +53,17 @@ class HUEConfigurator extends IPSModule
                     'Manufacturername'      => $light['manufacturername'],
                     'Productname'           => $light['productname'],
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValueLights['create'] = [
-                    $light['name'] => [
+                $AddValueLights['create'] = array(
+                    $light['name'] => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
+                        'configuration' => array(
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'lights'
-                        ]
-                    ]
-                ];
+                        )
+                    )
+                );
 
                 $Values[] = $AddValueLights;
             }
@@ -71,7 +71,7 @@ class HUEConfigurator extends IPSModule
 
         //Sensors
         if (count($Sensors) > 0) {
-            $AddValueSensors = [
+            $AddValueSensors = array(
                 'id'                    => 2,
                 'ID'                    => '',
                 'name'                  => 'Sensors',
@@ -80,13 +80,13 @@ class HUEConfigurator extends IPSModule
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-            ];
+            );
 
             $Values[] = $AddValueSensors;
             foreach ($Sensors as $key => $sensor) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
 
-                $AddValueSensors = [
+                $AddValueSensors = array(
                     'parent'                => 2,
                     'ID'                    => $key,
                     'DisplayName'           => $sensor['name'],
@@ -95,18 +95,18 @@ class HUEConfigurator extends IPSModule
                     'Manufacturername'      => $sensor['manufacturername'],
                     'Productname'           => '-',
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValueSensors['create'] = [
-                    $sensor['name'] => [
+                $AddValueSensors['create'] = array(
+                    $sensor['name'] => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
+                        'configuration' => array(
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'sensors',
                             'SensorType'     => $sensor['type']
-                        ]
-                    ]
-                ];
+                        )
+                    )
+                );
 
                 $Values[] = $AddValueSensors;
             }
@@ -115,7 +115,7 @@ class HUEConfigurator extends IPSModule
         //Groups
 
         if (count($Groups) > 0) {
-            $AddValueGroups = [
+            $AddValueGroups = array(
                 'id'                    => 3,
                 'ID'                    => '',
                 'name'                  => 'Groups',
@@ -124,12 +124,12 @@ class HUEConfigurator extends IPSModule
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-                ];
+                );
             $Values[] = $AddValueGroups;
             foreach ($Groups as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
 
-                $AddValueGroups = [
+                $AddValueGroups = array(
                     'parent'                => 3,
                     'ID'                    => $key,
                     'DisplayName'           => $group['name'],
@@ -138,17 +138,17 @@ class HUEConfigurator extends IPSModule
                     'Manufacturername'      => '-',
                     'Productname'           => '-',
                     'instanceID'            => $instanceID
-                ];
+                );
 
-                $AddValueGroups['create'] = [
-                    $group['name'] => [
+                $AddValueGroups['create'] = array(
+                    $group['name'] => array(
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
+                        'configuration' => array(
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'groups'
-                        ]
-                    ]
-                ];
+                        )
+                    )
+                );
 
                 $Values[] = $AddValueGroups;
             }
@@ -170,8 +170,8 @@ class HUEConfigurator extends IPSModule
 
     private function getHUELights()
     {
-        $Data = [];
-        $Buffer = [];
+        $Data = array();
+        $Buffer = array();
 
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = 'getAllLights';
@@ -180,15 +180,15 @@ class HUEConfigurator extends IPSModule
         $Data = json_encode($Data);
         $result = json_decode($this->SendDataToParent($Data), true);
         if (!$result) {
-            return [];
+            return array();
         }
         return $result;
     }
 
     private function getHUEGroups()
     {
-        $Data = [];
-        $Buffer = [];
+        $Data = array();
+        $Buffer = array();
 
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = 'getAllGroups';
@@ -197,15 +197,15 @@ class HUEConfigurator extends IPSModule
         $Data = json_encode($Data);
         $result = json_decode($this->SendDataToParent($Data), true);
         if (!$result) {
-            return [];
+            return array();
         }
         return $result;
     }
 
     private function getHUESensors()
     {
-        $Data = [];
-        $Buffer = [];
+        $Data = array();
+        $Buffer = array();
 
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = 'getAllSensors';
@@ -214,7 +214,7 @@ class HUEConfigurator extends IPSModule
         $Data = json_encode($Data);
         $result = json_decode($this->SendDataToParent($Data), true);
         if (!$result) {
-            return [];
+            return array();
         }
         return $result;
     }
