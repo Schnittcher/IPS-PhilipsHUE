@@ -144,7 +144,7 @@ class HUEDevice extends IPSModule
             $this->SetValue('HUE_Battery', $DeviceConfig->battery);
         }
         if (property_exists($DeviceState, 'lightlevel')) {
-            $this->SetValue('HUE_Lightlevel', $DeviceState->lightlevel);
+            $this->SetValue('HUE_Lightlevel', intval(pow(10, $DeviceState->lightlevel / 10000)));
         }
         if (property_exists($DeviceState, 'dark')) {
             $this->SetValue('HUE_Dark', $DeviceState->dark);
