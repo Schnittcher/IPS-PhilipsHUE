@@ -64,7 +64,7 @@ class HUEBridge extends IPSModule
         if ($User != '' && $endpoint != '') {
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint);
-        } elseif ($endpoint == '') {
+        } elseif ($endpoint != '') {
             return [];
         } else {
             $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
