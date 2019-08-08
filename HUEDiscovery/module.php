@@ -24,33 +24,33 @@ class HUEDiscovery extends IPSModule
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Bridges = $this->DiscoverBridges();
 
-        $Values = array();
+        $Values = [];
 
         foreach ($Bridges as $IPAddress => $Bridge) {
             $instanceID = $this->getHUEBridgeInstances($IPAddress);
 
-            $AddValue = array(
+            $AddValue = [
                 'IPAddress'             => $IPAddress,
                 'name'                  => $Bridge['devicename'],
                 'ModelName'             => $Bridge['modelName'],
                 'ModelNumber'           => $Bridge['modelNumber'],
                 'SerialNumber'          => $Bridge['serialNumber'],
                 'instanceID'            => $instanceID
-            );
+            ];
 
-            $AddValue['create'] = array(
-                array(
+            $AddValue['create'] = [
+                [
                     'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
                     'configuration' => new stdClass()
-                ),
-                array(
+                ],
+                [
                     'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
-                    'configuration' => array(
+                    'configuration' => [
                         'Host' => $IPAddress
-                    )
-                )
+                    ]
+                ]
 
-            );
+            ];
 
             $Values[] = $AddValue;
         }
@@ -73,27 +73,27 @@ class HUEDiscovery extends IPSModule
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if (!$socket) {
-            return array();
+            return [];
         }
-        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec' => 3, 'usec' => 100000));
+        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 3, 'usec' => 100000]);
         socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_bind($socket, '0.0.0.0', 0);
-        $message = array(
+        $message = [
             'M-SEARCH * HTTP/1.1',
             'ST: ssdp:all',
             'MX: 3',
             'MAN: "ssdp:discover"',
             'HOST: 239.255.255.250:1900'
-        );
+        ];
         $SendData = implode("\r\n", $message) . "\r\n\r\n";
         $this->SendDebug('Search', $SendData, 0);
         if (@socket_sendto($socket, $SendData, strlen($SendData), 0, '239.255.255.250', 1900) === false) {
-            return array();
+            return [];
         }
         usleep(100000);
         $IPAddress = '';
         $Port = 0;
-        $BridgeData = array();
+        $BridgeData = [];
         do {
             $buf = null;
             $bytes = @socket_recvfrom($socket, $buf, 2048, 0, $IPAddress, $Port);
@@ -112,7 +112,7 @@ class HUEDiscovery extends IPSModule
         } while (!is_null($buf));
         socket_close($socket);
 
-        $Bridge = array();
+        $Bridge = [];
         foreach ($BridgeData as $IPAddress => $Url) {
             $XMLData = @Sys_GetURLContent($Url);
             $this->SendDebug('XML', $XMLData, 0);
@@ -126,12 +126,12 @@ class HUEDiscovery extends IPSModule
             if (strpos($modelName, 'Philips hue bridge') === false) {
                 continue;
             }
-            $Bridge[$IPAddress] = array(
+            $Bridge[$IPAddress] = [
                 'devicename'   => (string) $Xml->device->friendlyName,
                 'modelName'    => (string) $Xml->device->modelName,
                 'modelNumber'  => (string) $Xml->device->modelNumber,
                 'serialNumber' => (string) $Xml->device->serialNumber
-            );
+            ];
         }
         return $Bridge;
     }
@@ -141,7 +141,7 @@ class HUEDiscovery extends IPSModule
         $Lines = explode("\r\n", $Data);
         array_shift($Lines);
         array_pop($Lines);
-        $Header = array();
+        $Header = [];
         foreach ($Lines as $Line) {
             $line_array = explode(':', $Line);
             $Header[strtoupper(trim(array_shift($line_array)))] = trim(implode(':', $line_array));

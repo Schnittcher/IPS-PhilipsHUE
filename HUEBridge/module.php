@@ -80,7 +80,7 @@ class HUEBridge extends IPSModule
             if ($method == 'POST') {
                 curl_setopt($ch, CURLOPT_POST, true);
             }
-            if (in_array($method, array('PUT', 'DELETE'))) {
+            if (in_array($method, ['PUT', 'DELETE'])) {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             }
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
