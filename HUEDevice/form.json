@@ -10,10 +10,10 @@
         { "caption": "Group", "value": "groups" }
       ]
     },
-    { "type": "Label", "caption": "Select only, when device type = sensors" },
+    { "type": "Label", "caption": "Select only, when device type = sensor" },
     { "type": "Select", "name": "SensorType", "caption": "Sensor Type",
       "options": [
-        { "caption": "Select a SensorType", "value": "" },
+        { "caption": "Select a Sensor Type", "value": "" },
         { "caption": "Daylight", "value": "Daylight" },
         { "caption": "Presence Sensor", "value": "ZLLPresence" },
         { "caption": "Light Sensor", "value": "ZLLLightLevel" },

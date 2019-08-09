@@ -307,16 +307,16 @@ class HUEDevice extends IPSModule
     {
         switch ($Value) {
             case 0:
-                IPS_SetHidden($this->GetIDByIdent('HUE_Saturation'), true);
-                IPS_SetHidden($this->GetIDByIdent('HUE_ColorTemperature'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), true);
 
-                IPS_SetHidden($this->GetIDByIdent('HUE_Color'), false);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Color'), false);
                 break;
             case 1:
-                IPS_SetHidden($this->GetIDByIdent('HUE_Color'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Color'), true);
 
-                IPS_SetHidden($this->GetIDByIdent('HUE_Saturation'), false);
-                IPS_SetHidden($this->GetIDByIdent('HUE_ColorTemperature'), false);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), false);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), false);
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Color Mode: ' . $Value, 0);

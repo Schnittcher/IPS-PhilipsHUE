@@ -1,7 +1,7 @@
 {
   "elements":
   [
-    { "type": "Label", "caption": "Configurator to find all HUE lights" }
+    { "type": "Label", "caption": "Configurator to find all HUE Devices" }
   ],
   "actions":
   [
