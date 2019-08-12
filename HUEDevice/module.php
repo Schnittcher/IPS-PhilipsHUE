@@ -280,7 +280,6 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_Saturation':
                 $result = $this->SatSet($Value);
-                IPS_LogMessage('Saturation success', print_r($result, true));
 
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
@@ -288,7 +287,6 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_ColorTemperature':
                 $result = $this->CTSet($Value);
-                IPS_LogMessage('Color Temperature success', print_r($result, true));
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
                 }
