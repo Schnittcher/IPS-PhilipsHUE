@@ -9,7 +9,7 @@ class HUEConfigurator extends IPSModule
         //Never delete this line!
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
-        $this->RegisterPropertyInteger("TargetCategory",0);
+        $this->RegisterPropertyInteger('TargetCategory', 0);
     }
 
     public function ApplyChanges()
@@ -45,7 +45,6 @@ class HUEConfigurator extends IPSModule
         $Values = [];
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
-
 
         //Lights
         if (count($Lights) > 0) {
@@ -244,14 +243,14 @@ class HUEConfigurator extends IPSModule
             return [];
         }
 
-        $path[]   = IPS_GetName($categoryId);
+        $path[] = IPS_GetName($categoryId);
         $parentId = IPS_GetObject($categoryId)['ParentID'];
-    
+
         while ($parentId > 0) {
-            $path[]   = IPS_GetName($parentId);
+            $path[] = IPS_GetName($parentId);
             $parentId = IPS_GetObject($parentId)['ParentID'];
         }
-    
+
         return array_reverse($path);
-    }  
+    }
 }
