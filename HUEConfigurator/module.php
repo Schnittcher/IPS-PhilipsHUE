@@ -9,6 +9,7 @@ class HUEConfigurator extends IPSModule
         //Never delete this line!
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        $this->RegisterPropertyInteger("TargetCategory",0);
     }
 
     public function ApplyChanges()
@@ -43,6 +44,9 @@ class HUEConfigurator extends IPSModule
 
         $Values = [];
 
+        $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
+
+
         //Lights
         if (count($Lights) > 0) {
             $AddValueLights = [
@@ -63,6 +67,7 @@ class HUEConfigurator extends IPSModule
                     'parent'                => 1,
                     'ID'                    => $key,
                     'DisplayName'           => $light['name'],
+                    'name'                  => $light['name'],
                     'Type'                  => $light['type'],
                     'ModelID'               => $light['modelid'],
                     'Manufacturername'      => $light['manufacturername'],
@@ -71,13 +76,12 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $AddValueLights['create'] = [
-                    $light['name'] => [
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => [
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'lights'
-                        ]
-                    ]
+                        ],
+                        'location' => $location
                 ];
 
                 $Values[] = $AddValueLights;
@@ -105,6 +109,7 @@ class HUEConfigurator extends IPSModule
                     'parent'                => 2,
                     'ID'                    => $key,
                     'DisplayName'           => $sensor['name'],
+                    'name'                  => $sensor['name'],
                     'Type'                  => $sensor['type'],
                     'ModelID'               => $sensor['modelid'],
                     'Manufacturername'      => $sensor['manufacturername'],
@@ -113,14 +118,13 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $AddValueSensors['create'] = [
-                    $sensor['name'] => [
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => [
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'sensors',
                             'SensorType'     => $sensor['type']
-                        ]
-                    ]
+                        ],
+                        'location' => $location
                 ];
 
                 $Values[] = $AddValueSensors;
@@ -148,6 +152,7 @@ class HUEConfigurator extends IPSModule
                     'parent'                => 3,
                     'ID'                    => $key,
                     'DisplayName'           => $group['name'],
+                    'name'                  => $group['name'],
                     'Type'                  => $group['type'],
                     'ModelID'               => '-',
                     'Manufacturername'      => '-',
@@ -156,13 +161,12 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $AddValueGroups['create'] = [
-                    $group['name'] => [
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => [
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'groups'
-                        ]
-                    ]
+                        ],
+                        'location' => $location
                 ];
 
                 $Values[] = $AddValueGroups;
@@ -233,4 +237,21 @@ class HUEConfigurator extends IPSModule
         }
         return $result;
     }
+
+    private function getPathOfCategory(int $categoryId): array
+    {
+        if ($categoryId === 0) {
+            return [];
+        }
+
+        $path[]   = IPS_GetName($categoryId);
+        $parentId = IPS_GetObject($categoryId)['ParentID'];
+    
+        while ($parentId > 0) {
+            $path[]   = IPS_GetName($parentId);
+            $parentId = IPS_GetObject($parentId)['ParentID'];
+        }
+    
+        return array_reverse($path);
+    }  
 }
