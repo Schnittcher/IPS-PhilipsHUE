@@ -40,7 +40,7 @@ class HUEBridge extends IPSModule
             case 'getScenesFromGroup':
                 $params = (array) $data->Buffer->Params;
                 $result = $this->getAlleScenesFromGroup($params['GroupID']);
-                break;                
+                break;
             case 'state':
                 $params = (array) $data->Buffer->Params;
                 $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
@@ -201,9 +201,9 @@ class HUEBridge extends IPSModule
                 $GroupScenes[$key] = $scene;
             }
         }
-        
+
         return $GroupScenes;
-   }
+    }
 
     //Functions for Rules
 
