@@ -16,7 +16,7 @@ class HUEDevice extends IPSModule
         $this->RegisterPropertyString('DeviceType', '');
         $this->RegisterPropertyString('SensorType', '');
 
-        $this->RegisterAttributeString('Scenes','');
+        $this->RegisterAttributeString('Scenes', '');
 
         if (!IPS_VariableProfileExists('HUE.ColorMode')) {
             IPS_CreateVariableProfile('HUE.ColorMode', 1);
@@ -50,14 +50,14 @@ class HUEDevice extends IPSModule
         if ($this->ReadPropertyString('DeviceType') == '') {
             return;
         }
-        
+
         if (!$this->HasActiveParent()) {
             return;
-          }
+        }
 
-        //Scene Profile for Groups      
+        //Scene Profile for Groups
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            $ProfileName = 'HUE.GroupScene'.$this->ReadPropertyString('HUEDeviceID');
+            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             }
@@ -74,7 +74,7 @@ class HUEDevice extends IPSModule
                 $countScene++;
             }
             IPS_SetVariableProfileIcon($ProfileName, 'Database');
-            $this->WriteAttributeString('Scenes',json_encode($scenesAttribute));
+            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
         }
 
         //Sensors
@@ -99,7 +99,7 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
 
         //Groups
-        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene'.$this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
 
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             $this->EnableAction('HUE_ColorMode');
@@ -338,8 +338,8 @@ class HUEDevice extends IPSModule
                 $this->SetValue($Ident, $Value);
                 break;
             case 'HUE_GroupScenes':
-                $scenes = json_decode($this->ReadPropertyString('Scenes'),true);
-                $this->SendDebug(__FUNCTION__. ' Scene Value',$scenes[$Value],0);
+                $scenes = json_decode($this->ReadPropertyString('Scenes'), true);
+                $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value], 0);
                 $this->SceneSet($scenes[$Value]);
                 break;
             default:
@@ -380,13 +380,13 @@ class HUEDevice extends IPSModule
         $Data = json_encode($Data);
 
         $this->SendDebug(__FUNCTION__, $Data, 0);
-        IPS_LogMessage('Active Parent',$this->HasActiveParent());
+        IPS_LogMessage('Active Parent', $this->HasActiveParent());
         $result = $this->SendDataToParent($Data);
         $this->SendDebug(__FUNCTION__, $result, 0);
 
         if (!$result) {
             return [];
-        } 
+        }
         $Data = json_decode($result, true);
         return $Data;
     }
