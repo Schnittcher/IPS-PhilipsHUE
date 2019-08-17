@@ -37,6 +37,10 @@ class HUEBridge extends IPSModule
             case 'getAllSensors':
                 $result = $this->getAllSensors();
                 break;
+            case 'getScenesFromGroup':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->getAlleScenesFromGroup($params['GroupID']);
+                break;                
             case 'state':
                 $params = (array) $data->Buffer->Params;
                 $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/state', $params, 'PUT');
@@ -161,7 +165,7 @@ class HUEBridge extends IPSModule
 
     //Functions for Sensors
 
-    public function getAllSensors()
+    private function getAllSensors()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'sensors', [], 'GET');
     }
@@ -182,10 +186,24 @@ class HUEBridge extends IPSModule
 
     //Functions for Scenes
 
-    private function getAllScenes()
+    public function getAllScenes()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', [], 'GET');
     }
+
+    private function getAlleScenesFromGroup($GroupID)
+    {
+        $AllScenes = $this->getAllScenes();
+        $GroupScenes = [];
+
+        foreach ($AllScenes as $key => $scene) {
+            if ($scene->group == $GroupID) {
+                $GroupScenes[$key] = $scene;
+            }
+        }
+        
+        return $GroupScenes;
+   }
 
     //Functions for Rules
 
