@@ -2,7 +2,7 @@
   "elements":
   [
     {"type": "ValidationTextBox", "name": "HUEDeviceID", "caption": "HUE Device ID"},
-    { "type": "Select", "name": "DeviceType", "caption": "Device Type",
+    { "type": "Select", "name": "DeviceType", "caption": "Device Type", "onChange": "PHUE_ReloadConfigurationFormDeviceType($id,$DeviceType);",
       "options": [
         { "caption": "Select a Device", "value": "" },
         { "caption": "Light", "value": "lights" },
@@ -10,8 +10,7 @@
         { "caption": "Group", "value": "groups" }
       ]
     },
-    { "type": "Label", "caption": "Select only, when device type = sensor" },
-    { "type": "Select", "name": "SensorType", "caption": "Sensor Type",
+    { "type": "Select", "name": "SensorType", "caption": "Sensor Type", "visible": "false",
       "options": [
         { "caption": "Select a Sensor Type", "value": "" },
         { "caption": "Daylight", "value": "Daylight" },

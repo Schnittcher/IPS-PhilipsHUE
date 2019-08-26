@@ -41,6 +41,8 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileText('HUE.Intensity', '', '%');
         //153 (6500K) to 500 (2000K)
         IPS_SetVariableProfileValues('HUE.Intensity', 0, 254, 1);
+
+        $this->RegisterAttributeString('DeviceType', '');
     }
 
     public function ApplyChanges()
@@ -48,10 +50,6 @@ class HUEDevice extends IPSModule
         //Never delete this line!
         parent::ApplyChanges();
         if ($this->ReadPropertyString('DeviceType') == '') {
-            return;
-        }
-
-        if (!$this->HasActiveParent()) {
             return;
         }
 
@@ -117,6 +115,17 @@ class HUEDevice extends IPSModule
         }
     }
 
+    public function GetConfigurationForm()
+    {
+        $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+        if ($this->ReadAttributeString('DeviceType') == 'sensors') {
+            $jsonForm['elements'][2]['visible'] = true;
+        } else {
+            $jsonForm['elements'][2]['visible'] = false;
+        }
+        return json_encode($jsonForm);
+    }
+
     public function ReceiveData($JSONString)
     {
         $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
@@ -124,6 +133,8 @@ class HUEDevice extends IPSModule
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
+
+        $this->SendDebug(__FUNCTION__ . ' Data Buffer', $Data->Buffer, 0);
 
         $DeviceConfig = new stdClass();
 
@@ -269,7 +280,7 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function SceneSet(stirng $Value)
+    public function SceneSet(string $Value)
     {
         $params = ['scene' => $Value];
         return $this->sendData('action', $params);
@@ -338,7 +349,7 @@ class HUEDevice extends IPSModule
                 $this->SetValue($Ident, $Value);
                 break;
             case 'HUE_GroupScenes':
-                $scenes = json_decode($this->ReadPropertyString('Scenes'), true);
+                $scenes = json_decode($this->ReadAttributeString('Scenes'), true);
                 $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value], 0);
                 $this->SceneSet($scenes[$Value]);
                 break;
@@ -379,8 +390,11 @@ class HUEDevice extends IPSModule
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
 
+        if (!$this->HasActiveParent()) {
+            return [];
+        }
+
         $this->SendDebug(__FUNCTION__, $Data, 0);
-        IPS_LogMessage('Active Parent', $this->HasActiveParent());
         $result = $this->SendDataToParent($Data);
         $this->SendDebug(__FUNCTION__, $result, 0);
 
@@ -389,5 +403,15 @@ class HUEDevice extends IPSModule
         }
         $Data = json_decode($result, true);
         return $Data;
+    }
+
+    public function ReloadConfigurationFormDeviceType($DeviceType)
+    {
+        $this->WriteAttributeString('DeviceType', $DeviceType);
+        if ($DeviceType == 'sensors') {
+            $this->UpdateFormField('SensorType', 'visible', true);
+        } else {
+            $this->UpdateFormField('SensorType', 'visible', false);
+        }
     }
 }

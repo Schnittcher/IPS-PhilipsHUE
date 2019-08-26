@@ -75,12 +75,12 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $AddValueLights['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
-                            'HUEDeviceID'    => $key,
-                            'DeviceType'     => 'lights'
-                        ],
-                        'location' => $location
+                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'configuration' => [
+                        'HUEDeviceID'    => $key,
+                        'DeviceType'     => 'lights'
+                    ],
+                    'location' => $location
                 ];
 
                 $Values[] = $AddValueLights;
@@ -117,13 +117,13 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $AddValueSensors['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
-                            'HUEDeviceID'    => $key,
-                            'DeviceType'     => 'sensors',
-                            'SensorType'     => $sensor['type']
-                        ],
-                        'location' => $location
+                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'configuration' => [
+                        'HUEDeviceID'    => $key,
+                        'DeviceType'     => 'sensors',
+                        'SensorType'     => $sensor['type']
+                    ],
+                    'location' => $location
                 ];
 
                 $Values[] = $AddValueSensors;
@@ -142,32 +142,32 @@ class HUEConfigurator extends IPSModule
                 'ModelID'               => '',
                 'Manufacturername'      => '',
                 'Productname'           => ''
-                ];
+            ];
             $Values[] = $AddValueGroups;
             foreach ($Groups as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
+                if ($group['type'] != 'Entertainment') {
+                    $AddValueGroups = [
+                        'parent'                => 3,
+                        'ID'                    => $key,
+                        'DisplayName'           => $group['name'],
+                        'name'                  => $group['name'],
+                        'Type'                  => $group['type'],
+                        'ModelID'               => '-',
+                        'Manufacturername'      => '-',
+                        'Productname'           => '-',
+                        'instanceID'            => $instanceID
+                    ];
 
-                $AddValueGroups = [
-                    'parent'                => 3,
-                    'ID'                    => $key,
-                    'DisplayName'           => $group['name'],
-                    'name'                  => $group['name'],
-                    'Type'                  => $group['type'],
-                    'ModelID'               => '-',
-                    'Manufacturername'      => '-',
-                    'Productname'           => '-',
-                    'instanceID'            => $instanceID
-                ];
-
-                $AddValueGroups['create'] = [
+                    $AddValueGroups['create'] = [
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => [
                             'HUEDeviceID'    => $key,
                             'DeviceType'     => 'groups'
                         ],
                         'location' => $location
-                ];
-
+                    ];
+                }
                 $Values[] = $AddValueGroups;
             }
         }
