@@ -54,26 +54,7 @@ class HUEDevice extends IPSModule
         }
 
         //Scene Profile for Groups
-        if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
-            if (!IPS_VariableProfileExists($ProfileName)) {
-                IPS_CreateVariableProfile($ProfileName, 1);
-            }
-
-            //TODO Map Profile to Attribute
-            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
-
-            $scenesAttribute = [];
-            //$this->WriteAttributeString('Scenes',json_encode($scenes));
-            $countScene = 0;
-            foreach ($scenes as $key => $scene) {
-                IPS_SetVariableProfileAssociation($ProfileName, $countScene, $scene['name'], '', 0x000000);
-                $scenesAttribute[$countScene] = $key;
-                $countScene++;
-            }
-            IPS_SetVariableProfileIcon($ProfileName, 'Database');
-            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
-        }
+        $this->UpdateSceneProfile();
 
         //Sensors
         $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
@@ -426,6 +407,33 @@ class HUEDevice extends IPSModule
             $this->UpdateFormField('SensorType', 'visible', true);
         } else {
             $this->UpdateFormField('SensorType', 'visible', false);
+        }
+    }
+
+    public function UpdateSceneProfile()
+    {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
+            if (!IPS_VariableProfileExists($ProfileName)) {
+                IPS_CreateVariableProfile($ProfileName, 1);
+            } else {
+                IPS_DeleteVariableProfile($ProfileName);
+                IPS_CreateVariableProfile($ProfileName, 1);
+            }
+
+            //TODO Map Profile to Attribute
+            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
+
+            $scenesAttribute = [];
+            //$this->WriteAttributeString('Scenes',json_encode($scenes));
+            $countScene = 0;
+            foreach ($scenes as $key => $scene) {
+                IPS_SetVariableProfileAssociation($ProfileName, $countScene, $scene['name'], '', 0x000000);
+                $scenesAttribute[$countScene] = $key;
+                $countScene++;
+            }
+            IPS_SetVariableProfileIcon($ProfileName, 'Database');
+            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
         }
     }
 }

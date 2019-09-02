@@ -23,7 +23,8 @@
       "Presence Sensor": "Anwesenheitssensor",
       "Light Sensor": "Lichtsensor",
       "Temperature Sensor": "Temperatursensor",
-      "Switch": "Schalter"
+      "Switch": "Schalter",
+      "Update Scene Profile": "Szenenprofil aktualisieren"
     }
   }
 }

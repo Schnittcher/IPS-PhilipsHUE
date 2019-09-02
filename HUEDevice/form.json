@@ -20,5 +20,12 @@
         { "caption": "Switch", "value": "ZLLSwitch" }
       ]
     }
-  ]
+  ],
+  "actions": [
+    {
+      "type": "Button",
+      "caption": "Update Scene Profile",
+      "onClick": "PHUE_UpdateSceneProfile($id);"
+    }
+]
 }
