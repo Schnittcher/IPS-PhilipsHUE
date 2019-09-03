@@ -56,6 +56,11 @@ class HUEDevice extends IPSModule
         //Scene Profile for Groups
         if ($this->HasActiveParent()) {
             $this->UpdateSceneProfile();
+        } else {
+            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
+            if (!IPS_VariableProfileExists($ProfileName)) {
+                IPS_CreateVariableProfile($ProfileName, 1);
+            }
         }
 
         //Sensors
