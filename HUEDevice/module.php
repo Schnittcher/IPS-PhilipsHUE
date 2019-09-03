@@ -54,7 +54,9 @@ class HUEDevice extends IPSModule
         }
 
         //Scene Profile for Groups
-        $this->UpdateSceneProfile();
+        if ($this->HasActiveParent()) {
+            $this->UpdateSceneProfile();
+        }
 
         //Sensors
         $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
@@ -79,7 +81,6 @@ class HUEDevice extends IPSModule
 
         //Groups
         $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
-
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             $this->EnableAction('HUE_ColorMode');
             $this->EnableAction('HUE_State');
@@ -92,6 +93,7 @@ class HUEDevice extends IPSModule
         }
 
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            SetValue($this->GetIDForIdent('HUE_GroupScenes'),-1);
             $this->EnableAction('HUE_GroupScenes');
         }
     }
