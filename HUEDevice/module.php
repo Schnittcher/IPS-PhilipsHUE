@@ -93,7 +93,7 @@ class HUEDevice extends IPSModule
         }
 
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            SetValue($this->GetIDForIdent('HUE_GroupScenes'),-1);
+            SetValue($this->GetIDForIdent('HUE_GroupScenes'), -1);
             $this->EnableAction('HUE_GroupScenes');
         }
     }
