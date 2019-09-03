@@ -281,7 +281,8 @@ class HUEDevice extends IPSModule
         return $this->sendData('action', $params);
     }
 
-    public function AlertSet(string $Value) {
+    public function AlertSet(string $Value)
+    {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
         } else {
@@ -292,7 +293,8 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function EffectSet(string $Value) {
+    public function EffectSet(string $Value)
+    {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
         } else {
