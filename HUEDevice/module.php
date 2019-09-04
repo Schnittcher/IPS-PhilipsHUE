@@ -209,6 +209,16 @@ class HUEDevice extends IPSModule
         }
     }
 
+    public function Request(array $Value)
+    {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
+        return $this->sendData($command, $params);
+    }
+
     public function SwitchMode(bool $Value)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
