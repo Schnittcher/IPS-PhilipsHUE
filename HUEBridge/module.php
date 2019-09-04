@@ -197,11 +197,12 @@ class HUEBridge extends IPSModule
         $GroupScenes = [];
 
         foreach ($AllScenes as $key => $scene) {
-            if ($scene->group == $GroupID) {
-                $GroupScenes[$key] = $scene;
+            if ($scene->type == 'GroupScene') {
+                if ($scene->group == $GroupID) {
+                    $GroupScenes[$key] = $scene;
+                }
             }
         }
-
         return $GroupScenes;
     }
 
