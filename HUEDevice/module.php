@@ -216,7 +216,7 @@ class HUEDevice extends IPSModule
         } else {
             $command = 'state';
         }
-        return $this->sendData($command, $params);
+        return $this->sendData($command, $Value);
     }
 
     public function SwitchMode(bool $Value)
