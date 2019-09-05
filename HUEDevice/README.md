@@ -71,5 +71,5 @@
    $xy[0] = 0.648427;
    $xy[1] = 0.330856;
    $array = ['on' => true, 'bri' => 150, 'xy' => $xy, 'transitiontime' => 25];
-   PHUE_Request($instanzID,$array);
+   PHUE_Request(25537,$array);
    ```
