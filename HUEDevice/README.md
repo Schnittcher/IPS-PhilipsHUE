@@ -50,7 +50,7 @@
    **PHUE_SceneSet($InstanceID, $Value)**\
    Mit dieser Funktion ist es möglich eine Szene für die Gruppe zu aktiveren.
    ```php
-   PHUE_SceneSet(25537, 'ID der Szene');
+   PHUE_SceneSet(25537, 'Name der Szene');
    ```
 
    **PHUE_AlertSet($InstanceID, $Value)**\
@@ -63,4 +63,13 @@
    Mit dieser Funktion ist es möglich einen Effekt für die Lampe bzw. Gruppe zu aktiveren.
    ```php
    PHUE_EffectSet(25537, 'colorloop'); //Effekt colorloop
+   ```
+
+   **PHUE_Request($InstanceID, $array)**\
+   Mit dieser Funktion ist es möglich mehere Parameter gleichzeitig an die HUE Bridge zu senden, um beispielsweise eine Farbe langsam hoch dimmen zu können. Im Beispiel wird die Farbe rot langsam hoch gedimmt.
+   ```php
+   $xy[0] = 0.648427;
+   $xy[1] = 0.330856;
+   $array = ['on' => true, 'bri' => 150, 'xy' => $xy, 'transitiontime' => 25];
+   PHUE_Request($instanzID,$array);
    ```
