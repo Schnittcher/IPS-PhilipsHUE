@@ -294,6 +294,18 @@ class HUEDevice extends IPSModule
 
     public function SceneSet(string $Value)
     {
+        $scenes = json_decode($this->ReadAttributeString('Scenes'), true);
+        foreach ($scenes as $key => $scene) {
+            if ($scene['name'] == $Value) {
+                $this->SceneSetKey($scene['key']);
+                return;
+            }
+        }
+        IPS_LogMessage('Philips HUE', 'Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+    }
+
+    private function SceneSetKey(string $Value)
+    {
         $params = ['scene' => $Value];
         return $this->sendData('action', $params);
     }
@@ -386,8 +398,8 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_GroupScenes':
                 $scenes = json_decode($this->ReadAttributeString('Scenes'), true);
-                $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value], 0);
-                $this->SceneSet($scenes[$Value]);
+                $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value]['name'], 0);
+                $this->SceneSetKey($scenes[$Value]['key']);
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Ident', 0);
@@ -470,7 +482,8 @@ class HUEDevice extends IPSModule
             $countScene = 0;
             foreach ($scenes as $key => $scene) {
                 IPS_SetVariableProfileAssociation($ProfileName, $countScene, $scene['name'], '', 0x000000);
-                $scenesAttribute[$countScene] = $key;
+                $scenesAttribute[$countScene]['name'] = $scene['name'];
+                $scenesAttribute[$countScene]['key'] = $key;
                 $countScene++;
             }
             IPS_SetVariableProfileIcon($ProfileName, 'Database');
