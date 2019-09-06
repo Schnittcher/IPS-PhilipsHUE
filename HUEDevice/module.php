@@ -68,7 +68,7 @@ class HUEDevice extends IPSModule
 
         $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
