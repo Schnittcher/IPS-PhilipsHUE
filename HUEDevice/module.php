@@ -346,6 +346,11 @@ class HUEDevice extends IPSModule
             case 'HUE_Brightness':
                 $result = $this->DimSet($Value);
 
+                if ($Value == 0) {
+                    $this->SwitchMode(false);
+                    $this->SetValue('HUE_State', false);
+                    return;
+                }
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue('HUE_State', true);
                 }
