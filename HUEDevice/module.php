@@ -142,6 +142,8 @@ class HUEDevice extends IPSModule
                 if (property_exists($Buffer->Lights, $this->ReadPropertyString('HUEDeviceID'))) {
                     if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
                         $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                    }
+                    if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
                         $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
                     }
                 } else {
@@ -154,6 +156,8 @@ class HUEDevice extends IPSModule
                 if (property_exists($Buffer->Sensors, $this->ReadPropertyString('HUEDeviceID'))) {
                     if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
                         $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                    }
+                    if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
                         $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->config;
                     }
                 } else {
@@ -470,6 +474,7 @@ class HUEDevice extends IPSModule
 
     public function UpdateSceneProfile()
     {
+        IPS_LogMessage('Philips HUE UpdateSceneProfile', strval($this->HasActiveParent()));
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
@@ -481,6 +486,8 @@ class HUEDevice extends IPSModule
 
             //TODO Map Profile to Attribute
             $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
+
+            IPS_LogMessage('Philips HUE UpdateSceneProfile $scenes', json_encode($scenes));
 
             $scenesAttribute = [];
             //$this->WriteAttributeString('Scenes',json_encode($scenes));
