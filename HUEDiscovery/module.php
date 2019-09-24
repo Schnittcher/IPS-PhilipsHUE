@@ -71,13 +71,21 @@ class HUEDiscovery extends IPSModule
 
     public function DiscoverBridges()
     {
+        $s = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+        socket_connect($s, '8.8.8.8', 53); // connecting to a UDP address doesn't send packets
+        socket_getsockname($s, $local_ip_address, $port);
+        socket_close($s);
+
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if (!$socket) {
             return [];
         }
-        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 3, 'usec' => 100000]);
-        socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
-        socket_bind($socket, '0.0.0.0', 0);
+        socket_set_option($socket, SOL_SOCKET, SO_BROADCAST, 1);
+        socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 1, 'usec' => 0]);
+        socket_bind($socket, $local_ip_address, $port);
+        //socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, ['sec' => 3, 'usec' => 100000]);
+        //socket_set_option($socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        //socket_bind($socket, '0.0.0.0', 0);
         $message = [
             'M-SEARCH * HTTP/1.1',
             'ST: ssdp:all',
