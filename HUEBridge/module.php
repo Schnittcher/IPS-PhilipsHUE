@@ -20,6 +20,12 @@ class HUEBridge extends IPSModule
         //Never delete this line!
         parent::ApplyChanges();
 
+        if (!$this->BridgePaired()) {
+            $this->SetStatus(200);
+            IPS_LogMessage('PhilipsHUE', 'Error: Registration incomplete, please pair IP-Symcon with the Philips HUE Bridge.');
+            $this->SetTimerInterval('PHUE_UpdateState', 0);
+            return;
+        }
         $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
     }
 
@@ -119,9 +125,11 @@ class HUEBridge extends IPSModule
         if (@isset($result[0]->success->username)) {
             $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
             $this->WriteAttributeString('User', $result[0]->success->username);
+            $this->SetStatus(102);
         } else {
             $this->SendDebug(__FUNCTION__ . 'Pairing failed', json_encode($result), 0);
-            IPS_LogMessage('PhilipsHUE', 'Register User failed');
+            $this->SetStatus(200);
+            IPS_LogMessage('PhilipsHUE - User registration', 'Error: ' . $result[0]->error->type . ': ' . $result[0]->error->description);
         }
     }
 
@@ -215,7 +223,7 @@ class HUEBridge extends IPSModule
 
     private function BridgePaired()
     {
-        if ($this->ReadAttributeString('User)') != '') {
+        if ($this->ReadAttributeString('User') != '') {
             return true;
         }
         return false;
