@@ -131,7 +131,6 @@ class HUEConfigurator extends IPSModule
         }
 
         //Groups
-
         if (count($Groups) > 0) {
             $AddValueGroups = [
                 'id'                    => 3,
@@ -145,7 +144,6 @@ class HUEConfigurator extends IPSModule
             ];
             $Values[] = $AddValueGroups;
             foreach ($Groups as $key => $group) {
-                IPS_LogMessage('Groups',$key);
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
                 if ($group['type'] != 'Entertainment') {
                     $AddValueGroups = [
@@ -168,9 +166,8 @@ class HUEConfigurator extends IPSModule
                         ],
                         'location' => $location
                     ];
-                    $Values[] = $AddValueGroups;                    
+                    $Values[] = $AddValueGroups;
                 }
-
             }
         }
         $Form['actions'][0]['values'] = $Values;
