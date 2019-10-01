@@ -60,7 +60,7 @@ class HUEBridge extends IPSModule
                 break;
             case 'getNewDevices':
                 $result = $this->getNewLights();
-                break;                
+                break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Command: ' . $data->Buffer->Command, 0);
                 break;
