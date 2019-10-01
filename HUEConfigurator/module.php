@@ -10,6 +10,9 @@ class HUEConfigurator extends IPSModule
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
         $this->RegisterPropertyInteger('TargetCategory', 0);
+
+        $this->RegisterAttributeInteger('ProgressStatus', -1);
+        $this->RegisterTimer('ProgressNewDevices', 0, 'PHUE_ProgressUpdateNewDevicesList(' . $this->InstanceID . ');');
     }
 
     public function ApplyChanges()
@@ -52,7 +55,7 @@ class HUEConfigurator extends IPSModule
                 'id'                    => 1,
                 'ID'                    => '',
                 'name'                  => 'Lights',
-                'DisplayName'           => 'Lights',
+                'DisplayName'           => $this->translate('Lights'),
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
@@ -93,7 +96,7 @@ class HUEConfigurator extends IPSModule
                 'id'                    => 2,
                 'ID'                    => '',
                 'name'                  => 'Sensors',
-                'DisplayName'           => 'Sensors',
+                'DisplayName'           => $this->translate('Sensors'),
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
@@ -136,7 +139,7 @@ class HUEConfigurator extends IPSModule
                 'id'                    => 3,
                 'ID'                    => '',
                 'name'                  => 'Groups',
-                'DisplayName'           => 'Groups',
+                'DisplayName'           => $this->translate('Groups'),
                 'Type'                  => '',
                 'ModelID'               => '',
                 'Manufacturername'      => '',
@@ -251,5 +254,70 @@ class HUEConfigurator extends IPSModule
         }
 
         return array_reverse($path);
+    }
+
+    public function scanNewDevices()
+    {
+        $Data = [];
+        $Buffer = [];
+
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'scanNewDevices';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        $this->UpdateFormField('LastScan', 'caption', $result[0]['success']['/lights']);
+        //Progress Timer für getNewDevice
+        $this->SetTimerInterval('ProgressNewDevices', 1000);
+        return $result;
+    }
+
+    public function getNewDevices()
+    {
+        $Data = [];
+        $Buffer = [];
+
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getNewDevices';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
+    public function ProgressUpdateNewDevicesList()
+    {
+        $Values = [];
+        $NewDevices = $this->getNewDevices();
+
+        $this->WriteAttributeInteger('ProgressStatus', $this->ReadAttributeInteger('ProgressStatus') + 1);
+        $this->UpdateFormField('ProgressNewDevices', 'current', $this->ReadAttributeInteger('ProgressStatus'));
+
+        $this->UpdateFormField('LastScan', 'caption', $NewDevices['lastscan']);
+        //For Debug
+        //sleep(3);
+        //$NewDevices = json_decode('{"7": {"name": "Hue Lamp 7"},"8": {"name": "Hue Lamp 8"},"lastscan": "2012-10-29T12:00:00"}',true);
+        foreach ($NewDevices as $key => $Device) {
+            if ($key != 'lastscan') {
+                $ValueNewDevice = [
+                    'DeviceID'   => $key,
+                    'DeviceName' => $Device['name']
+                ];
+                $Values[] = $ValueNewDevice;
+            }
+        }
+        $this->UpdateFormField('NewDevices', 'values', json_encode($Values));
+        if ($NewDevices['lastscan'] != 'active') {
+            $this->SetTimerInterval('ProgressNewDevices', 0);
+            $this->WriteAttributeInteger('ProgressStatus', 0);
+        }
     }
 }

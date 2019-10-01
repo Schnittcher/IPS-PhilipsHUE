@@ -133,7 +133,7 @@ class HUEDevice extends IPSModule
                         $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
                     }
                 } else {
-                    IPS_LogMessage('Philips HUE', 'Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+                    IPS_LogMessage('Philips HUE', 'Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
                     return;
                 }
                 break;

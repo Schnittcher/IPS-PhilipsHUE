@@ -55,6 +55,12 @@ class HUEBridge extends IPSModule
                 $params = (array) $data->Buffer->Params;
                 $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/action', $params, 'PUT');
                 break;
+            case 'scanNewDevices':
+                $result = $this->scanNewLights();
+                break;
+            case 'getNewDevices':
+                $result = $this->getNewLights();
+                break;                
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Command: ' . $data->Buffer->Command, 0);
                 break;
@@ -147,7 +153,8 @@ class HUEBridge extends IPSModule
 
     private function scanNewLights()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', [], 'POST');
+        $params['deviceid'] = [];
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', $params, 'POST');
     }
 
     private function getLight($id)

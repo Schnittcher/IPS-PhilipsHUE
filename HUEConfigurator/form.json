@@ -10,6 +10,7 @@
       "type": "Configurator",
       "name": "Configurator",
       "caption": "Configurator",
+      "rowCount": 15,
       "delete": false,
       "sort": {
         "column": "ID",
@@ -48,6 +49,44 @@
         }
       ],
       "values": []
-    }
+    },
+    {
+        "type": "ExpansionPanel",
+        "caption": "Pair new devices with the Philips HUE Bridge",
+        "items": [
+          {
+            "type": "ProgressBar",
+            "name": "ProgressNewDevices",
+            "minimum": 0,
+            "maximum": 60,
+            "current": 0
+          },
+          { "type": "Label", "label": "Last Scan"},
+          { "type": "Label", "name":"LastScan", "label": "-"},
+          {
+            "type": "List",
+            "name": "NewDevices",
+            "caption": "New Devices",
+            "rowCount": 10,
+            "add": false,
+            "delete": false,
+            "sort": {
+                "column": "DeviceID",
+                "direction": "ascending"
+            },
+            "columns": [{
+                "caption": "Device ID",
+                "name": "DeviceID", 
+                "width": "125px"
+            }, {
+                "caption": "Device Name",
+                "name": "DeviceName",
+                "width": "auto"
+            }],
+            "values": []
+        },
+        { "type": "Button", "label": "Scan new Devices", "onClick": "PHUE_scanNewDevices($id);" }
+    ]
+  }
   ]
 }

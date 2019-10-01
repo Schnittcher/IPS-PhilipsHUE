@@ -8,7 +8,13 @@
       "Sensors": "Sensoren",
       "Groups": "Gruppen",
       "Scenes": "Szenen",
-      "Target Category": "Zielkategorie"
+      "Target Category": "Zielkategorie",
+      "Pair new devices with the Philips HUE Bridge": "Koppel neue Geräte mit der Philips HUE Bridge",
+      "Last Scan": "Letzter Scan",
+      "Scan new Devices": "Suche neue Geräte",
+      "Device ID": "Geräte ID",
+      "Device Name": "Geräte Name",
+      "New Devices": "Neue Geräte"
     }
   }
 }
