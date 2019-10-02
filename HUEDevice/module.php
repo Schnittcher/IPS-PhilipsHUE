@@ -475,18 +475,19 @@ class HUEDevice extends IPSModule
     public function UpdateSceneProfile()
     {
         IPS_LogMessage('Philips HUE UpdateSceneProfile', strval($this->HasActiveParent()));
+
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            //TODO Map Profile to Attribute
+            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
             $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             } else {
-                IPS_DeleteVariableProfile($ProfileName);
-                IPS_CreateVariableProfile($ProfileName, 1);
+                if (!empty($scenes)) {
+                    IPS_DeleteVariableProfile($ProfileName);
+                    IPS_CreateVariableProfile($ProfileName, 1);
+                }
             }
-
-            //TODO Map Profile to Attribute
-            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
-
             IPS_LogMessage('Philips HUE UpdateSceneProfile $scenes', json_encode($scenes));
 
             $scenesAttribute = [];
