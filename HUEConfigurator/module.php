@@ -378,6 +378,11 @@ class HUEConfigurator extends IPSModule
             ];
             $Values[] = $Value;
         }
+
+        if (empty($Group['lights'])) {
+            $Values = [];
+        }
+
         $this->UpdateFormField('AllLightsInGroup', 'values', json_encode($Values));
     }
 
