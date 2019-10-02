@@ -51,6 +51,7 @@ class HUEConfigurator extends IPSModule
 
         //Lights
         if (count($Lights) > 0) {
+            //$this->UpdateLightsForNewGroup($Lights);
             $AddValueLights = [
                 'id'                    => 1,
                 'ID'                    => '',
@@ -293,6 +294,22 @@ class HUEConfigurator extends IPSModule
         return $result;
     }
 
+    public function getGroupAttributes($id)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getGroupAttributes';
+        $Buffer['Params'] = ['GroupID' => $id];
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
     public function ProgressUpdateNewDevicesList()
     {
         $Values = [];
@@ -318,6 +335,173 @@ class HUEConfigurator extends IPSModule
         if ($NewDevices['lastscan'] != 'active') {
             $this->SetTimerInterval('ProgressNewDevices', 0);
             $this->WriteAttributeInteger('ProgressStatus', 0);
+        }
+    }
+
+    //Groupd Function
+
+    public function LoadGroupConfigurationForm()
+    {
+        $this->UpdateGroupsForConfiguration();
+        $this->UpdateLightsForNewGroup();
+    }
+
+    private function UpdateGroupsForConfiguration()
+    {
+        $Option = [
+            'caption'   => 'All',
+            'value'     => 0,
+        ];
+
+        $Options[] = $Option;
+
+        $Groups = $this->getHUEGroups();
+        foreach ($Groups as $key => $group) {
+            if ($group['type'] != 'Entertainment') {
+                $Option = [
+                    'caption'   => $group['name'],
+                    'value'     => $key,
+                ];
+                $Options[] = $Option;
+            }
+            $this->UpdateFormField('Groups', 'options', json_encode($Options));
+        }
+    }
+
+    public function UpdateAllLightsInGroupsForConfiguration(int $id)
+    {
+        $Group = $this->getGroupAttributes($id);
+        foreach ($Group['lights'] as $key => $light) {
+            $Value = [
+                'DeviceID'   => $light,
+                'DeviceName' => '',
+            ];
+            $Values[] = $Value;
+        }
+        $this->UpdateFormField('AllLightsInGroup', 'values', json_encode($Values));
+    }
+
+    private function UpdateLightsForNewGroup()
+    {
+        $Lights = $this->getHUELights();
+        foreach ($Lights as $key => $light) {
+            $Value = [
+                'DeviceID'   => $key,
+                'DeviceName' => $light['name']
+            ];
+            $Values[] = $Value;
+        }
+        $this->UpdateFormField('AllLights', 'values', json_encode($Values));
+    }
+
+    public function createGroup(string $GroupName, string $GroupType, string $class = 'Other', int $Light = 0)
+    {
+        $Buffer = [];
+        $Data = [];
+
+        if ($GroupType == 'Room') {
+            $Buffer['Params'] = ['name' => $GroupName, 'type' => $GroupType, 'class' => $class];
+        } else {
+            if ($Light == 0) {
+                $this->UpdateFormField('PopupLightGroupFailed', 'visible', 'true');
+                return;
+            }
+            $Buffer['Params'] = ['name' => $GroupName, 'type' => $GroupType, 'lights' => [strval($Light)]];
+        }
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'createGroup';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        if ($this->parseError($result)) {
+            $this->LoadGroupConfigurationForm();
+        }
+    }
+
+    public function addLightToGroup($DeviceID, $GroupID)
+    {
+        $Group = $this->getGroupAttributes($GroupID);
+
+        if (array_key_exists('lights', $Group)) {
+            array_push($Group['lights'], strval($DeviceID));
+        } else {
+            $Group['lights'][0] = strval($DeviceID);
+        }
+        $params = ['name' => $Group['name'], 'lights' => $Group['lights']];
+
+        $this->setGroupAttributes($GroupID, $params);
+        $this->UpdateAllLightsInGroupsForConfiguration($GroupID);
+    }
+
+    public function deleteLightFromGroup($DeviceID, $GroupID)
+    {
+        $Group = $this->getGroupAttributes($GroupID);
+
+        if (array_key_exists('lights', $Group)) {
+            $key = array_search($DeviceID, $Group['lights']);
+            unset($Group['lights'][$key]);
+            $Group['lights'] = array_values($Group['lights']);
+        } else {
+            return;
+        }
+        $params = ['name' => $Group['name'], 'lights' => $Group['lights']];
+
+        $this->setGroupAttributes($GroupID, $params);
+        $this->UpdateAllLightsInGroupsForConfiguration($GroupID);
+    }
+
+    private function setGroupAttributes($GroupID, $params)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'setGroupAttributes';
+        $Buffer['GroupID'] = $GroupID;
+        $Buffer['Params'] = $params;
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        $this->parseError($result);
+    }
+
+    public function deleteGroup($GroupID)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'deleteGroup';
+        $Buffer['GroupID'] = $GroupID;
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        if ($this->parseError($result)) {
+            $this->LoadGroupConfigurationForm();
+            $this->UpdateFormField('AllLightsInGroup', 'values', json_encode([]));
+        }
+    }
+
+    private function parseError($result)
+    {
+        if (array_key_exists('error', $result[0])) {
+            IPS_LogMessage('Philips HUE Error', $result[0]['error']['type'] . ': ' . $result[0]['error']['address'] . ' - ' . $result[0]['error']['description']);
+            $this->UpdateFormField('PopupFailed', 'visible', 'true');
+            return false;
+        } elseif (array_key_exists('success', $result[0])) {
+            $this->UpdateFormField('PopupSuccess', 'visible', 'true');
+            return true;
+        } else {
+            IPS_LogMessage('Philips HUE unknown Error', print_r($result, true));
+            $this->UpdateFormField('PopupFailed', 'visible', 'true');
+            return false;
         }
     }
 }

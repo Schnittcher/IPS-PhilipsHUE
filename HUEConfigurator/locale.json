@@ -14,7 +14,23 @@
       "Scan new Devices": "Suche neue Geräte",
       "Device ID": "Geräte ID",
       "Device Name": "Geräte Name",
-      "New Devices": "Neue Geräte"
+      "New Devices": "Neue Geräte",
+      "Group Configurator": "Gruppen Konfigurator",
+      "Configure your Groups with IP-Symcon": "Konfiguriere die Gruppen mit IP-Symcon",
+      "Group Name": "Gruppenname",
+      "Group Type": "Gruppentyp",
+      "Room": "Raum",
+      "Add": "Hinzufügen",
+      "Other": "Andere",
+      "Group": "Gruppe",
+      "Load Group Data": "Lade Gruppen Daten",
+      "Delete Group": "Gruppe löschen",
+      "All Lights in Group": "Alle Lampen innerhalb der Gruppe",
+      "All Lights": "Alle Lampen",
+      "Add to Group": "Zu Gruppe hinzufügen",
+      "Delete from Group": "Lösche aus der Gruppe",
+      "Action successful": "Aktion erfolgreich",
+      "Action failed, please check the log": "Aktion fehlgeschlagen, überprüfe das Protokoll"
     }
   }
 }

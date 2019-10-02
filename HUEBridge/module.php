@@ -40,6 +40,23 @@ class HUEBridge extends IPSModule
             case 'getAllGroups':
                 $result = $this->getAllGroups();
                 break;
+            case 'getGroupAttributes':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->getGroupAttributes($params['GroupID']);
+                break;
+            case 'setGroupAttributes':
+                $params = (array) $data->Buffer->Params;
+                $GroupID = $data->Buffer->GroupID;
+                $result = $this->setGroupAttributes($GroupID, $params);
+                break;
+            case 'createGroup':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->createGroup($params);
+                break;
+            case 'deleteGroup':
+                $GroupID = $data->Buffer->GroupID;
+                $result = $this->deleteGroup($GroupID);
+                break;
             case 'getAllSensors':
                 $result = $this->getAllSensors();
                 break;
@@ -190,6 +207,26 @@ class HUEBridge extends IPSModule
     private function getAllGroups()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'groups', [], 'GET');
+    }
+
+    private function getGroupAttributes($id)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'groups/' . $id, [], 'GET');
+    }
+
+    private function setGroupAttributes($id, $params)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'groups/' . $id, $params, 'PUT');
+    }
+
+    private function createGroup($params)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'groups', $params, 'POST');
+    }
+
+    private function deleteGroup($id)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'groups/' . $id, [], 'DELETE');
     }
 
     //Functions for Schedules

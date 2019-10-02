@@ -79,14 +79,174 @@
                 "name": "DeviceID", 
                 "width": "125px"
             }, {
-                "caption": "Device Name",
-                "name": "DeviceName",
-                "width": "auto"
-            }],
+              "caption": "Device Name",
+              "name": "DeviceName",
+              "width": "auto"
+          }],
             "values": []
         },
         { "type": "Button", "label": "Scan new Devices", "onClick": "PHUE_scanNewDevices($id);" }
     ]
-  }
+  },
+  {
+    "type": "ExpansionPanel",
+    "caption": "Group Configurator",
+    "items": [
+      { "type": "Label", "label": "Configure your Groups with IP-Symcon"},
+      { 
+        "type": "RowLayout",
+        "items": [
+            {
+                "type": "ValidationTextBox",
+                "name": "GroupName",
+                "caption": "Group Name"
+            },{
+                "type": "Select",
+		            "name":	"GroupType",
+                "caption": "Group Type",
+                "options": [
+                  { "caption": "Room", "value": "Room" },
+                  { "caption": "LightGroup", "value": "LightGroup" }
+                ]
+            },{
+                "type": "Select",
+                "name": "Room",
+                "caption": "Room",
+                "options": [
+                  { "caption": "Other", "value": "Other" },
+                  { "caption": "Living room", "value": "Living room" },
+                  { "caption": "Dining", "value": "Dining" },
+                  { "caption": "Bedroom", "value": "Bedroom" },
+                  { "caption": "Kids bedroom", "value": "Kids bedroom" },
+                  { "caption": "Bathroom", "value": "Bathroom" },
+                  { "caption": "Nursery", "value": "Nursery" },
+                  { "caption": "Recreation", "value": "Recreation" },
+                  { "caption": "Office", "value": "Office" },
+                  { "caption": "Gym", "value": "Gym" },
+                  { "caption": "Hallway", "value": "Hallway" },
+                  { "caption": "Toilet", "value": "Toilet" },
+                  { "caption": "Front door", "value": "Front door" },
+                  { "caption": "Garage", "value": "Garage" },
+                  { "caption": "Terrace", "value": "Terrace" },
+                  { "caption": "Garden", "value": "Garden" },
+                  { "caption": "Driveway", "value": "Driveway" },
+                  { "caption": "Carport", "value": "Carport" }
+              ]
+            },{
+              "type": "Button",
+              "caption": "Add",
+              "onClick": "PHUE_createGroup($id,$GroupName,$GroupType,$Room,intval($AllLights['DeviceID']));"
+            }
+        ]
+    },{
+      "type": "RowLayout",
+      "items": [
+    {
+      "type": "Select",
+      "name": "Groups",
+      "caption": "Group",
+      "onChange": "PHUE_UpdateAllLightsInGroupsForConfiguration($id,$Groups);",
+      "options": [
+        { "caption": "All", "value": 0 }
+      ]
+    },{
+      "type": "Button",
+      "name": "LoadGroupConfiguration",
+      "caption": "Load Group Data",
+      "onClick": "PHUE_LoadGroupConfigurationForm($id);"
+    },{
+      "type": "Button",
+      "name": "DeleteGroup",
+      "caption": "Delete Group",
+      "onClick": "PHUE_deleteGroup($id,$Groups);"
+    }
+    ]},{
+      "type": "RowLayout",
+      "items": [
+    {
+      "type": "List",
+      "name": "AllLightsInGroup",
+      "caption": "All Lights in Group",
+      "rowCount": 10,
+      "add": false,
+      "delete": false,
+      "sort": {
+          "column": "DeviceID",
+          "direction": "ascending"
+      },
+      "columns": [{
+          "caption": "Device ID",
+          "name": "DeviceID", 
+          "width": "150px"
+      }],
+      "values": []
+  },{
+      "type": "List",
+      "name": "AllLights",
+      "caption": "All Lights",
+      "rowCount": 10,
+      "add": false,
+      "delete": false,
+      "sort": {
+          "column": "DeviceID",
+          "direction": "ascending"
+      },
+      "columns": [{
+          "caption": "Device ID",
+          "name": "DeviceID", 
+          "width": "125px"
+      }, {
+        "caption": "Device Name",
+        "name": "DeviceName",
+        "width": "auto"
+    }],
+      "values": []
+  }]},{
+    "type": "RowLayout",
+    "items": [
+      { "type": "Button", "caption": "Add to Group", "onClick": "PHUE_addLightToGroup($id,$AllLights['DeviceID'],$Groups);" },
+      { "type": "Button", "caption": "Delete from Group", "onClick": "PHUE_deleteLightFromGroup($id,$AllLightsInGroup['DeviceID'],$Groups);" }
+    ]},
+    {
+      "type": "PopupAlert",
+      "name": "PopupSuccess",
+      "visible ": "false",
+      "popup": {
+          "items": [
+            {
+              "type": "Label",
+              "caption": "Action successful"
+            }
+          ]
+      }
+    },
+    {
+      "type": "PopupAlert",
+      "name": "PopupFailed",
+      "visible ": "false",
+      "popup": {
+          "items": [
+            {
+              "type": "Label",
+              "caption": "Action failed, please check the log"
+            }
+          ]
+      }
+    },
+    {
+      "type": "PopupAlert",
+      "name": "PopupLightGroupFailed",
+      "visible ": "false",
+      "popup": {
+          "items": [
+            {
+              "type": "Label",
+              "caption": "Create LightGroup failed, please select one Light for the Group."
+            }
+          ]
+      }
+    }
+]
+}
   ]
 }
