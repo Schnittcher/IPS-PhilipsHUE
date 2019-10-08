@@ -37,6 +37,14 @@ class HUEBridge extends IPSModule
             case 'getAllLights':
                 $result = $this->getAllLights();
                 break;
+            case 'getLightState':
+                $DeviceID = $data->Buffer->DeviceID;
+                $result = $this->getLight($DeviceID);
+                break;
+            case 'getGroupState':
+                $DeviceID = $data->Buffer->DeviceID;
+                $result = $this->getGroupAttributes($DeviceID);
+                break;
             case 'getAllGroups':
                 $result = $this->getAllGroups();
                 break;

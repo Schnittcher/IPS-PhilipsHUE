@@ -338,6 +338,19 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
+    public function GetState()
+    {
+        $params = [];
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'getLightState';
+            $result = $this->sendData($command, $params)['state']['on'];
+        } else {
+            $command = 'getGroupState';
+            $result = $this->sendData($command, $params)['action']['on'];
+        }
+        return $result;
+    }
+
     public function RequestAction($Ident, $Value)
     {
         switch ($Ident) {
