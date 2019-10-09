@@ -83,8 +83,38 @@ class HUEBridge extends IPSModule
             case 'scanNewDevices':
                 $result = $this->scanNewLights();
                 break;
-            case 'getNewDevices':
+            case 'getNewLights':
                 $result = $this->getNewLights();
+                break;
+            case 'getNewSensors':
+                $result = $this->getNewSensors();
+                break;
+            case 'renameDevice':
+                $params = (array) $data->Buffer->Params;
+                switch($data->Buffer->DeviceType) {
+                    case 'lights':
+                        $result = $this->renameLight($data->Buffer->DeviceID,$params);
+                        break;
+                    case 'sensors':
+                        $result = $this->renameSensor($data->Buffer->DeviceID, $params);
+                        break;
+                    default:
+                        $this->SendDebug(__FUNCTION__, 'renameDevice - Invalid DeviceType: ' . $data->Buffer->DeviceType, 0);
+                        break;
+                }
+                break;
+            case 'deleteDevice':
+                switch($data->Buffer->DeviceType) {
+                    case 'lights':
+                        $result = $this->deleteLight($data->Buffer->DeviceID);
+                        break;
+                    case 'sensors':
+                        $result = $this->deleteSensor($data->Buffer->DeviceID);
+                        break;
+                    default:
+                        $this->SendDebug(__FUNCTION__, 'renameDevice - Invalid DeviceType: ' . $data->Buffer->DeviceType, 0);
+                        break;
+                }
                 break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Command: ' . $data->Buffer->Command, 0);
@@ -187,9 +217,8 @@ class HUEBridge extends IPSModule
         return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, [], 'GET');
     }
 
-    private function renameLight($id, $name)
+    private function renameLight($id, $params)
     {
-        $params['name'] = $name;
         return $this->sendRequest($this->ReadAttributeString('User'), 'lights/' . $id, $params, 'PUT');
     }
 
@@ -208,6 +237,21 @@ class HUEBridge extends IPSModule
     private function getAllSensors()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'sensors', [], 'GET');
+    }
+
+    private function getNewSensors()
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'sensors/new', [], 'GET');
+    }
+
+    private function renameSensor($id, $params)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'sensors/' . $id, $params, 'PUT');
+    }
+
+    private function deleteSensor($id)
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'sensors/' . $id, [], 'DELETE');
     }
 
     //Functions for Groups

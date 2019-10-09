@@ -46,12 +46,11 @@ class HUEConfigurator extends IPSModule
         $this->SendDebug(__FUNCTION__ . ' Sensors', json_encode($Sensors), 0);
 
         $Values = [];
+        $ValuesAllDevices = [];
 
         $location = $this->getPathOfCategory($this->ReadPropertyInteger('TargetCategory'));
-
         //Lights
         if (count($Lights) > 0) {
-            //$this->UpdateLightsForNewGroup($Lights);
             $AddValueLights = [
                 'id'                    => 1,
                 'ID'                    => '',
@@ -62,7 +61,17 @@ class HUEConfigurator extends IPSModule
                 'Manufacturername'      => '',
                 'Productname'           => ''
             ];
+
+            $AddValueAllDevicesLights = [
+                'id'                    => 99999,
+                'DeviceID'              => '',
+                'DeviceName'            => $this->translate('Lights'),
+                'DeviceType'            => ''
+            ];
+
             $Values[] = $AddValueLights;
+            $ValuesAllDevices[] = $AddValueAllDevicesLights;
+
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
 
@@ -78,6 +87,14 @@ class HUEConfigurator extends IPSModule
                     'instanceID'            => $instanceID
                 ];
 
+                $AddValueAllDevicesLights = [
+                    'parent'                => 99999,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $light['name'],
+                    'DeviceType'            => 'lights'
+                ];
+
                 $AddValueLights['create'] = [
                     'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                     'configuration' => [
@@ -88,6 +105,7 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $Values[] = $AddValueLights;
+                $ValuesAllDevices[] = $AddValueAllDevicesLights;
             }
         }
 
@@ -104,7 +122,16 @@ class HUEConfigurator extends IPSModule
                 'Productname'           => ''
             ];
 
+            $AddValueAllDevicesSensors = [
+                'id'                    => 99998,
+                'DeviceID'              => '',
+                'DeviceName'            => $this->translate('Sensors'),
+                'DeviceType'            => ''
+            ];
+
             $Values[] = $AddValueSensors;
+            $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+
             foreach ($Sensors as $key => $sensor) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
 
@@ -120,6 +147,14 @@ class HUEConfigurator extends IPSModule
                     'instanceID'            => $instanceID
                 ];
 
+                $AddValueAllDevicesSensors = [
+                    'parent'                => 99998,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $sensor['name'],
+                    'DeviceType'            => 'sensors'
+                ];
+
                 $AddValueSensors['create'] = [
                     'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                     'configuration' => [
@@ -131,8 +166,12 @@ class HUEConfigurator extends IPSModule
                 ];
 
                 $Values[] = $AddValueSensors;
+                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
             }
         }
+
+        //DeviceManagement AllDevices
+        $Form['actions'][1]['items'][6]['values'] = $ValuesAllDevices;
 
         //Groups
         if (count($Groups) > 0) {
@@ -156,6 +195,7 @@ class HUEConfigurator extends IPSModule
                         'DisplayName'           => $group['name'],
                         'name'                  => $group['name'],
                         'Type'                  => $group['type'],
+                        'DeviceType'            => 'Group',
                         'ModelID'               => '-',
                         'Manufacturername'      => '-',
                         'Productname'           => '-',
@@ -240,6 +280,57 @@ class HUEConfigurator extends IPSModule
         return $result;
     }
 
+    public function reloadAllDevices()
+    {
+        $Lights = $this->getHUELights();
+        $Sensors = $this->getHUESensors();
+
+        //Lights
+        if (count($Lights) > 0) {
+            $AddValueAllDevicesLights = [
+                'id'                    => 99999,
+                'DeviceID'              => '',
+                'DeviceName'            => $this->translate('Lights'),
+                'DeviceType'            => '',
+                'expanded'              => true
+            ];
+        }
+        $ValuesAllDevices[] = $AddValueAllDevicesLights;
+
+        foreach ($Lights as $key => $light) {
+            $AddValueAllDevicesLights = [
+                'parent'                => 99999,
+                'id'                    => $key,
+                'DeviceID'              => $key,
+                'DeviceName'            => $light['name'],
+                'DeviceType'            => 'lights'
+            ];
+            $ValuesAllDevices[] = $AddValueAllDevicesLights;
+        }
+        //Sensors
+        if (count($Sensors) > 0) {
+            $AddValueAllDevicesSensors = [
+                'id'                    => 99998,
+                'DeviceID'              => '',
+                'DeviceName'            => $this->translate('Sensors'),
+                'DeviceType'            => '',
+                'expanded'              => true
+            ];
+            $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+            foreach ($Sensors as $key => $sensor) {
+                $AddValueAllDevicesSensors = [
+                    'parent'                => 99998,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $sensor['name'],
+                    'DeviceType'            => 'sensors'
+                ];
+                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+            }
+        }
+        $this->UpdateFormField('AllDevices', 'values', json_encode($ValuesAllDevices));
+    }
+
     private function getPathOfCategory(int $categoryId): array
     {
         if ($categoryId === 0) {
@@ -255,6 +346,45 @@ class HUEConfigurator extends IPSModule
         }
 
         return array_reverse($path);
+    }
+
+    //Functions for Device Management / Pairing (New Devices)
+
+    public function renameDevice(string $NewName, $DeviceID, $DeviceType)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'renameDevice';
+        $Buffer['DeviceType'] = $DeviceType;
+        $Buffer['DeviceID'] = $DeviceID;
+        $Buffer['Params'] = ['name' => $NewName];
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        $this->parseError($result);
+        $this->reloadAllDevices();
+    }
+
+    public function deleteDevice($DeviceID, $DeviceType)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'deleteDevice';
+        $Buffer['DeviceType'] = $DeviceType;
+        $Buffer['DeviceID'] = $DeviceID;
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        $this->parseError($result);
+        $this->reloadAllDevices();
     }
 
     public function scanNewDevices()
@@ -277,13 +407,24 @@ class HUEConfigurator extends IPSModule
         return $result;
     }
 
-    public function getNewDevices()
+    public function getNewDevices($DeviceType)
     {
         $Data = [];
         $Buffer = [];
 
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
-        $Buffer['Command'] = 'getNewDevices';
+
+        switch ($DeviceType) {
+            case 'Lights':
+                $Buffer['Command'] = 'getNewLights';
+                break;
+            case 'Sensors':
+                $Buffer['Command'] = 'getNewSensors';
+                break;
+            default:
+                return [];
+            }
+
         $Buffer['Params'] = '';
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
@@ -312,33 +453,49 @@ class HUEConfigurator extends IPSModule
 
     public function ProgressUpdateNewDevicesList()
     {
-        $Values = [];
-        $NewDevices = $this->getNewDevices();
+        $ValuesLights = [];
+        $ValuesSensors = [];
+        $NewLights = $this->getNewDevices('Lights');
+        $NewSensors = $this->getNewDevices('Sensors');
 
         $this->WriteAttributeInteger('ProgressStatus', $this->ReadAttributeInteger('ProgressStatus') + 1);
         $this->UpdateFormField('ProgressNewDevices', 'current', $this->ReadAttributeInteger('ProgressStatus'));
 
-        $this->UpdateFormField('LastScan', 'caption', $NewDevices['lastscan']);
+        $this->UpdateFormField('LastScan', 'caption', $NewLights['lastscan']);
         //For Debug
         //sleep(3);
         //$NewDevices = json_decode('{"7": {"name": "Hue Lamp 7"},"8": {"name": "Hue Lamp 8"},"lastscan": "2012-10-29T12:00:00"}',true);
-        foreach ($NewDevices as $key => $Device) {
+        foreach ($NewLights as $key => $Light) {
             if ($key != 'lastscan') {
-                $ValueNewDevice = [
+                $ValueNewLight = [
                     'DeviceID'   => $key,
-                    'DeviceName' => $Device['name']
+                    'DeviceName' => $Light['name']
                 ];
-                $Values[] = $ValueNewDevice;
+                $ValuesLights[] = $ValueNewLight;
             }
         }
-        $this->UpdateFormField('NewDevices', 'values', json_encode($Values));
-        if ($NewDevices['lastscan'] != 'active') {
+        $this->UpdateFormField('NewLights', 'values', json_encode($ValuesLights));
+
+        foreach ($NewSensors as $key => $Sensor) {
+            if ($key != 'lastscan') {
+                $ValueNewSensor = [
+                    'DeviceID'   => $key,
+                    'DeviceName' => $Sensor['name']
+                ];
+                $ValuesSensors[] = $ValueNewSensor;
+            }
+        }
+        $this->UpdateFormField('NewSensors', 'values', json_encode($ValuesSensors));
+
+        IPS_LogMessage('New Sensors', $NewSensors['lastscan']);
+
+        if ($NewLights['lastscan'] != 'active' && $NewSensors['lastscan'] != 'active') {
             $this->SetTimerInterval('ProgressNewDevices', 0);
             $this->WriteAttributeInteger('ProgressStatus', 0);
         }
     }
 
-    //Groupd Function
+    //Group Function
 
     public function LoadGroupConfigurationForm()
     {
@@ -494,18 +651,20 @@ class HUEConfigurator extends IPSModule
         }
     }
 
+    //End Functions for Group Gonfigurator
+
     private function parseError($result)
     {
         if (array_key_exists('error', $result[0])) {
             IPS_LogMessage('Philips HUE Error', $result[0]['error']['type'] . ': ' . $result[0]['error']['address'] . ' - ' . $result[0]['error']['description']);
-            $this->UpdateFormField('PopupFailed', 'visible', 'true');
+            $this->UpdateFormField('PopupFailed', 'visible', true);
             return false;
         } elseif (array_key_exists('success', $result[0])) {
-            $this->UpdateFormField('PopupSuccess', 'visible', 'true');
+            $this->UpdateFormField('PopupSuccess', 'visible', true);
             return true;
         } else {
             IPS_LogMessage('Philips HUE unknown Error', print_r($result, true));
-            $this->UpdateFormField('PopupFailed', 'visible', 'true');
+            $this->UpdateFormField('PopupFailed', 'visible', true);
             return false;
         }
     }
