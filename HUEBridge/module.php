@@ -91,9 +91,9 @@ class HUEBridge extends IPSModule
                 break;
             case 'renameDevice':
                 $params = (array) $data->Buffer->Params;
-                switch($data->Buffer->DeviceType) {
+                switch ($data->Buffer->DeviceType) {
                     case 'lights':
-                        $result = $this->renameLight($data->Buffer->DeviceID,$params);
+                        $result = $this->renameLight($data->Buffer->DeviceID, $params);
                         break;
                     case 'sensors':
                         $result = $this->renameSensor($data->Buffer->DeviceID, $params);
@@ -104,7 +104,7 @@ class HUEBridge extends IPSModule
                 }
                 break;
             case 'deleteDevice':
-                switch($data->Buffer->DeviceType) {
+                switch ($data->Buffer->DeviceType) {
                     case 'lights':
                         $result = $this->deleteLight($data->Buffer->DeviceID);
                         break;
