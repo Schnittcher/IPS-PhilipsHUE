@@ -83,7 +83,7 @@ class HUEConfigurator extends IPSModule
                     'Type'                  => $light['type'],
                     'ModelID'               => $light['modelid'],
                     'Manufacturername'      => $light['manufacturername'],
-                    'Productname'           => ((array_key_exists('productname',$light)) ? $light['productname']: '-'),
+                    'Productname'           => ((array_key_exists('productname', $light)) ? $light['productname'] : '-'),
                     'instanceID'            => $instanceID
                 ];
 
