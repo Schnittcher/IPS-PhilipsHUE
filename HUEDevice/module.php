@@ -40,7 +40,7 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileIcon('HUE.Intensity', 'Intensity');
         IPS_SetVariableProfileText('HUE.Intensity', '', '%');
         //153 (6500K) to 500 (2000K)
-        IPS_SetVariableProfileValues('HUE.Intensity', 0, 254, 1);
+        IPS_SetVariableProfileValues('HUE.Intensity', 1, 254, 1);
 
         $this->RegisterAttributeString('DeviceType', '');
     }
