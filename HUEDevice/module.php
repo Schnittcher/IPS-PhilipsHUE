@@ -193,7 +193,7 @@ class HUEDevice extends IPSModule
                     $this->SetValue('HUE_Brightness', $DeviceState->bri);
                 }
             } else {
-                $this->SetValue('HUE_Brightness', 0);
+                $this->SetValue('HUE_Brightness', -1);
             }
         }
         if (property_exists($DeviceState, 'sat')) {
