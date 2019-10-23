@@ -15,7 +15,7 @@
    
 ## 1. Voraussetzungen
 
-* mindestens IPS Version 5.1
+* mindestens IPS Version 5.2
 
 
 ## 2. Enthaltene Module

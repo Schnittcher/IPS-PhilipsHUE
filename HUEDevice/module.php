@@ -40,7 +40,7 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileIcon('HUE.Intensity', 'Intensity');
         IPS_SetVariableProfileText('HUE.Intensity', '', '%');
         //153 (6500K) to 500 (2000K)
-        IPS_SetVariableProfileValues('HUE.Intensity', 1, 254, 1);
+        IPS_SetVariableProfileValues('HUE.Intensity', 0, 254, 1);
 
         $this->RegisterAttributeString('DeviceType', '');
     }
@@ -171,9 +171,14 @@ class HUEDevice extends IPSModule
                 return;
         }
 
-        //Convervt XY to RGB an set Color if Color Lamp
+        //Convert XY to RGB an set Color if Color Lamp
         if (property_exists($DeviceState, 'xy')) {
-            $RGB = $this->convertXYToRGB($DeviceState->xy[0], $DeviceState->xy[1], $DeviceState->bri);
+            if ($DeviceState->bri == 0) {
+                $brightness = 1;
+            } else {
+                $brightness = $DeviceState->bri;
+            }
+            $RGB = $this->convertXYToRGB($DeviceState->xy[0], $DeviceState->xy[1], $brightness);
             $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
             $this->SetValue('HUE_Color', $Color);
         }
@@ -181,7 +186,15 @@ class HUEDevice extends IPSModule
             $this->SetValue('HUE_State', $DeviceState->on);
         }
         if (property_exists($DeviceState, 'bri')) {
-            $this->SetValue('HUE_Brightness', $DeviceState->bri);
+            if ($DeviceState->on) {
+                if ($DeviceState->bri == 0) {
+                    $this->SetValue('HUE_Brightness', 1);
+                } else {
+                    $this->SetValue('HUE_Brightness', $DeviceState->bri);
+                }
+            } else {
+                $this->SetValue('HUE_Brightness', 0);
+            }
         }
         if (property_exists($DeviceState, 'sat')) {
             $this->SetValue('HUE_Saturation', $DeviceState->sat);
@@ -243,7 +256,11 @@ class HUEDevice extends IPSModule
             $command = 'state';
         }
 
-        $params = ['bri' => $Value, 'on' => true];
+        if ($Value <= 0) {
+            $params = ['on' => false];
+        } else {
+            $params = ['bri' => $Value, 'on' => true];
+        }
         return $this->sendData($command, $params);
     }
 
@@ -363,7 +380,7 @@ class HUEDevice extends IPSModule
             case 'HUE_Brightness':
                 $result = $this->DimSet($Value);
 
-                if ($Value == 0) {
+                if ($Value <= 0) {
                     $this->SwitchMode(false);
                     $this->SetValue('HUE_State', false);
                     return;
@@ -487,8 +504,6 @@ class HUEDevice extends IPSModule
 
     public function UpdateSceneProfile()
     {
-        IPS_LogMessage('Philips HUE UpdateSceneProfile', strval($this->HasActiveParent()));
-
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             //TODO Map Profile to Attribute
             $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
@@ -501,7 +516,6 @@ class HUEDevice extends IPSModule
                     IPS_CreateVariableProfile($ProfileName, 1);
                 }
             }
-            IPS_LogMessage('Philips HUE UpdateSceneProfile $scenes', json_encode($scenes));
 
             $scenesAttribute = [];
             //$this->WriteAttributeString('Scenes',json_encode($scenes));

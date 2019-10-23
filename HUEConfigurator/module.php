@@ -487,8 +487,6 @@ class HUEConfigurator extends IPSModule
         }
         $this->UpdateFormField('NewSensors', 'values', json_encode($ValuesSensors));
 
-        IPS_LogMessage('New Sensors', $NewSensors['lastscan']);
-
         if ($NewLights['lastscan'] != 'active' && $NewSensors['lastscan'] != 'active') {
             $this->SetTimerInterval('ProgressNewDevices', 0);
             $this->WriteAttributeInteger('ProgressStatus', 0);
