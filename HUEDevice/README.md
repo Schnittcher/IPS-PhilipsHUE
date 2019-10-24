@@ -10,35 +10,19 @@
    
    Feld | Beschreibung
    ------------ | ----------------
-   HUE Device ID | Hier wird das Topic (shelly1-deviceid) des Shelly1 eingetragen. Dazu muss zur Zeit die folgende URL aufgerufen werden: http://ShellyIP/settings dort ist derHostname zu finden. Der Hostname ist die DeviceID!
+   HUE Device ID | Hier wird die ID der HUE Devices eingetragen.
    Geräte Typ | Auswhal zwischen Licht, Sensor/Schalter und Gruppe
    Sensor Typ | Nur sichtbar, wenn als Geräte Typ Sensor ausgewählt wurde,hier kann der Typ des Sensors ausgewählt werden.
 
   ## 2. Funktionen
-   
-   **PHUE_SwitchMode($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich das Gerät ein- bzw. auszuschalten.
-   ```php
-   Shelly_SwitchMode(25537, true); //Einschalten
-   Shelly_SwitchMode(25537, false); //Ausschalten
-   ```
 
-   **PHUE_DimSet($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich das Gerät bzw. die Gruppe zu dimmen.
+  **PHUE_AlertSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich einen Alarm für eine Lampe / Gruppe zu setzen.
+   none: Kein Alarm
+   select: Das Licht führt einen Atemzyklus (breathe cycle) durch.
+   lselect: Die Leuchte führt 15 Sekunden lang oder bis zum Empfang eines Befehls "alert": "none" Atemzyklen (breathe cycle) durch. d.h. nachdem der Atemzyklus (breathe cycle) beendet ist, setzt die Brücke die Warnung nicht auf "none" zurück
    ```php
-   PHUE_DimSet(25537, 50); //auf 50% dimmen
-   ```
-   
-   **PHUE_ColorSet($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich die Farbe der Lampe bzw. der Gruppe zu ändern. Der Wert wird in Hex angegeben werden.
-   ```php
-   PHUE_ColorSet(25537, '#FF0000'); //Farbe Rot
-   ```
-
-   **PHUE_SatSet($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich die Sättigung der Lampe bzw. der Gruppe zu ändern. Der Wert wird in Integer angegeben werden.
-   ```php
-   PHUE_SatSet(25537, 50); //Sättigung 50
+   PHUE_AlertSet($InstanceID, $Value); //string 'none', 'select', 'lselect'
    ```
 
    **PHUE_CTSet($InstanceID, $Value)**\
@@ -47,16 +31,16 @@
    PHUE_CTSet(25537, 366); //Farbtemperatur 366
    ```
 
-   **PHUE_SceneSet($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich eine Szene für die Gruppe zu aktiveren.
+   **PHUE_ColorSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich die Farbe der Lampe bzw. der Gruppe zu ändern. Der Wert wird in Hex angegeben werden.
    ```php
-   PHUE_SceneSet(25537, 'Name der Szene');
+   PHUE_ColorSet(25537, '#FF0000'); //Farbe Rot
    ```
 
-   **PHUE_AlertSet($InstanceID, $Value)**\
-   Mit dieser Funktion ist es möglich einen Alarm für die Lampe bzw. Gruppe zu aktiveren.
+   **PHUE_DimSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich das Gerät bzw. die Gruppe zu dimmen.
    ```php
-   PHUE_AlertSet(25537, 'alert');
+   PHUE_DimSet(25537, 50); //0-254
    ```
 
    **PHUE_EffectSet($InstanceID, $Value)**\
@@ -65,11 +49,27 @@
    PHUE_EffectSet(25537, 'colorloop'); //Effekt colorloop
    ```
 
-   **PHUE_Request($InstanceID, $array)**\
-   Mit dieser Funktion ist es möglich mehere Parameter gleichzeitig an die HUE Bridge zu senden, um beispielsweise eine Farbe langsam hoch dimmen zu können. Im Beispiel wird die Farbe rot langsam hoch gedimmt.
+   **PHUE_GetState($InstanceID)**\
+   Mit dieser Funktion ist es möglich den aktuellen Status der lampe / Gruppe abzufragen.
    ```php
-   $xy[0] = 0.648427;
-   $xy[1] = 0.330856;
-   $array = ['on' => true, 'bri' => 150, 'xy' => $xy, 'transitiontime' => 25];
-   PHUE_Request(25537,$array);
+   PHUE_GetState(25537); //Gibt ture oder false zurück
+   ```
+
+   **PHUE_SatSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich die Sättigung der Lampe bzw. der Gruppe zu ändern. Der Wert wird in Integer angegeben werden.
+   ```php
+   PHUE_SatSet(25537, 50); //Sättigung 50  - 254
+   ```
+
+   **PHUE_SceneSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich eine Szene für die Gruppe zu aktiveren.
+   ```php
+   PHUE_SceneSet(25537, 'Name der Szene');
+   ```
+ 
+   **PHUE_SwitchMode($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich das Gerät ein- bzw. auszuschalten.
+   ```php
+   Shelly_SwitchMode(25537, true); //Einschalten
+   Shelly_SwitchMode(25537, false); //Ausschalten
    ```
