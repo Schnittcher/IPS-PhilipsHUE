@@ -325,12 +325,6 @@ class HUEDevice extends IPSModule
         IPS_LogMessage('Philips HUE', 'Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
     }
 
-    private function SceneSetKey(string $Value)
-    {
-        $params = ['scene' => $Value];
-        return $this->sendData('action', $params);
-    }
-
     public function AlertSet(string $Value)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
@@ -446,6 +440,51 @@ class HUEDevice extends IPSModule
         }
     }
 
+    public function ReloadConfigurationFormDeviceType($DeviceType)
+    {
+        $this->WriteAttributeString('DeviceType', $DeviceType);
+        if ($DeviceType == 'sensors') {
+            $this->UpdateFormField('SensorType', 'visible', true);
+        } else {
+            $this->UpdateFormField('SensorType', 'visible', false);
+        }
+    }
+
+    public function UpdateSceneProfile()
+    {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            //TODO Map Profile to Attribute
+            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
+            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
+            if (!IPS_VariableProfileExists($ProfileName)) {
+                IPS_CreateVariableProfile($ProfileName, 1);
+            } else {
+                if (!empty($scenes)) {
+                    IPS_DeleteVariableProfile($ProfileName);
+                    IPS_CreateVariableProfile($ProfileName, 1);
+                }
+            }
+
+            $scenesAttribute = [];
+            //$this->WriteAttributeString('Scenes',json_encode($scenes));
+            $countScene = 0;
+            foreach ($scenes as $key => $scene) {
+                IPS_SetVariableProfileAssociation($ProfileName, $countScene, $scene['name'], '', 0x000000);
+                $scenesAttribute[$countScene]['name'] = $scene['name'];
+                $scenesAttribute[$countScene]['key'] = $key;
+                $countScene++;
+            }
+            IPS_SetVariableProfileIcon($ProfileName, 'Database');
+            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
+        }
+    }
+
+    private function SceneSetKey(string $Value)
+    {
+        $params = ['scene' => $Value];
+        return $this->sendData('action', $params);
+    }
+
     private function hideVariables($Value)
     {
         switch ($Value) {
@@ -490,44 +529,5 @@ class HUEDevice extends IPSModule
         }
         $Data = json_decode($result, true);
         return $Data;
-    }
-
-    public function ReloadConfigurationFormDeviceType($DeviceType)
-    {
-        $this->WriteAttributeString('DeviceType', $DeviceType);
-        if ($DeviceType == 'sensors') {
-            $this->UpdateFormField('SensorType', 'visible', true);
-        } else {
-            $this->UpdateFormField('SensorType', 'visible', false);
-        }
-    }
-
-    public function UpdateSceneProfile()
-    {
-        if ($this->ReadPropertyString('DeviceType') == 'groups') {
-            //TODO Map Profile to Attribute
-            $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
-            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
-            if (!IPS_VariableProfileExists($ProfileName)) {
-                IPS_CreateVariableProfile($ProfileName, 1);
-            } else {
-                if (!empty($scenes)) {
-                    IPS_DeleteVariableProfile($ProfileName);
-                    IPS_CreateVariableProfile($ProfileName, 1);
-                }
-            }
-
-            $scenesAttribute = [];
-            //$this->WriteAttributeString('Scenes',json_encode($scenes));
-            $countScene = 0;
-            foreach ($scenes as $key => $scene) {
-                IPS_SetVariableProfileAssociation($ProfileName, $countScene, $scene['name'], '', 0x000000);
-                $scenesAttribute[$countScene]['name'] = $scene['name'];
-                $scenesAttribute[$countScene]['key'] = $key;
-                $countScene++;
-            }
-            IPS_SetVariableProfileIcon($ProfileName, 'Database');
-            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
-        }
     }
 }
