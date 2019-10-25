@@ -124,6 +124,49 @@ class HUEBridge extends IPSModule
         return json_encode($result);
     }
 
+    public function UpdateState()
+    {
+        $Data['DataID'] = '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}';
+
+        $Buffer['Lights'] = $this->getAllLights();
+        $Buffer['Groups'] = $this->getAllGroups();
+        $Buffer['Sensors'] = $this->getAllSensors();
+
+        $Data['Buffer'] = json_encode($Buffer);
+
+        $Data = json_encode($Data);
+        $this->SendDataToChildren($Data);
+    }
+
+    public function registerUser()
+    {
+        $params['devicetype'] = 'Symcon';
+        $result = $this->sendRequest('', '', $params, 'POST');
+        if (@isset($result[0]->success->username)) {
+            $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
+            $this->WriteAttributeString('User', $result[0]->success->username);
+            $this->SetStatus(102);
+        } else {
+            $this->SendDebug(__FUNCTION__ . 'Pairing failed', json_encode($result), 0);
+            $this->SetStatus(200);
+            IPS_LogMessage('PhilipsHUE - User registration', 'Error: ' . $result[0]->error->type . ': ' . $result[0]->error->description);
+        }
+    }
+
+    //Functions for Lights
+
+    public function getAllLights()
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', [], 'GET');
+    }
+
+    //Functions for Scenes
+
+    public function getAllScenes()
+    {
+        return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', [], 'GET');
+    }
+
     private function sendRequest(string $User, string $endpoint, array $params = [], string $method = 'GET')
     {
         if ($this->ReadPropertyString('Host') == '') {
@@ -163,42 +206,6 @@ class HUEBridge extends IPSModule
         curl_close($ch);
         $result = json_decode($apiResult, false);
         return $result;
-    }
-
-    public function UpdateState()
-    {
-        $Data['DataID'] = '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}';
-
-        $Buffer['Lights'] = $this->getAllLights();
-        $Buffer['Groups'] = $this->getAllGroups();
-        $Buffer['Sensors'] = $this->getAllSensors();
-
-        $Data['Buffer'] = json_encode($Buffer);
-
-        $Data = json_encode($Data);
-        $this->SendDataToChildren($Data);
-    }
-
-    public function registerUser()
-    {
-        $params['devicetype'] = 'Symcon';
-        $result = $this->sendRequest('', '', $params, 'POST');
-        if (@isset($result[0]->success->username)) {
-            $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
-            $this->WriteAttributeString('User', $result[0]->success->username);
-            $this->SetStatus(102);
-        } else {
-            $this->SendDebug(__FUNCTION__ . 'Pairing failed', json_encode($result), 0);
-            $this->SetStatus(200);
-            IPS_LogMessage('PhilipsHUE - User registration', 'Error: ' . $result[0]->error->type . ': ' . $result[0]->error->description);
-        }
-    }
-
-    //Functions for Lights
-
-    public function getAllLights()
-    {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'lights', [], 'GET');
     }
 
     private function getNewLights()
@@ -286,13 +293,6 @@ class HUEBridge extends IPSModule
     private function getAllSchedules()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'schedules', [], 'GET');
-    }
-
-    //Functions for Scenes
-
-    public function getAllScenes()
-    {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', [], 'GET');
     }
 
     private function getAlleScenesFromGroup($GroupID)

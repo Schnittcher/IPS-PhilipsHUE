@@ -58,17 +58,6 @@ class HUEDiscovery extends IPSModule
         return json_encode($Form);
     }
 
-    private function getHUEBridgeInstances($IPAddress)
-    {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
-        foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'Host') == $IPAddress) {
-                return $id;
-            }
-        }
-        return 0;
-    }
-
     public function DiscoverBridges()
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
@@ -134,6 +123,17 @@ class HUEDiscovery extends IPSModule
             ];
         }
         return $Bridge;
+    }
+
+    private function getHUEBridgeInstances($IPAddress)
+    {
+        $InstanceIDs = IPS_GetInstanceListByModuleID('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        foreach ($InstanceIDs as $id) {
+            if (IPS_GetProperty($id, 'Host') == $IPAddress) {
+                return $id;
+            }
+        }
+        return 0;
     }
 
     private function parseHeader(string $Data): array

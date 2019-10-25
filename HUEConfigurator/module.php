@@ -218,68 +218,6 @@ class HUEConfigurator extends IPSModule
         return json_encode($Form);
     }
 
-    private function getHUEDeviceInstances($HueDeviceID, $DeviceType)
-    {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}'); //HUEDevice
-        foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
-                return $id;
-            }
-        }
-        return 0;
-    }
-
-    private function getHUELights()
-    {
-        $Data = [];
-        $Buffer = [];
-
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
-        $Buffer['Command'] = 'getAllLights';
-        $Buffer['Params'] = '';
-        $Data['Buffer'] = $Buffer;
-        $Data = json_encode($Data);
-        $result = json_decode($this->SendDataToParent($Data), true);
-        if (!$result) {
-            return [];
-        }
-        return $result;
-    }
-
-    private function getHUEGroups()
-    {
-        $Data = [];
-        $Buffer = [];
-
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
-        $Buffer['Command'] = 'getAllGroups';
-        $Buffer['Params'] = '';
-        $Data['Buffer'] = $Buffer;
-        $Data = json_encode($Data);
-        $result = json_decode($this->SendDataToParent($Data), true);
-        if (!$result) {
-            return [];
-        }
-        return $result;
-    }
-
-    private function getHUESensors()
-    {
-        $Data = [];
-        $Buffer = [];
-
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
-        $Buffer['Command'] = 'getAllSensors';
-        $Buffer['Params'] = '';
-        $Data['Buffer'] = $Buffer;
-        $Data = json_encode($Data);
-        $result = json_decode($this->SendDataToParent($Data), true);
-        if (!$result) {
-            return [];
-        }
-        return $result;
-    }
-
     public function reloadAllDevices()
     {
         $Lights = $this->getHUELights();
@@ -329,23 +267,6 @@ class HUEConfigurator extends IPSModule
             }
         }
         $this->UpdateFormField('AllDevices', 'values', json_encode($ValuesAllDevices));
-    }
-
-    private function getPathOfCategory(int $categoryId): array
-    {
-        if ($categoryId === 0) {
-            return [];
-        }
-
-        $path[] = IPS_GetName($categoryId);
-        $parentId = IPS_GetObject($categoryId)['ParentID'];
-
-        while ($parentId > 0) {
-            $path[] = IPS_GetName($parentId);
-            $parentId = IPS_GetObject($parentId)['ParentID'];
-        }
-
-        return array_reverse($path);
     }
 
     //Functions for Device Management / Pairing (New Devices)
@@ -501,28 +422,6 @@ class HUEConfigurator extends IPSModule
         $this->UpdateLightsForNewGroup();
     }
 
-    private function UpdateGroupsForConfiguration()
-    {
-        $Option = [
-            'caption'   => 'All',
-            'value'     => 0,
-        ];
-
-        $Options[] = $Option;
-
-        $Groups = $this->getHUEGroups();
-        foreach ($Groups as $key => $group) {
-            if ($group['type'] != 'Entertainment') {
-                $Option = [
-                    'caption'   => $group['name'],
-                    'value'     => $key,
-                ];
-                $Options[] = $Option;
-            }
-            $this->UpdateFormField('Groups', 'options', json_encode($Options));
-        }
-    }
-
     public function UpdateAllLightsInGroupsForConfiguration(int $id)
     {
         $Group = $this->getGroupAttributes($id);
@@ -539,19 +438,6 @@ class HUEConfigurator extends IPSModule
         }
 
         $this->UpdateFormField('AllLightsInGroup', 'values', json_encode($Values));
-    }
-
-    private function UpdateLightsForNewGroup()
-    {
-        $Lights = $this->getHUELights();
-        foreach ($Lights as $key => $light) {
-            $Value = [
-                'DeviceID'   => $key,
-                'DeviceName' => $light['name']
-            ];
-            $Values[] = $Value;
-        }
-        $this->UpdateFormField('AllLights', 'values', json_encode($Values));
     }
 
     public function createGroup(string $GroupName, string $GroupType, string $class = 'Other', int $Light = 0)
@@ -613,23 +499,6 @@ class HUEConfigurator extends IPSModule
         $this->UpdateAllLightsInGroupsForConfiguration($GroupID);
     }
 
-    private function setGroupAttributes($GroupID, $params)
-    {
-        $Data = [];
-        $Buffer = [];
-        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
-        $Buffer['Command'] = 'setGroupAttributes';
-        $Buffer['GroupID'] = $GroupID;
-        $Buffer['Params'] = $params;
-        $Data['Buffer'] = $Buffer;
-        $Data = json_encode($Data);
-        $result = json_decode($this->SendDataToParent($Data), true);
-        if (!$result) {
-            return [];
-        }
-        $this->parseError($result);
-    }
-
     public function deleteGroup($GroupID)
     {
         $Data = [];
@@ -647,6 +516,137 @@ class HUEConfigurator extends IPSModule
             $this->LoadGroupConfigurationForm();
             $this->UpdateFormField('AllLightsInGroup', 'values', json_encode([]));
         }
+    }
+
+    private function getHUEDeviceInstances($HueDeviceID, $DeviceType)
+    {
+        $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}'); //HUEDevice
+        foreach ($InstanceIDs as $id) {
+            if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
+                return $id;
+            }
+        }
+        return 0;
+    }
+
+    private function getHUELights()
+    {
+        $Data = [];
+        $Buffer = [];
+
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getAllLights';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
+    private function getHUEGroups()
+    {
+        $Data = [];
+        $Buffer = [];
+
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getAllGroups';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
+    private function getHUESensors()
+    {
+        $Data = [];
+        $Buffer = [];
+
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'getAllSensors';
+        $Buffer['Params'] = '';
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        return $result;
+    }
+
+    private function getPathOfCategory(int $categoryId): array
+    {
+        if ($categoryId === 0) {
+            return [];
+        }
+
+        $path[] = IPS_GetName($categoryId);
+        $parentId = IPS_GetObject($categoryId)['ParentID'];
+
+        while ($parentId > 0) {
+            $path[] = IPS_GetName($parentId);
+            $parentId = IPS_GetObject($parentId)['ParentID'];
+        }
+
+        return array_reverse($path);
+    }
+
+    private function UpdateGroupsForConfiguration()
+    {
+        $Option = [
+            'caption'   => 'All',
+            'value'     => 0,
+        ];
+
+        $Options[] = $Option;
+
+        $Groups = $this->getHUEGroups();
+        foreach ($Groups as $key => $group) {
+            if ($group['type'] != 'Entertainment') {
+                $Option = [
+                    'caption'   => $group['name'],
+                    'value'     => $key,
+                ];
+                $Options[] = $Option;
+            }
+            $this->UpdateFormField('Groups', 'options', json_encode($Options));
+        }
+    }
+
+    private function UpdateLightsForNewGroup()
+    {
+        $Lights = $this->getHUELights();
+        foreach ($Lights as $key => $light) {
+            $Value = [
+                'DeviceID'   => $key,
+                'DeviceName' => $light['name']
+            ];
+            $Values[] = $Value;
+        }
+        $this->UpdateFormField('AllLights', 'values', json_encode($Values));
+    }
+
+    private function setGroupAttributes($GroupID, $params)
+    {
+        $Data = [];
+        $Buffer = [];
+        $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
+        $Buffer['Command'] = 'setGroupAttributes';
+        $Buffer['GroupID'] = $GroupID;
+        $Buffer['Params'] = $params;
+        $Data['Buffer'] = $Buffer;
+        $Data = json_encode($Data);
+        $result = json_decode($this->SendDataToParent($Data), true);
+        if (!$result) {
+            return [];
+        }
+        $this->parseError($result);
     }
 
     //End Functions for Group Gonfigurator
