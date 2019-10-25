@@ -475,7 +475,9 @@ class HUEDevice extends IPSModule
                 $countScene++;
             }
             IPS_SetVariableProfileIcon($ProfileName, 'Database');
-            $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
+            if (!empty($scenesAttribute)) {
+                $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
+            }
         }
     }
 
