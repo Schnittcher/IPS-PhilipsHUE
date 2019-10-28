@@ -75,37 +75,39 @@ class HUEConfigurator extends IPSModule
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
 
-                $AddValueLights = [
-                    'parent'                => 1,
-                    'ID'                    => $key,
-                    'DisplayName'           => $light['name'],
-                    'name'                  => $light['name'],
-                    'Type'                  => $light['type'],
-                    'ModelID'               => $light['modelid'],
-                    'Manufacturername'      => $light['manufacturername'],
-                    'Productname'           => ((array_key_exists('productname', $light)) ? $light['productname'] : '-'),
-                    'instanceID'            => $instanceID
-                ];
+                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
+                    $AddValueLights = [
+                        'parent'                => 1,
+                        'ID'                    => $key,
+                        'DisplayName'           => $light['name'],
+                        'name'                  => $light['name'],
+                        'Type'                  => $light['type'],
+                        'ModelID'               => $light['modelid'],
+                        'Manufacturername'      => $light['manufacturername'],
+                        'Productname'           => ((array_key_exists('productname', $light)) ? $light['productname'] : '-'),
+                        'instanceID'            => $instanceID
+                    ];
 
-                $AddValueAllDevicesLights = [
-                    'parent'                => 99999,
-                    'id'                    => $key,
-                    'DeviceID'              => $key,
-                    'DeviceName'            => $light['name'],
-                    'DeviceType'            => 'lights'
-                ];
+                    $AddValueAllDevicesLights = [
+                        'parent'                => 99999,
+                        'id'                    => $key,
+                        'DeviceID'              => $key,
+                        'DeviceName'            => $light['name'],
+                        'DeviceType'            => 'lights'
+                    ];
 
-                $AddValueLights['create'] = [
-                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                    'configuration' => [
-                        'HUEDeviceID'    => $key,
-                        'DeviceType'     => 'lights'
-                    ],
-                    'location' => $location
-                ];
+                    $AddValueLights['create'] = [
+                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'configuration' => [
+                            'HUEDeviceID'    => $key,
+                            'DeviceType'     => 'lights'
+                        ],
+                        'location' => $location
+                    ];
 
-                $Values[] = $AddValueLights;
-                $ValuesAllDevices[] = $AddValueAllDevicesLights;
+                    $Values[] = $AddValueLights;
+                    $ValuesAllDevices[] = $AddValueAllDevicesLights;
+                }
             }
         }
 
@@ -134,39 +136,40 @@ class HUEConfigurator extends IPSModule
 
             foreach ($Sensors as $key => $sensor) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
+                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
+                    $AddValueSensors = [
+                        'parent'                => 2,
+                        'ID'                    => $key,
+                        'DisplayName'           => $sensor['name'],
+                        'name'                  => $sensor['name'],
+                        'Type'                  => $sensor['type'],
+                        'ModelID'               => $sensor['modelid'],
+                        'Manufacturername'      => $sensor['manufacturername'],
+                        'Productname'           => '-',
+                        'instanceID'            => $instanceID
+                    ];
 
-                $AddValueSensors = [
-                    'parent'                => 2,
-                    'ID'                    => $key,
-                    'DisplayName'           => $sensor['name'],
-                    'name'                  => $sensor['name'],
-                    'Type'                  => $sensor['type'],
-                    'ModelID'               => $sensor['modelid'],
-                    'Manufacturername'      => $sensor['manufacturername'],
-                    'Productname'           => '-',
-                    'instanceID'            => $instanceID
-                ];
+                    $AddValueAllDevicesSensors = [
+                        'parent'                => 99998,
+                        'id'                    => $key,
+                        'DeviceID'              => $key,
+                        'DeviceName'            => $sensor['name'],
+                        'DeviceType'            => 'sensors'
+                    ];
 
-                $AddValueAllDevicesSensors = [
-                    'parent'                => 99998,
-                    'id'                    => $key,
-                    'DeviceID'              => $key,
-                    'DeviceName'            => $sensor['name'],
-                    'DeviceType'            => 'sensors'
-                ];
+                    $AddValueSensors['create'] = [
+                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'configuration' => [
+                            'HUEDeviceID'    => $key,
+                            'DeviceType'     => 'sensors',
+                            'SensorType'     => $sensor['type']
+                        ],
+                        'location' => $location
+                    ];
 
-                $AddValueSensors['create'] = [
-                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                    'configuration' => [
-                        'HUEDeviceID'    => $key,
-                        'DeviceType'     => 'sensors',
-                        'SensorType'     => $sensor['type']
-                    ],
-                    'location' => $location
-                ];
-
-                $Values[] = $AddValueSensors;
-                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+                    $Values[] = $AddValueSensors;
+                    $ValuesAllDevices[] = $AddValueAllDevicesSensors;
+                }
             }
         }
 
@@ -188,29 +191,31 @@ class HUEConfigurator extends IPSModule
             $Values[] = $AddValueGroups;
             foreach ($Groups as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
-                if ($group['type'] != 'Entertainment') {
-                    $AddValueGroups = [
-                        'parent'                => 3,
-                        'ID'                    => $key,
-                        'DisplayName'           => $group['name'],
-                        'name'                  => $group['name'],
-                        'Type'                  => $group['type'],
-                        'DeviceType'            => 'Group',
-                        'ModelID'               => '-',
-                        'Manufacturername'      => '-',
-                        'Productname'           => '-',
-                        'instanceID'            => $instanceID
-                    ];
+                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
+                    if ($group['type'] != 'Entertainment') {
+                        $AddValueGroups = [
+                            'parent'                => 3,
+                            'ID'                    => $key,
+                            'DisplayName'           => $group['name'],
+                            'name'                  => $group['name'],
+                            'Type'                  => $group['type'],
+                            'DeviceType'            => 'Group',
+                            'ModelID'               => '-',
+                            'Manufacturername'      => '-',
+                            'Productname'           => '-',
+                            'instanceID'            => $instanceID
+                        ];
 
-                    $AddValueGroups['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
-                            'HUEDeviceID'    => $key,
-                            'DeviceType'     => 'groups'
-                        ],
-                        'location' => $location
-                    ];
-                    $Values[] = $AddValueGroups;
+                        $AddValueGroups['create'] = [
+                            'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                            'configuration' => [
+                                'HUEDeviceID'    => $key,
+                                'DeviceType'     => 'groups'
+                            ],
+                            'location' => $location
+                        ];
+                        $Values[] = $AddValueGroups;
+                    }
                 }
             }
         }
