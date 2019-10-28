@@ -203,9 +203,12 @@ class HUEBridge extends IPSModule
         $apiResult = curl_exec($ch);
         $this->SendDebug(__FUNCTION__ . ' Result', $apiResult, 0);
         $headerInfo = curl_getinfo($ch);
+        if ($apiResult <> false) {
+            return json_decode($apiResult, false);
+        } else {
+            IPS_LogMessage('Philips HUE sendRequest Error',curl_error($ch));
+        }
         curl_close($ch);
-        $result = json_decode($apiResult, false);
-        return $result;
     }
 
     private function getNewLights()
