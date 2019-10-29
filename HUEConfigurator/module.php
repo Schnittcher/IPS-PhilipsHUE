@@ -25,6 +25,7 @@ class HUEConfigurator extends IPSModule
     {
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
         $Lights = $this->getHUELights();
+        //$Groups = json_decode('{"1":{"name":"wohnzimmer","lights":["3","7","16"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"2":{"name":"arbeitszimmer","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"3":{"name":"flur-eg","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"4":{"name":"kueche","lights":["34","27"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"5":{"name":"esszimmer","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"6":{"name":"gaesteklo","lights":["1"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Toilet","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"8":{"name":"wohnzimmer-sofa","lights":["3","7","16"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Living room","action":{"on":false,"bri":77,"hue":8402,"sat":140,"effect":"none","xy":[0.4575,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"13":{"name":"hauseingang","lights":["32"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"17":{"name":"veranda","lights":["30","31"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Terrace","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"18":{"name":"garten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"19":{"name":"garage","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Driveway","action":{"on":false,"alert":"none"}},"20":{"name":"carport","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Carport","action":{"on":false,"alert":"none"}},"21":{"name":"gartenhaus","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"alert":"none"}},"22":{"name":"vorgarten","lights":[],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Garden","action":{"on":false,"alert":"none"}},"23":{"name":"vorratsraum","lights":["2","9"],"sensors":[],"type":"Room","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}},"25":{"name":"arbeitszimmer-decke","lights":["20","5","8","10","13","14","15","19"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Office","action":{"on":false,"bri":116,"ct":184,"alert":"select","colormode":"ct"}},"26":{"name":"esszimmer-decke","lights":["4","6","11","12","17","18"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Dining","action":{"on":false,"bri":77,"ct":366,"alert":"select","colormode":"ct"}},"27":{"name":"flur-eg-decke","lights":["35","24","25","26","28","29","21","22","23"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Hallway","action":{"on":false,"bri":57,"hue":50964,"sat":247,"effect":"none","xy":[0.2763,0.1067],"ct":153,"alert":"select","colormode":"xy"}},"28":{"name":"gaesteklo-decke","lights":["1"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Bathroom","action":{"on":false,"bri":254,"ct":153,"alert":"select","colormode":"ct"}},"29":{"name":"hauseingang-decke","lights":["32"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Front door","action":{"on":false,"bri":254,"hue":42235,"sat":67,"effect":"none","xy":[0.3215,0.3289],"ct":165,"alert":"select","colormode":"xy"}},"30":{"name":"kueche-decke","lights":["34","27"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":254,"ct":366,"alert":"select","colormode":"ct"}},"31":{"name":"veranda-wand","lights":["30","31"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Porch","action":{"on":false,"bri":254,"hue":8381,"sat":141,"effect":"none","xy":[0.4583,0.4099],"ct":366,"alert":"select","colormode":"xy"}},"32":{"name":"vorratsraum-decke","lights":["2","9"],"sensors":[],"type":"Zone","state":{"all_on":false,"any_on":false},"recycle":false,"class":"Kitchen","action":{"on":false,"bri":127,"ct":366,"alert":"select","colormode":"ct"}}}',true);
         $Groups = $this->getHUEGroups();
         $Sensors = $this->getHUESensors();
 
@@ -74,40 +75,37 @@ class HUEConfigurator extends IPSModule
 
             foreach ($Lights as $key => $light) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'lights');
+                $AddValueLights = [
+                    'parent'                => 1,
+                    'ID'                    => $key,
+                    'DisplayName'           => $light['name'],
+                    'name'                  => $light['name'],
+                    'Type'                  => $light['type'],
+                    'ModelID'               => $light['modelid'],
+                    'Manufacturername'      => $light['manufacturername'],
+                    'Productname'           => ((array_key_exists('productname', $light)) ? $light['productname'] : '-'),
+                    'instanceID'            => $instanceID
+                ];
 
-                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
-                    $AddValueLights = [
-                        'parent'                => 1,
-                        'ID'                    => $key,
-                        'DisplayName'           => $light['name'],
-                        'name'                  => $light['name'],
-                        'Type'                  => $light['type'],
-                        'ModelID'               => $light['modelid'],
-                        'Manufacturername'      => $light['manufacturername'],
-                        'Productname'           => ((array_key_exists('productname', $light)) ? $light['productname'] : '-'),
-                        'instanceID'            => $instanceID
-                    ];
+                $AddValueAllDevicesLights = [
+                    'parent'                => 99999,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $light['name'],
+                    'DeviceType'            => 'lights'
+                ];
 
-                    $AddValueAllDevicesLights = [
-                        'parent'                => 99999,
-                        'id'                    => $key,
-                        'DeviceID'              => $key,
-                        'DeviceName'            => $light['name'],
-                        'DeviceType'            => 'lights'
-                    ];
+                $AddValueLights['create'] = [
+                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'configuration' => [
+                        'HUEDeviceID'    => $key,
+                        'DeviceType'     => 'lights'
+                    ],
+                    'location' => $location
+                ];
 
-                    $AddValueLights['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
-                            'HUEDeviceID'    => $key,
-                            'DeviceType'     => 'lights'
-                        ],
-                        'location' => $location
-                    ];
-
-                    $Values[] = $AddValueLights;
-                    $ValuesAllDevices[] = $AddValueAllDevicesLights;
-                }
+                $Values[] = $AddValueLights;
+                $ValuesAllDevices[] = $AddValueAllDevicesLights;
             }
         }
 
@@ -136,40 +134,38 @@ class HUEConfigurator extends IPSModule
 
             foreach ($Sensors as $key => $sensor) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'sensors');
-                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
-                    $AddValueSensors = [
-                        'parent'                => 2,
-                        'ID'                    => $key,
-                        'DisplayName'           => $sensor['name'],
-                        'name'                  => $sensor['name'],
-                        'Type'                  => $sensor['type'],
-                        'ModelID'               => $sensor['modelid'],
-                        'Manufacturername'      => $sensor['manufacturername'],
-                        'Productname'           => '-',
-                        'instanceID'            => $instanceID
-                    ];
+                $AddValueSensors = [
+                    'parent'                => 2,
+                    'ID'                    => $key,
+                    'DisplayName'           => $sensor['name'],
+                    'name'                  => $sensor['name'],
+                    'Type'                  => $sensor['type'],
+                    'ModelID'               => $sensor['modelid'],
+                    'Manufacturername'      => $sensor['manufacturername'],
+                    'Productname'           => '-',
+                    'instanceID'            => $instanceID
+                ];
 
-                    $AddValueAllDevicesSensors = [
-                        'parent'                => 99998,
-                        'id'                    => $key,
-                        'DeviceID'              => $key,
-                        'DeviceName'            => $sensor['name'],
-                        'DeviceType'            => 'sensors'
-                    ];
+                $AddValueAllDevicesSensors = [
+                    'parent'                => 99998,
+                    'id'                    => $key,
+                    'DeviceID'              => $key,
+                    'DeviceName'            => $sensor['name'],
+                    'DeviceType'            => 'sensors'
+                ];
 
-                    $AddValueSensors['create'] = [
-                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                        'configuration' => [
-                            'HUEDeviceID'    => $key,
-                            'DeviceType'     => 'sensors',
-                            'SensorType'     => $sensor['type']
-                        ],
-                        'location' => $location
-                    ];
+                $AddValueSensors['create'] = [
+                    'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                    'configuration' => [
+                        'HUEDeviceID'    => $key,
+                        'DeviceType'     => 'sensors',
+                        'SensorType'     => $sensor['type']
+                    ],
+                    'location' => $location
+                ];
 
-                    $Values[] = $AddValueSensors;
-                    $ValuesAllDevices[] = $AddValueAllDevicesSensors;
-                }
+                $Values[] = $AddValueSensors;
+                $ValuesAllDevices[] = $AddValueAllDevicesSensors;
             }
         }
 
@@ -191,31 +187,30 @@ class HUEConfigurator extends IPSModule
             $Values[] = $AddValueGroups;
             foreach ($Groups as $key => $group) {
                 $instanceID = $this->getHUEDeviceInstances($key, 'groups');
-                if ($instanceID == 0 || IPS_GetInstance($instanceID)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
-                    if ($group['type'] != 'Entertainment') {
-                        $AddValueGroups = [
-                            'parent'                => 3,
-                            'ID'                    => $key,
-                            'DisplayName'           => $group['name'],
-                            'name'                  => $group['name'],
-                            'Type'                  => $group['type'],
-                            'DeviceType'            => 'Group',
-                            'ModelID'               => '-',
-                            'Manufacturername'      => '-',
-                            'Productname'           => '-',
-                            'instanceID'            => $instanceID
-                        ];
 
-                        $AddValueGroups['create'] = [
-                            'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
-                            'configuration' => [
-                                'HUEDeviceID'    => $key,
-                                'DeviceType'     => 'groups'
-                            ],
-                            'location' => $location
-                        ];
-                        $Values[] = $AddValueGroups;
-                    }
+                if ($group['type'] != 'Entertainment') {
+                    $AddValueGroups = [
+                        'parent'                => 3,
+                        'ID'                    => $key,
+                        'DisplayName'           => $group['name'],
+                        'name'                  => $group['name'],
+                        'Type'                  => $group['type'],
+                        'DeviceType'            => 'Group',
+                        'ModelID'               => '-',
+                        'Manufacturername'      => '-',
+                        'Productname'           => '-',
+                        'instanceID'            => $instanceID
+                    ];
+
+                    $AddValueGroups['create'] = [
+                        'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
+                        'configuration' => [
+                            'HUEDeviceID'    => $key,
+                            'DeviceType'     => 'groups'
+                        ],
+                        'location' => $location
+                    ];
+                    $Values[] = $AddValueGroups;
                 }
             }
         }
@@ -528,7 +523,9 @@ class HUEConfigurator extends IPSModule
         $InstanceIDs = IPS_GetInstanceListByModuleID('{83354C26-2732-427C-A781-B3F5CDF758B1}'); //HUEDevice
         foreach ($InstanceIDs as $id) {
             if (IPS_GetProperty($id, 'HUEDeviceID') == $HueDeviceID && IPS_GetProperty($id, 'DeviceType') == $DeviceType) {
-                return $id;
+                if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
+                    return $id;
+                }
             }
         }
         return 0;
