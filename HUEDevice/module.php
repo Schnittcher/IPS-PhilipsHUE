@@ -25,6 +25,17 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileAssociation('HUE.ColorMode', 1, $this->Translate('Color Temperature'), '', 0x000000);
         IPS_SetVariableProfileIcon('HUE.ColorMode', 'ArrowRight');
 
+        if (!IPS_VariableProfileExists('HUE.ColorMode')) {
+            IPS_CreateVariableProfile('HUE.ColorMode', 1);
+        }
+
+        if (!IPS_VariableProfileExists('HUE.Reachable')) {
+            IPS_CreateVariableProfile('HUE.Reachable', 0);
+        }
+        IPS_SetVariableProfileAssociation('HUE.Reachable', true, $this->Translate('Yes'), '', 0x00FF00);
+        IPS_SetVariableProfileAssociation('HUE.Reachable', false, $this->Translate('No'), '', 0xFF0000);
+        IPS_SetVariableProfileIcon('HUE.ColorMode', 'Information');
+
         if (!IPS_VariableProfileExists('HUE.ColorTemperature')) {
             IPS_CreateVariableProfile('HUE.ColorTemperature', 1);
         }
@@ -101,6 +112,14 @@ class HUEDevice extends IPSModule
             SetValue($this->GetIDForIdent('HUE_GroupScenes'), -1);
             $this->EnableAction('HUE_GroupScenes');
         }
+
+        //Reachable for Lights and Sensors
+        if ($this->ReadPropertyString('DeviceType') == 'lights' || ($this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('SensorType') != 'ZGPSwitch' && $this->ReadPropertyString('SensorType') != 'Daylight')) {
+            $CreateVariableReachable = true;
+        } else {
+            $CreateVariableReachable = false;
+        }
+        $this->MaintainVariable('HUE_Reachable', $this->Translate('Reachable'), 0, 'HUE.Reachable', 0, $CreateVariableReachable);
     }
 
     public function GetConfigurationForm()
@@ -221,6 +240,12 @@ class HUEDevice extends IPSModule
         }
         if (property_exists($DeviceConfig, 'battery')) {
             $this->SetValue('HUE_Battery', $DeviceConfig->battery);
+        }
+        if (property_exists($DeviceConfig, 'reachable')) {
+            $this->SetValue('HUE_Reachable', $DeviceConfig->reachable);
+        }
+        if (property_exists($DeviceState, 'reachable')) {
+            $this->SetValue('HUE_Reachable', $DeviceState->reachable);
         }
         if (property_exists($DeviceState, 'lightlevel')) {
             $this->SetValue('HUE_Lightlevel', intval(pow(10, $DeviceState->lightlevel / 10000)));
