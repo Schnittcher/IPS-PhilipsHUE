@@ -465,6 +465,19 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_ColorMode':
                 $this->hideVariables($Value);
+                switch ($Value) {
+                    case 0: //Color
+                        $result = $this->ColorSet($this->GetValue('HUE_Color'));
+                        if (array_key_exists('success', $result[0])) {
+                            $this->SetValue('HUE_State', true);
+                        }
+                        break;
+                    case 1: //Color temperature
+                        $result = $this->CTSet($this->GetValue('HUE_ColorTemperature'));
+                        if (array_key_exists('success', $result[0])) {
+                            $this->SetValue($Ident, $Value);
+                        }
+                }
                 $this->SetValue($Ident, $Value);
                 break;
             case 'HUE_GroupScenes':
