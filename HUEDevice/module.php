@@ -230,7 +230,7 @@ class HUEDevice extends IPSModule
                     $this->SetValue('HUE_ColorMode', 1);
                     break;
                 default:
-                    IPS_LogMessage('Philips HUE', 'Invalid ColorMode: ' . $DeviceState->colormode);
+                    //IPS_LogMessage('Philips HUE', 'Invalid ColorMode: ' . $DeviceState->colormode);
                     break;
             }
         }
