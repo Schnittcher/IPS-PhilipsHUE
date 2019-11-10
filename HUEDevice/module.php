@@ -225,12 +225,14 @@ class HUEDevice extends IPSModule
             switch ($DeviceState->colormode) {
                 case 'xy':
                     $this->SetValue('HUE_ColorMode', 0);
+                case 'hs':
+                    $this->SetValue('HUE_ColorMode', 0);                    
                     break;
                 case 'ct':
                     $this->SetValue('HUE_ColorMode', 1);
                     break;
                 default:
-                    //IPS_LogMessage('Philips HUE', 'Invalid ColorMode: ' . $DeviceState->colormode);
+                    IPS_LogMessage('Philips HUE', 'Invalid ColorMode: ' . $DeviceState->colormode);
                     break;
             }
         }
@@ -302,7 +304,7 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function ColorSet($Value)
+    public function ColorSet($Value, $OptParams = [])
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
@@ -324,6 +326,7 @@ class HUEDevice extends IPSModule
         $xy[1] = $ConvertedXY['y'];
 
         $params = ['bri' => $ConvertedXY['bri'], 'xy' => $xy, 'on' => true];
+        $params = array_merge($params, $OptParams);
         return $this->sendData($command, $params);
     }
 
