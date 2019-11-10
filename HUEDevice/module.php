@@ -305,7 +305,33 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function ColorSet($Value, $OptParams = NULL)
+    public function ColorSet(variant $Value)
+    {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
+
+        //If $Value Hex Color convert to Decimal
+        if (preg_match('/^#[a-f0-9]{6}$/i', strval($Value))) {
+            $Value = hexdec($Value);
+        }
+
+        $this->SendDebug(__FUNCTION__, $Value, 0);
+
+        $rgb = $this->decToRGB($Value);
+
+        $ConvertedXY = $this->convertRGBToXY($rgb['r'], $rgb['g'], $rgb['b']);
+        $xy[0] = $ConvertedXY['x'];
+        $xy[1] = $ConvertedXY['y'];
+
+        $params = ['bri' => $ConvertedXY['bri'], 'xy' => $xy, 'on' => true];
+
+        return $this->sendData($command, $params);
+    }
+
+    public function ColorSetOpt(variant $Value, array $OptParams = null)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
