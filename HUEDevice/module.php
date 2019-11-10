@@ -225,8 +225,9 @@ class HUEDevice extends IPSModule
             switch ($DeviceState->colormode) {
                 case 'xy':
                     $this->SetValue('HUE_ColorMode', 0);
+                    break;
                 case 'hs':
-                    $this->SetValue('HUE_ColorMode', 0);                    
+                    $this->SetValue('HUE_ColorMode', 0);
                     break;
                 case 'ct':
                     $this->SetValue('HUE_ColorMode', 1);
