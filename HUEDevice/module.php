@@ -305,7 +305,7 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function ColorSet(variant $Value)
+    public function ColorSet($Value)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
@@ -331,7 +331,7 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function ColorSetOpt(variant $Value, array $OptParams = null)
+    public function ColorSetOpt($Value, array $OptParams = null)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
