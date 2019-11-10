@@ -305,7 +305,7 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
-    public function ColorSet($Value, $OptParams = [])
+    public function ColorSet($Value, $OptParams = NULL)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $command = 'action';
