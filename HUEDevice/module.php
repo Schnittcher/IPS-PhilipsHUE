@@ -152,7 +152,7 @@ class HUEDevice extends IPSModule
                         $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
                     }
                 } else {
-                    IPS_LogMessage('Philips HUE', 'Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+                    $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid',10204);
                     return;
                 }
                 break;
@@ -166,7 +166,7 @@ class HUEDevice extends IPSModule
                         $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
                     }
                 } else {
-                    IPS_LogMessage('Philips HUE', 'Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+                    $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid',10204);
                     return;
                 }
                 break;
@@ -180,7 +180,7 @@ class HUEDevice extends IPSModule
                         $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->config;
                     }
                 } else {
-                    IPS_LogMessage('Philips HUE', 'Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+                    $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid',10204);
                     return;
                 }
                 break;
@@ -233,7 +233,7 @@ class HUEDevice extends IPSModule
                     $this->SetValue('HUE_ColorMode', 1);
                     break;
                 default:
-                    IPS_LogMessage('Philips HUE', 'Invalid ColorMode: ' . $DeviceState->colormode);
+                    $this->LogMessage('Invalid ColorMode: ' . $DeviceState->colormode,10204);
                     break;
             }
         }
@@ -390,7 +390,7 @@ class HUEDevice extends IPSModule
                 return;
             }
         }
-        IPS_LogMessage('Philips HUE', 'Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid');
+        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid',10204);
     }
 
     public function AlertSet(string $Value)
