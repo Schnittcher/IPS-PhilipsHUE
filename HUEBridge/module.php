@@ -145,6 +145,7 @@ class HUEBridge extends IPSModule
         if (@isset($result[0]->success->username)) {
             $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
             $this->WriteAttributeString('User', $result[0]->success->username);
+            $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
             $this->SetStatus(102);
         } else {
             $this->SendDebug(__FUNCTION__ . 'Pairing failed', json_encode($result), 0);
