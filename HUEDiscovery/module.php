@@ -22,16 +22,16 @@ class HUEDiscovery extends IPSModule
     public function GetConfigurationForm()
     {
         $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-        $Bridges = $this->DiscoverBridges();
+        $Bridges = $this->mDNSDiscoverBridges();
 
         $Values = [];
 
-        foreach ($Bridges as $IPAddress => $Bridge) {
-            $instanceID = $this->getHUEBridgeInstances($IPAddress);
+        foreach ($Bridges as $Bridge) {
+            $instanceID = $this->getHUEBridgeInstances($Bridge['IPv4']);
 
             $AddValue = [
-                'IPAddress'             => $IPAddress,
-                'name'                  => $Bridge['devicename'],
+                'IPAddress'             => $Bridge['IPv4'],
+                'name'                  => $Bridge['deviceName'],
                 'ModelName'             => $Bridge['modelName'],
                 'ModelNumber'           => $Bridge['modelNumber'],
                 'SerialNumber'          => $Bridge['serialNumber'],
@@ -46,7 +46,7 @@ class HUEDiscovery extends IPSModule
                 [
                     'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
                     'configuration' => [
-                        'Host' => $IPAddress
+                        'Host' => $Bridge['IPv4']
                     ]
                 ]
 
@@ -58,7 +58,32 @@ class HUEDiscovery extends IPSModule
         return json_encode($Form);
     }
 
-    public function DiscoverBridges()
+    public function mDNSDiscoverBridges()
+    {
+        $mDNSInstanceIDs = IPS_GetInstanceListByModuleID('{780B2D48-916C-4D59-AD35-5A429B2355A5}');
+        $resultServiceTypes = ZC_QueryServiceType($mDNSInstanceIDs[0], '_hue._tcp', '');
+        $this->SendDebug('mDNS resultServiceTypes', print_r($resultServiceTypes, true), 0);
+        $bridges = [];
+        foreach ($resultServiceTypes as $key => $device) {
+            $hue = [];
+            $deviceInfo = ZC_QueryService($mDNSInstanceIDs[0], $device['Name'], '_hue._tcp', 'local.');
+            $this->SendDebug('mDNS QueryService', $device['Name'] . ' ' . $device['Type'] . ' ' . $device['Domain'] . '.', 0);
+            $this->SendDebug('mDNS QueryService Result', print_r($deviceInfo, true), 0);
+            if (!empty($deviceInfo)) {
+                $hue['Hostname'] = $deviceInfo[0]['Host'];
+                $hue['IPv4'] = $deviceInfo[0]['IPv4'][0]; //IPv4 und IPv6 sind vertauscht
+                $hueData = $this->readBridgeDataFromXML($hue['IPv4']);
+                $hue['deviceName'] = (string) $hueData->device->friendlyName;
+                $hue['modelName'] = (string) $hueData->device->modelName;
+                $hue['modelNumber'] = (string) $hueData->device->modelNumber;
+                $hue['serialNumber'] = (string) $hueData->device->serialNumber;
+                array_push($bridges, $hue);
+            }
+        }
+        return $bridges;
+    }
+
+    private function DiscoverBridgesOld() // wird später entfernt
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         if (!$socket) {
@@ -103,6 +128,7 @@ class HUEDiscovery extends IPSModule
 
         $Bridge = [];
         foreach ($BridgeData as $IPAddress => $Url) {
+            $this->SendDebug('url', $Url, 0);
             $XMLData = @Sys_GetURLContent($Url);
             $this->SendDebug('XML', $XMLData, 0);
             if ($XMLData === false) {
@@ -123,6 +149,21 @@ class HUEDiscovery extends IPSModule
             ];
         }
         return $Bridge;
+    }
+
+    private function readBridgeDataFromXML($ip)
+    {
+        $XMLData = file_get_contents('http://' . $ip . ':80/description.xml');
+        if ($XMLData === false) {
+            return;
+        }
+        $Xml = new SimpleXMLElement($XMLData);
+
+        $modelName = (string) $Xml->device->modelName;
+        if (strpos($modelName, 'Philips hue bridge') === false) {
+            return;
+        }
+        return $Xml;
     }
 
     private function getHUEBridgeInstances($IPAddress)
