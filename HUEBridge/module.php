@@ -206,12 +206,15 @@ class HUEBridge extends IPSModule
         $headerInfo = curl_getinfo($ch);
         if ($headerInfo['http_code'] == 200) {
             if ($apiResult != false) {
+                $this->SetStatus(102);
                 return json_decode($apiResult, false);
             } else {
-                IPS_LogMessage('Philips HUE sendRequest Error', curl_error($ch));
+                $this->LogMessage('Philips HUE sendRequest Error' . curl_error($ch), 10205);
+                $this->SetStatus(201);
             }
         } else {
-            IPS_LogMessage('Philips HUE sendRequest Error', curl_error($ch));
+            $this->LogMessage('Philips HUE sendRequest Error - Curl Error:' . curl_error($ch). 'HTTP Code: '. $headerInfo['http_code'], 10205);
+            $this->SetStatus(202);
         }
         curl_close($ch);
     }

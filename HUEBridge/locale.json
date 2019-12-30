@@ -2,7 +2,9 @@
   "translations": {
     "de": {
       "Seconds": "Sekunden",
-      "Register IP-Symcon": "Registriere IP-Symcon"
+      "Register IP-Symcon": "Registriere IP-Symcon",
+      "Invalid JSON": "Ungültiges JSON",
+      "HUE Bridge unreachable": "HUE Bridge nicht erreichbar"
     }
   }
 }

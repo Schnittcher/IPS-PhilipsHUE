@@ -23,6 +23,14 @@
     { "code": 200,
       "icon": "error",
       "caption": "Registration complete, more Information in IP-Symcon Log"
+    },
+    { "code": 201,
+      "icon": "error",
+      "caption": "Invalid JSON"
+    },
+    { "code": 202,
+      "icon": "error",
+      "caption": "HUE Bridge unreachable"
     }
   ]  
 }
