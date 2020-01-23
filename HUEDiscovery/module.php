@@ -66,8 +66,7 @@ class HUEDiscovery extends IPSModule
         $bridges = [];
         foreach ($resultServiceTypes as $key => $device) {
             $hue = [];
-            $deviceInfo = ZC_QueryServiceEx($mDNSInstanceIDs[0], $device['Name'], '_hue._tcp', 'local.',500);
-            $this->SendDebug('mDNS QueryService Name', $device['Name'], 0);
+            $deviceInfo = ZC_QueryService($mDNSInstanceIDs[0], $device['Name'], '_hue._tcp', 'local.');
             $this->SendDebug('mDNS QueryService', $device['Name'] . ' ' . $device['Type'] . ' ' . $device['Domain'] . '.', 0);
             $this->SendDebug('mDNS QueryService Result', print_r($deviceInfo, true), 0);
             if (!empty($deviceInfo)) {
