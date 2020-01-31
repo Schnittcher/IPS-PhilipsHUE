@@ -147,41 +147,47 @@ class HUEDevice extends IPSModule
 
         switch ($this->ReadPropertyString('DeviceType')) {
             case 'groups':
-                if (property_exists($Buffer->Groups, $this->ReadPropertyString('HUEDeviceID'))) {
-                    if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
-                        $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
+                if (property_exists($Buffer, 'Groups')) {
+                    if (property_exists($Buffer->Groups, $this->ReadPropertyString('HUEDeviceID'))) {
+                        if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
+                            $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
+                        }
+                    } else {
+                        $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
+                        return;
                     }
-                } else {
-                    $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
-                    return;
                 }
                 break;
 
             case 'lights':
-                if (property_exists($Buffer->Lights, $this->ReadPropertyString('HUEDeviceID'))) {
-                    if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
-                        $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                if (property_exists($Buffer, 'Lights')) {
+                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('HUEDeviceID'))) {
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                        }
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                        }
+                    } else {
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
+                        return;
                     }
-                    if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
-                        $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
-                    }
-                } else {
-                    $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
-                    return;
                 }
                 break;
 
             case 'sensors':
-                if (property_exists($Buffer->Sensors, $this->ReadPropertyString('HUEDeviceID'))) {
-                    if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
-                        $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                if (property_exists($Buffer, 'Sensors')) {
+                    if (property_exists($Buffer->Sensors, $this->ReadPropertyString('HUEDeviceID'))) {
+                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                        }
+                        if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                        }
+                    } else {
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
+                        return;
                     }
-                    if (property_exists($Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
-                        $DeviceConfig = $Buffer->Sensors->{$this->ReadPropertyString('HUEDeviceID')}->config;
-                    }
-                } else {
-                    $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
-                    return;
                 }
                 break;
 

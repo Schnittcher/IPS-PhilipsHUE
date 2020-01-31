@@ -71,7 +71,7 @@ class HUEDiscovery extends IPSModule
             $this->SendDebug('mDNS QueryService Result', print_r($deviceInfo, true), 0);
             if (!empty($deviceInfo)) {
                 $hue['Hostname'] = $deviceInfo[0]['Host'];
-                $hue['IPv4'] = $deviceInfo[0]['IPv4'][0]; //IPv4 und IPv6 sind vertauscht
+                $hue['IPv4'] = $deviceInfo[0]['IPv6'][0]; //IPv4 und IPv6 sind vertauscht
                 $hueData = $this->readBridgeDataFromXML($hue['IPv4']);
                 $hue['deviceName'] = (string) $hueData->device->friendlyName;
                 $hue['modelName'] = (string) $hueData->device->modelName;
