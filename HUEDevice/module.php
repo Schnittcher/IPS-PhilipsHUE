@@ -537,7 +537,10 @@ class HUEDevice extends IPSModule
                 $this->SceneSetKey($scenes[$Value]['key']);
                 break;
             case 'HUE_PresenceState':
-                    $this->SensorStateSet($Value);
+                    $result = $this->SensorStateSet($Value);
+                    if (array_key_exists('success', $result[0])) {
+                        $this->SetValue($Ident, $Value);
+                    }
                     break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Ident', 0);
