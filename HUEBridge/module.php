@@ -80,6 +80,9 @@ class HUEBridge extends IPSModule
                 $params = (array) $data->Buffer->Params;
                 $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/action', $params, 'PUT');
                 break;
+            case 'config':
+                $params = (array) $data->Buffer->Params;
+                $result = $this->sendRequest($this->ReadAttributeString('User'), $data->Buffer->Endpoint . '/' . $data->Buffer->DeviceID . '/config', $params, 'PUT');
             case 'scanNewDevices':
                 $result = $this->scanNewLights();
                 break;
