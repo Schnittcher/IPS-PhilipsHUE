@@ -78,7 +78,11 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
         $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Presence State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+
+        if ($this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors') {
+            $this->EnableAction('HUE_PresenceState');
+        }
 
         $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
@@ -440,6 +444,13 @@ class HUEDevice extends IPSModule
         return $result;
     }
 
+    public function SensorStateSet(bool $Value)
+    {
+        $command = 'config';
+        $params = ['on' => $Value];
+        return $this->sendData($command, $params);
+    }
+
     public function RequestAction($Ident, $Value)
     {
         switch ($Ident) {
@@ -525,6 +536,9 @@ class HUEDevice extends IPSModule
                 $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value]['name'], 0);
                 $this->SceneSetKey($scenes[$Value]['key']);
                 break;
+            case 'HUE_PresenceState':
+                    $this->SensorStateSet($Value);
+                    break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Ident', 0);
                 break;
