@@ -78,6 +78,7 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
         $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Presence State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
         $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
@@ -246,6 +247,9 @@ class HUEDevice extends IPSModule
 
         if (property_exists($DeviceState, 'presence')) {
             $this->SetValue('HUE_Presence', $DeviceState->presence);
+            if (property_exists($DeviceConfig, 'on')) {
+                $this->SetValue('HUE_PresenceState', $DeviceConfig->on);
+            }
         }
         if (property_exists($DeviceConfig, 'battery')) {
             $this->SetValue('HUE_Battery', $DeviceConfig->battery);
