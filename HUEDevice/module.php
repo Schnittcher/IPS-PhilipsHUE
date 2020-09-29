@@ -158,6 +158,10 @@ class HUEDevice extends IPSModule
                             $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
                         }
                     } else {
+                        if ($this->ReadPropertyString('HUEDeviceID') == 0) {
+                            $this->SendDebug('Group 0', 'No Data');
+                            return;
+                        }
                         $this->LogMessage('Group Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
                         return;
                     }
