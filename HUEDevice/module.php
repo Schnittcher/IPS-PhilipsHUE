@@ -333,6 +333,7 @@ class HUEDevice extends IPSModule
 
         //If $Value Hex Color convert to Decimal
         if (preg_match('/^#[a-f0-9]{6}$/i', strval($Value))) {
+            $Value = ltrim($Value, '#');
             $Value = hexdec($Value);
         }
 
