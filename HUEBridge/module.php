@@ -2,8 +2,13 @@
 
 declare(strict_types=1);
 
+include_once __DIR__ . '/helper/autoload.php';
+
 class HUEBridge extends IPSModule
 {
+    //Helper
+    use PHUE_hueAPI;
+
     public function Create()
     {
         //Never delete this line!
@@ -33,6 +38,7 @@ class HUEBridge extends IPSModule
     {
         $this->SendDebug(__FUNCTION__, $JSONString, 0);
         $data = json_decode($JSONString);
+        $result = '';
         switch ($data->Buffer->Command) {
             case 'getAllLights':
                 $result = $this->getAllLights();
@@ -222,7 +228,7 @@ class HUEBridge extends IPSModule
             $this->SetStatus(202);
             return new stdClass();
         }
-        curl_close($ch);
+        curl_close($ch); //Statement is unreachable
     }
 
     private function getNewLights()
@@ -331,7 +337,7 @@ class HUEBridge extends IPSModule
 
     private function getAllRules()
     {
-        return $this->sendRequest($this->ReadAttributeString('User'), 'rules', $params, 'GET');
+        return $this->sendRequest($this->ReadAttributeString('User'), 'rules', [], 'GET');
     }
 
     private function BridgePaired()

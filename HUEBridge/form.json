@@ -6,7 +6,7 @@
   },
     {
       "name": "UpdateInterval",
-      "type": "IntervalBox",
+      "type": "NumberSpinner",
       "caption": "Seconds"
     }
   ],
