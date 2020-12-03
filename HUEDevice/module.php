@@ -84,6 +84,11 @@ class HUEDevice extends IPSModule
             $this->EnableAction('HUE_PresenceState');
         }
 
+        $this->MaintainVariable('HUE_CLIPGenericState', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        if ($this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors') {
+            $this->EnableAction('HUE_CLIPGenericState');
+        }
+
         $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
@@ -456,6 +461,13 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
+    public function CLIPSensorStateSet(bool $Value)
+    {
+        $command = 'state';
+        $params = ['status' => intval($Value)];
+        return $this->sendData($command, $params);
+    }
+
     public function RequestAction($Ident, $Value)
     {
         switch ($Ident) {
@@ -547,6 +559,12 @@ class HUEDevice extends IPSModule
                         $this->SetValue($Ident, $Value);
                     }
                     break;
+            case 'HUE_CLIPGenericState':
+                $result = $this->CLIPSensorStateSet($Value);
+                if (array_key_exists('success', $result[0])) {
+                    $this->SetValue($Ident, $Value);
+                }
+                break;
             default:
                 $this->SendDebug(__FUNCTION__, 'Invalid Ident', 0);
                 break;

@@ -70,6 +70,21 @@
    **PHUE_SwitchMode($InstanceID, $Value)**\
    Mit dieser Funktion ist es möglich das Gerät ein- bzw. auszuschalten.
    ```php
-   Shelly_SwitchMode(25537, true); //Einschalten
-   Shelly_SwitchMode(25537, false); //Ausschalten
+   PHUE_SwitchMode(25537, true); //Einschalten
+   PHUE_SwitchMode(25537, false); //Ausschalten
+   ```
+
+   **PHUE_SensorStateSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich einen Sensor ein- bzw. auszuschalten.
+   ```php
+   PHUE_SensorStateSet(25537, true); //Einschalten
+   PHUE_SensorStateSet(25537, false); //Ausschalten
+   ```
+
+   **PHUE_CLIPSensorStateSet($InstanceID, $Value)**\
+   Mit dieser Funktion ist es möglich einen CLIPGenericStatus Sensor ein- bzw. auszuschalten.
+   Zum Beispiel für die HUE Labs Szenen.
+   ```php
+   PHUE_CLIPSensorStateSet(25537, true); //Einschalten
+   PHUE_CLIPSensorStateSet(25537, false); //Ausschalten
    ```

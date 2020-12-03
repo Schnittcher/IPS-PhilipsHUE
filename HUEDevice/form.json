@@ -17,7 +17,8 @@
         { "caption": "Presence Sensor", "value": "ZLLPresence" },
         { "caption": "Light Sensor", "value": "ZLLLightLevel" },
         { "caption": "Temperature Sensor", "value": "ZLLTemperature" },
-        { "caption": "Switch", "value": "ZLLSwitch" }
+        { "caption": "Switch", "value": "ZLLSwitch" },
+        { "caption": "CLIPGenericStatus", "value": "CLIPGenericStatus" }
       ]
     }
   ],
