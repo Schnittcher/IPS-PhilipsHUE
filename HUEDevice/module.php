@@ -417,6 +417,18 @@ class HUEDevice extends IPSModule
         $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
     }
 
+    public function SceneSetEx(string $Value, array $params)
+    {
+        $scenes = json_decode($this->ReadAttributeString('Scenes'), true);
+        foreach ($scenes as $key => $scene) {
+            if ($scene['name'] == $Value) {
+                $this->SceneSetKeyEx($scene['key'], $params);
+                return;
+            }
+        }
+        $this->LogMessage('Scene Name (' . $Value . ') for Group ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
+    }
+
     public function AlertSet(string $Value)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
@@ -615,6 +627,12 @@ class HUEDevice extends IPSModule
     private function SceneSetKey(string $Value)
     {
         $params = ['scene' => $Value];
+        return $this->sendData('action', $params);
+    }
+
+    private function SceneSetKeyEx(string $Value, $params)
+    {
+        $params['scene'] = $Value;
         return $this->sendData('action', $params);
     }
 

@@ -66,6 +66,12 @@
    ```php
    PHUE_SceneSet(25537, 'Name der Szene');
    ```
+
+      **PHUE_SceneSetEx($InstanceID, $Value, $Parameter)**\
+   Mit dieser Funktion ist es möglich eine Szene mit erweiterten Parametern für die Gruppe zu aktiveren.
+   ```php
+   PHUE_SceneSetEx(25537, 'Name der Szene', ['transitiontime' => 200]);
+   ```
  
    **PHUE_SwitchMode($InstanceID, $Value)**\
    Mit dieser Funktion ist es möglich das Gerät ein- bzw. auszuschalten.
