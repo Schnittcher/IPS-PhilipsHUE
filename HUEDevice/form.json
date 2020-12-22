@@ -18,6 +18,7 @@
         { "caption": "Light Sensor", "value": "ZLLLightLevel" },
         { "caption": "Temperature Sensor", "value": "ZLLTemperature" },
         { "caption": "Switch", "value": "ZLLSwitch" },
+        { "caption": "Friends of HUE Switch", "value": "ZGPSwitch" },
         { "caption": "CLIPGenericStatus", "value": "CLIPGenericStatus" }
       ]
     }
