@@ -16,6 +16,8 @@ class HUEDevice extends IPSModule
         $this->RegisterPropertyString('DeviceType', '');
         $this->RegisterPropertyString('SensorType', '');
 
+        $this->RegisterPropertyBoolean('GroupStateAnyOn', false);
+
         $this->RegisterAttributeString('Scenes', '');
 
         if (!IPS_VariableProfileExists('HUE.ColorMode')) {
@@ -135,10 +137,16 @@ class HUEDevice extends IPSModule
     public function GetConfigurationForm()
     {
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+        IPS_LogMessage('from', print_r($jsonForm, true));
         if ($this->ReadAttributeString('DeviceType') == 'sensors') {
             $jsonForm['elements'][2]['visible'] = true;
         } else {
             $jsonForm['elements'][2]['visible'] = false;
+        }
+        if ($this->ReadAttributeString('DeviceType') == 'groups') {
+            $jsonForm['elements'][3]['visible'] = true;
+        } else {
+            $jsonForm['elements'][3]['visible'] = false;
         }
         return json_encode($jsonForm);
     }
@@ -154,6 +162,7 @@ class HUEDevice extends IPSModule
         $this->SendDebug(__FUNCTION__ . ' Data Buffer', $Data->Buffer, 0);
 
         $DeviceConfig = new stdClass();
+        $GroupState = new stdClass();
 
         switch ($this->ReadPropertyString('DeviceType')) {
             case 'groups':
@@ -161,6 +170,7 @@ class HUEDevice extends IPSModule
                     if (property_exists($Buffer->Groups, $this->ReadPropertyString('HUEDeviceID'))) {
                         if (property_exists($Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}, 'action')) {
                             $DeviceState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->action;
+                            $GroupState = $Buffer->Groups->{$this->ReadPropertyString('HUEDeviceID')}->state;
                         }
                     } else {
                         if ($this->ReadPropertyString('HUEDeviceID') == 0) {
@@ -221,8 +231,15 @@ class HUEDevice extends IPSModule
             $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
             $this->SetValue('HUE_Color', $Color);
         }
-        if (property_exists($DeviceState, 'on')) {
-            $this->SetValue('HUE_State', $DeviceState->on);
+
+        if ($this->ReadPropertyBoolean('GroupStateAnyOn')) {
+            if (property_exists($GroupState, 'any_on')) {
+                $this->SetValue('HUE_State', $GroupState->any_on);
+            }
+        } else {
+            if (property_exists($DeviceState, 'on')) {
+                $this->SetValue('HUE_State', $DeviceState->on);
+            }
         }
         if (property_exists($DeviceState, 'bri')) {
             if ($DeviceState->on) {

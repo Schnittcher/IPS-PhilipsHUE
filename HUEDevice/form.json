@@ -21,7 +21,8 @@
         { "caption": "Friends of HUE Switch", "value": "ZGPSwitch" },
         { "caption": "CLIPGenericStatus", "value": "CLIPGenericStatus" }
       ]
-    }
+    },
+    { "type": "CheckBox", "name": "GroupStateAnyOn", "caption": "Group State (Any on)", "visible": false }
   ],
   "actions": [
     {

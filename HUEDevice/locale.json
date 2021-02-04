@@ -27,6 +27,7 @@
       "Light Sensor": "Lichtsensor",
       "Temperature Sensor": "Temperatursensor",
       "Switch": "Schalter",
+      "Group State (Any on)" : "Gruppen Status (Eine an)",
       "Update Scene Profile": "Szenenprofil aktualisieren",
       "Sensor State": "Sensor Status"
     }
