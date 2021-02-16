@@ -77,7 +77,8 @@ class HUEDevice extends IPSModule
         }
 
         //Sensors
-        $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $sensor = $this->ReadPropertyString('DeviceType') == 'sensors';
+        $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $sensor == 'sensors');
 
         //Presence
         $Presence = false;
@@ -91,24 +92,24 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $Presence == true && $sensor == 'sensors');
         //$this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, ($this->ReadPropertyString('SensorType') == 'ZLLPresence' || $this->ReadPropertyString('SensorType') == 'CLIPPresence') && $sensor == 'sensors');
         //$this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $sensor == 'sensors');
 
-        if ($this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors') {
+        if ($this->ReadPropertyString('SensorType') == 'ZLLPresence' && $sensor == 'sensors') {
             $this->EnableAction('HUE_PresenceState');
         }
 
-        $this->MaintainVariable('HUE_CLIPGenericState', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_CLIPGenericState', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $sensor == 'sensors');
         if ($this->ReadPropertyString('SensorType') == 'CLIPGenericStatus' && $this->ReadPropertyString('DeviceType') == 'sensors') {
             $this->EnableAction('HUE_CLIPGenericState');
         }
 
-        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $this->ReadPropertyString('DeviceType') == 'sensors');
-        $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, ($this->ReadPropertyString('SensorType') == 'ZLLLightLevel') || ($this->ReadPropertyString('SensorType') == 'Daylight') && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Lightlevel', $this->Translate('Lightlevel'), 1, '~Illumination', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == 'sensors');
+        $this->MaintainVariable('HUE_Dark', $this->Translate('Dark'), 0, '', 0, $this->ReadPropertyString('SensorType') == 'ZLLLightLevel' && $sensor == 'sensors');
+        $this->MaintainVariable('HUE_Daylight', $this->Translate('Daylight'), 0, '', 0, ($this->ReadPropertyString('SensorType') == 'ZLLLightLevel') || ($this->ReadPropertyString('SensorType') == 'Daylight') && $sensor == 'sensors');
 
-        $this->MaintainVariable('HUE_Temperature', $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString('SensorType') == 'ZLLTemperature' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Temperature', $this->Translate('Temperature'), 2, '~Temperature', 0, $this->ReadPropertyString('SensorType') == 'ZLLTemperature' && $sensor == 'sensors');
 
-        $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == 'sensors');
 
         //Lights and Groups
         $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
