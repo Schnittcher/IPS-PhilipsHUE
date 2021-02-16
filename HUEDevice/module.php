@@ -79,8 +79,19 @@ class HUEDevice extends IPSModule
         //Sensors
         $this->MaintainVariable('HUE_Battery', $this->Translate('Battery'), 1, '~Battery.100', 0, $this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('DeviceType') == 'sensors');
 
-        $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, ($this->ReadPropertyString('SensorType') == 'ZLLPresence' || $this->ReadPropertyString('SensorType') == 'CLIPPresence') && $sensor == 'sensors');
-        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        //Presence
+        $Presence = false;
+        switch ($this->ReadPropertyString('SensorType')) {
+            case 'ZLLPresence':
+            case 'CLIPPresence':
+                $Presence = true;
+                break;
+        }
+
+        $this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, $Presence == true && $sensor == 'sensors');
+        //$this->MaintainVariable('HUE_Presence', $this->Translate('Presence'), 0, '~Presence', 0, ($this->ReadPropertyString('SensorType') == 'ZLLPresence' || $this->ReadPropertyString('SensorType') == 'CLIPPresence') && $sensor == 'sensors');
+        //$this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
+        $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $this->ReadPropertyString('DeviceType') == 'sensors');
 
         if ($this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors') {
             $this->EnableAction('HUE_PresenceState');
