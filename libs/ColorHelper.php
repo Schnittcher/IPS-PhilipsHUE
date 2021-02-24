@@ -44,14 +44,13 @@ trait ColorHelper
         $Y = $bri;
         if (($x != 0) || ($y != 0)) {
             $X = ($Y / $y) * $x;
-            $Z = ($Y / $y) * $z;            
+            $Z = ($Y / $y) * $z;
         } else {
             $color['red'] = 0;
             $color['green'] = 0;
             $color['blue'] = 0;
             return $color;
         }
-
 
         // Convert to RGB using Wide RGB D65 conversion
         $r = $X * 1.656492 - $Y * 0.354851 - $Z * 0.255038;
