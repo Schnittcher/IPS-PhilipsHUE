@@ -42,8 +42,16 @@ trait ColorHelper
         // Calculate XYZ values Convert using the following formulas
         $z = 1.0 - $x - $y;
         $Y = $bri;
-        $X = ($Y / $y) * $x;
-        $Z = ($Y / $y) * $z;
+        if (($x != 0) || ($y != 0)) {
+            $X = ($Y / $y) * $x;
+            $Z = ($Y / $y) * $z;            
+        } else {
+            $color['red'] = 0;
+            $color['green'] = 0;
+            $color['blue'] = 0;
+            return $color;
+        }
+
 
         // Convert to RGB using Wide RGB D65 conversion
         $r = $X * 1.656492 - $Y * 0.354851 - $Z * 0.255038;
