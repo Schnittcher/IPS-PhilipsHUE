@@ -85,7 +85,7 @@ class HUEDevice extends IPSModule
         switch ($this->ReadPropertyString('SensorType')) {
             case 'ZLLPresence':
             case 'CLIPPresence':
-            case 'HA_GEOFENSE':
+            case 'Geofence':
                 $Presence = true;
                 break;
         }
