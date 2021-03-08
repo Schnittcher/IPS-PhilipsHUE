@@ -85,6 +85,7 @@ class HUEDevice extends IPSModule
         switch ($this->ReadPropertyString('SensorType')) {
             case 'ZLLPresence':
             case 'CLIPPresence':
+            case 'HA_GEOFENSE':
                 $Presence = true;
                 break;
         }
@@ -94,7 +95,7 @@ class HUEDevice extends IPSModule
         //$this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $this->ReadPropertyString('SensorType') == 'ZLLPresence' && $this->ReadPropertyString('DeviceType') == 'sensors');
         $this->MaintainVariable('HUE_PresenceState', $this->Translate('Sensor State'), 0, '~Switch', 0, $Presence == true && $sensor == true);
 
-        if ($this->ReadPropertyString('SensorType') == 'ZLLPresence' && $sensor == true) {
+        if ($Presence == true && $sensor == true) {
             $this->EnableAction('HUE_PresenceState');
         }
 
