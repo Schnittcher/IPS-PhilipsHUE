@@ -271,7 +271,7 @@ class HUEConfigurator extends IPSModule
 
     //Functions for Device Management / Pairing (New Devices)
 
-    public function renameDevice(string $NewName, $DeviceID, $DeviceType)
+    public function renameDevice(string $NewName, int $DeviceID, string $DeviceType)
     {
         $Data = [];
         $Buffer = [];
@@ -290,7 +290,7 @@ class HUEConfigurator extends IPSModule
         $this->reloadAllDevices();
     }
 
-    public function deleteDevice($DeviceID, $DeviceType)
+    public function deleteDevice(int $DeviceID, string $DeviceType)
     {
         $Data = [];
         $Buffer = [];
@@ -328,7 +328,7 @@ class HUEConfigurator extends IPSModule
         return $result;
     }
 
-    public function getNewDevices($DeviceType)
+    public function getNewDevices(string $DeviceType)
     {
         $Data = [];
         $Buffer = [];
@@ -356,7 +356,7 @@ class HUEConfigurator extends IPSModule
         return $result;
     }
 
-    public function getGroupAttributes($id)
+    public function getGroupAttributes(int $id)
     {
         $Data = [];
         $Buffer = [];
@@ -467,7 +467,7 @@ class HUEConfigurator extends IPSModule
         }
     }
 
-    public function addLightToGroup($DeviceID, $GroupID)
+    public function addLightToGroup(int $DeviceID, int $GroupID)
     {
         $Group = $this->getGroupAttributes($GroupID);
 
@@ -482,7 +482,7 @@ class HUEConfigurator extends IPSModule
         $this->UpdateAllLightsInGroupsForConfiguration($GroupID);
     }
 
-    public function deleteLightFromGroup($DeviceID, $GroupID)
+    public function deleteLightFromGroup(int $DeviceID, int $GroupID)
     {
         $Group = $this->getGroupAttributes($GroupID);
 
@@ -499,7 +499,7 @@ class HUEConfigurator extends IPSModule
         $this->UpdateAllLightsInGroupsForConfiguration($GroupID);
     }
 
-    public function deleteGroup($GroupID)
+    public function deleteGroup(int $GroupID)
     {
         $Data = [];
         $Buffer = [];
