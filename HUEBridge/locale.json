@@ -4,7 +4,8 @@
       "Seconds": "Sekunden",
       "Register IP-Symcon": "Registriere IP-Symcon",
       "Invalid JSON": "Ungültiges JSON",
-      "HUE Bridge unreachable": "HUE Bridge nicht erreichbar"
+      "HUE Bridge unreachable": "HUE Bridge nicht erreichbar",
+      "Registration incomplete, more Information in IP-Symcon Log": "Registrierung unvollständig, weitere Informationen im IP-Symcon Log"
     }
   }
 }
