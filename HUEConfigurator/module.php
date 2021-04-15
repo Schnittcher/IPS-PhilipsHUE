@@ -98,7 +98,7 @@ class HUEConfigurator extends IPSModule
                 $AddValueLights['create'] = [
                     'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                     'configuration' => [
-                        'HUEDeviceID'    => $key,
+                        'HUEDeviceID'    => strval($key),
                         'DeviceType'     => 'lights'
                     ],
                     'location' => $location
@@ -157,7 +157,7 @@ class HUEConfigurator extends IPSModule
                 $AddValueSensors['create'] = [
                     'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                     'configuration' => [
-                        'HUEDeviceID'    => $key,
+                        'HUEDeviceID'    => strval($key),
                         'DeviceType'     => 'sensors',
                         'SensorType'     => $sensor['type']
                     ],
@@ -205,7 +205,7 @@ class HUEConfigurator extends IPSModule
                     $AddValueGroups['create'] = [
                         'moduleID'      => '{83354C26-2732-427C-A781-B3F5CDF758B1}',
                         'configuration' => [
-                            'HUEDeviceID'    => $key,
+                            'HUEDeviceID'    => strval($key),
                             'DeviceType'     => 'groups'
                         ],
                         'location' => $location
