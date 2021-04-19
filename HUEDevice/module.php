@@ -65,12 +65,11 @@ class HUEDevice extends IPSModule
         if ($this->ReadPropertyString('DeviceType') == '') {
             return;
         }
-
         //Scene Profile for Groups
         if ($this->HasActiveParent()) {
             $this->UpdateSceneProfile();
         } else {
-            $ParentID = IPS_GetParent($this->InstanceID);
+            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
             $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
@@ -122,7 +121,7 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
 
         //Groups
-        $ParentID = IPS_GetParent($this->InstanceID);
+        $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
         $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             $this->EnableAction('HUE_ColorMode');
@@ -152,7 +151,6 @@ class HUEDevice extends IPSModule
     public function GetConfigurationForm()
     {
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-        IPS_LogMessage('from', print_r($jsonForm, true));
         if ($this->ReadAttributeString('DeviceType') == 'sensors') {
             $jsonForm['elements'][2]['visible'] = true;
         } else {
@@ -628,10 +626,11 @@ class HUEDevice extends IPSModule
 
     public function UpdateSceneProfile()
     {
+        $Object = IPS_GetObject($this->InstanceID);
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             //TODO Map Profile to Attribute
             $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
-            $ParentID = IPS_GetParent($this->InstanceID);
+            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
             $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
