@@ -70,7 +70,8 @@ class HUEDevice extends IPSModule
         if ($this->HasActiveParent()) {
             $this->UpdateSceneProfile();
         } else {
-            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
+            $ParentID = IPS_GetParent($this->InstanceID);
+            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             }
@@ -121,7 +122,8 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
 
         //Groups
-        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+        $ParentID = IPS_GetParent($this->InstanceID);
+        $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
             $this->EnableAction('HUE_ColorMode');
             $this->EnableAction('HUE_State');
@@ -629,7 +631,8 @@ class HUEDevice extends IPSModule
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
             //TODO Map Profile to Attribute
             $scenes = $this->sendData('getScenesFromGroup', ['GroupID' => $this->ReadPropertyString('HUEDeviceID')]);
-            $ProfileName = 'HUE.GroupScene' . $this->ReadPropertyString('HUEDeviceID');
+            $ParentID = IPS_GetParent($this->InstanceID);
+            $ProfileName = 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID');
             if (!IPS_VariableProfileExists($ProfileName)) {
                 IPS_CreateVariableProfile($ProfileName, 1);
             } else {
