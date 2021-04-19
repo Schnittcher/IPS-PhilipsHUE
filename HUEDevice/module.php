@@ -655,6 +655,7 @@ class HUEDevice extends IPSModule
             if (!empty($scenesAttribute)) {
                 $this->WriteAttributeString('Scenes', json_encode($scenesAttribute));
             }
+            $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
         }
     }
 
