@@ -6,6 +6,7 @@
       "options": [
         { "caption": "Select a Device", "value": "" },
         { "caption": "Light", "value": "lights" },
+        { "caption": "Plug", "value": "plugs" },
         { "caption": "Sensor", "value": "sensors" },
         { "caption": "Group", "value": "groups" }
       ]
