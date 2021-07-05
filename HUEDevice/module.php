@@ -114,7 +114,7 @@ class HUEDevice extends IPSModule
 
         //Lights and Groups
         $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups' || $this->ReadPropertyString('DeviceType') == 'plugs');
         $this->MaintainVariable('HUE_Brightness', $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
         $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
         $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
@@ -140,7 +140,7 @@ class HUEDevice extends IPSModule
         }
 
         //Reachable for Lights and Sensors
-        if ($this->ReadPropertyString('DeviceType') == 'lights' || ($this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('SensorType') != 'ZGPSwitch' && $this->ReadPropertyString('SensorType') != 'Daylight')) {
+        if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'plugs' || ($this->ReadPropertyString('DeviceType') == 'sensors' && $this->ReadPropertyString('SensorType') != 'ZGPSwitch' && $this->ReadPropertyString('SensorType') != 'Daylight')) {
             $CreateVariableReachable = true;
         } else {
             $CreateVariableReachable = false;
@@ -211,7 +211,21 @@ class HUEDevice extends IPSModule
                     }
                 }
                 break;
-
+            case 'plugs':
+                if (property_exists($Buffer, 'Lights')) {
+                    if (property_exists($Buffer->Lights, $this->ReadPropertyString('HUEDeviceID'))) {
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'state')) {
+                            $DeviceState = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->state;
+                        }
+                        if (property_exists($Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}, 'config')) {
+                            $DeviceConfig = $Buffer->Lights->{$this->ReadPropertyString('HUEDeviceID')}->config;
+                        }
+                    } else {
+                        $this->LogMessage('Device ID: ' . $this->ReadPropertyString('HUEDeviceID') . ' invalid', 10204);
+                        return;
+                    }
+                }
+                break;
             case 'sensors':
                 if (property_exists($Buffer, 'Sensors')) {
                     if (property_exists($Buffer->Sensors, $this->ReadPropertyString('HUEDeviceID'))) {
@@ -550,7 +564,7 @@ class HUEDevice extends IPSModule
                     if (array_key_exists('success', $result[2])) {
                         $this->SetValue($Ident, $Value);
                     }
-                } elseif ($this->ReadPropertyString('DeviceType') == 'lights') {
+                } elseif (($this->ReadPropertyString('DeviceType') == 'lights') || ($this->ReadPropertyString('DeviceType') == 'plugs')) {
                     //If DeviceType is Lights Key 1 is Color
                     if (array_key_exists('success', $result[1])) {
                         $this->SetValue($Ident, $Value);
@@ -693,10 +707,16 @@ class HUEDevice extends IPSModule
 
     private function sendData(string $command, $params = '')
     {
+        $DeviceType = $this->ReadPropertyString('DeviceType');
+        //Wenn DeviceType "plugs" ist Typ auf "lights" setzen, damit der Endpoint der API stimmt.
+        if ($this->ReadPropertyString('DeviceType') == 'plugs') {
+            $DeviceType = 'lights';
+        }
+
         $Data['DataID'] = '{03995C27-F41C-4E0C-85C9-099084294C3B}';
         $Buffer['Command'] = $command;
         $Buffer['DeviceID'] = $this->ReadPropertyString('HUEDeviceID');
-        $Buffer['Endpoint'] = $this->ReadPropertyString('DeviceType');
+        $Buffer['Endpoint'] = $DeviceType;
         $Buffer['Params'] = $params;
         $Data['Buffer'] = $Buffer;
         $Data = json_encode($Data);
