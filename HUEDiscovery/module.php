@@ -27,21 +27,23 @@ class HUEDiscovery extends IPSModule
         $Values = [];
 
         foreach ($Bridges as $Bridge) {
-            $instanceID = $this->getHUEBridgeInstances($Bridge['IPv4']);
+            $instanceID = $this->getHUEBridgeInstances($Bridge['serialNumber']);
 
             $AddValue = [
                 'IPAddress'             => $Bridge['IPv4'],
                 'name'                  => $Bridge['deviceName'],
                 'ModelName'             => $Bridge['modelName'],
                 'ModelNumber'           => $Bridge['modelNumber'],
-                'SerialNumber'          => $Bridge['serialNumber'],
+                'SerialNumber'          => $Bridge[''],
                 'instanceID'            => $instanceID
             ];
 
             $AddValue['create'] = [
                 [
                     'moduleID'      => '{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}',
-                    'configuration' => new stdClass()
+                    'configuration' => [
+                        'Serialnumber' => $Bridge['serialNumber']
+                    ]
                 ],
                 [
                     'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
@@ -170,11 +172,11 @@ class HUEDiscovery extends IPSModule
         return $Xml;
     }
 
-    private function getHUEBridgeInstances($IPAddress)
+    private function getHUEBridgeInstances($Serialnumber)
     {
         $InstanceIDs = IPS_GetInstanceListByModuleID('{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}');
         foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'Host') == $IPAddress) {
+            if (IPS_GetProperty($id, 'Serialnumber') == $Serialnumber) {
                 return $id;
             }
         }

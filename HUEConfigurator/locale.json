@@ -1,6 +1,7 @@
 {
   "translations": {
     "de": {
+      "Serialnumber": "Seriennummer",
       "Configurator to find all HUE Devices": "Konfigurator, um alle HUE-Geräte zu finden",
       "Configurator": "Konfigurator",
       "Manufacturername": "Herstellername",

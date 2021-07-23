@@ -9,6 +9,7 @@ class HUEConfigurator extends IPSModule
         //Never delete this line!
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        $this->RegisterPropertyString('Serialnumber', '');
         $this->RegisterPropertyInteger('TargetCategory', 0);
 
         $this->RegisterAttributeInteger('ProgressStatus', -1);
