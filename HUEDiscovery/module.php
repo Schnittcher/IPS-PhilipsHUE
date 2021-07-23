@@ -34,7 +34,7 @@ class HUEDiscovery extends IPSModule
                 'name'                  => $Bridge['deviceName'],
                 'ModelName'             => $Bridge['modelName'],
                 'ModelNumber'           => $Bridge['modelNumber'],
-                'SerialNumber'          => $Bridge[''],
+                'SerialNumber'          => $Bridge['serialNumber'],
                 'instanceID'            => $instanceID
             ];
 
