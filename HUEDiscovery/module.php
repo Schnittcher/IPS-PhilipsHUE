@@ -172,7 +172,7 @@ class HUEDiscovery extends IPSModule
 
     private function getHUEBridgeInstances($IPAddress)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        $InstanceIDs = IPS_GetInstanceListByModuleID('{EE92367A-BB8B-494F-A4D2-FAD77290CCF4}');
         foreach ($InstanceIDs as $id) {
             if (IPS_GetProperty($id, 'Host') == $IPAddress) {
                 return $id;
