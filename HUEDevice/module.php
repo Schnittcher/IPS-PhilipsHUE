@@ -16,6 +16,10 @@ class HUEDevice extends IPSModule
         $this->RegisterPropertyString('DeviceType', '');
         $this->RegisterPropertyString('SensorType', '');
 
+        $this->RegisterPropertyBoolean('ColorModeActive', true);
+        $this->RegisterPropertyBoolean('ColorActive', true);
+        $this->RegisterPropertyBoolean('SaturationActive', true);
+
         $this->RegisterPropertyBoolean('GroupStateAnyOn', false);
 
         $this->RegisterAttributeString('Scenes', '');
@@ -113,25 +117,40 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Buttonevent', $this->Translate('Buttonevent'), 1, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == true);
 
         //Lights and Groups
-        $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorModeActive') == true);
+
         $this->MaintainVariable('HUE_State', $this->Translate('State'), 0, '~Switch', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups' || $this->ReadPropertyString('DeviceType') == 'plugs');
+
         $this->MaintainVariable('HUE_Brightness', $this->Translate('Brightness'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
-        $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+
+        $this->MaintainVariable('HUE_Color', $this->Translate('Color'), 1, 'HexColor', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorActive') == true);
+
+        $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('SaturationActive') == true);
+
         $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
 
         //Groups
         $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
         $this->MaintainVariable('HUE_GroupScenes', $this->Translate('Scenes'), 1, 'HUE.GroupScene' . $ParentID . '_' . $this->ReadPropertyString('HUEDeviceID'), 0, $this->ReadPropertyString('DeviceType') == 'groups');
+
         if ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') {
-            $this->EnableAction('HUE_ColorMode');
+            if ($this->ReadPropertyBoolean('ColorModeActive')) {
+                $this->EnableAction('HUE_ColorMode');
+            }
             $this->EnableAction('HUE_State');
             $this->EnableAction('HUE_Brightness');
-            $this->EnableAction('HUE_Color');
-            $this->EnableAction('HUE_Saturation');
+            if ($this->ReadPropertyBoolean('ColorActive')) {
+                $this->EnableAction('HUE_Color');
+            }
+            if ($this->ReadPropertyBoolean('SaturationActive')) {
+                $this->EnableAction('HUE_Saturation');
+            }
             $this->EnableAction('HUE_ColorTemperature');
-            $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
-            $this->hideVariables($ColorMode);
+
+            if (@$this->GetIDForIdent('HUE_ColorMode') != false) {
+                $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
+                $this->hideVariables($ColorMode);
+            }
         }
 
         if ($this->ReadPropertyString('DeviceType') == 'groups') {
@@ -151,6 +170,8 @@ class HUEDevice extends IPSModule
     public function GetConfigurationForm()
     {
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
+
+        IPS_LogMessage('Form', print_r($jsonForm, true));
         if ($this->ReadAttributeString('DeviceType') == 'sensors') {
             $jsonForm['elements'][2]['visible'] = true;
         } else {
@@ -160,6 +181,15 @@ class HUEDevice extends IPSModule
             $jsonForm['elements'][3]['visible'] = true;
         } else {
             $jsonForm['elements'][3]['visible'] = false;
+        }
+        if ($this->ReadAttributeString('DeviceType') == 'lights') {
+            $jsonForm['elements'][3]['visible'] = true;
+            $jsonForm['elements'][4]['visible'] = true;
+            $jsonForm['elements'][5]['visible'] = true;
+        } else {
+            $jsonForm['elements'][3]['visible'] = false;
+            $jsonForm['elements'][4]['visible'] = false;
+            $jsonForm['elements'][5]['visible'] = false;
         }
         return json_encode($jsonForm);
     }
@@ -635,6 +665,15 @@ class HUEDevice extends IPSModule
             $this->UpdateFormField('SensorType', 'visible', true);
         } else {
             $this->UpdateFormField('SensorType', 'visible', false);
+        }
+        if ($DeviceType == 'lights') {
+            $this->UpdateFormField('ColorModeActive', 'visible', true);
+            $this->UpdateFormField('ColorActive', 'visible', true);
+            $this->UpdateFormField('SaturationActive', 'visible', true);
+        } else {
+            $this->UpdateFormField('ColorModeActive', 'visible', false);
+            $this->UpdateFormField('ColorActive', 'visible', false);
+            $this->UpdateFormField('SaturationActive', 'visible', false);
         }
     }
 

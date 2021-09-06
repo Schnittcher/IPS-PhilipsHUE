@@ -30,7 +30,10 @@
       "Switch": "Schalter",
       "Group State (Any on)" : "Gruppen Status (Eine an)",
       "Update Scene Profile": "Szenenprofil aktualisieren",
-      "Sensor State": "Sensor Status"
+      "Sensor State": "Sensor Status",
+      "Color mode variable active": "Farbmodus Variable aktiv",
+      "Color variable active": "Farb Variable aktiv",
+      "Saturation variable active": "Sättigungs Variable aktiv"
     }
   }
 }
