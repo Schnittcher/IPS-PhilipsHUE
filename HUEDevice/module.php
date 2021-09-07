@@ -458,6 +458,21 @@ class HUEDevice extends IPSModule
         return $this->sendData($command, $params);
     }
 
+    public function ColorSetHSB($HUE, $Saturation, $Brightness)
+    {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            $command = 'action';
+        } else {
+            $command = 'state';
+        }
+
+        $this->SendDebug('ColorSetHSB :: Values', 'HUE: ' . $HUE . ' Saturation: ' . $Saturation . ' Brightness: ' . $Brightness, 0);
+        $ConvertedHUE = $this->HUEConvertToHSB($HUE);
+
+        $params = ['sat' => $Saturation, 'bri' => $Brightness, 'hue'=> $ConvertedHUE, 'on' => true];
+        return $this->sendData($command, $params);
+    }
+
     public function SatSet(int $Value)
     {
         if ($this->ReadPropertyString('DeviceType') == 'groups') {

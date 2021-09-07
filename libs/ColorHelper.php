@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-
 trait ColorHelper
 {
     private function convertRGBToXY($red, $green, $blue)
@@ -81,5 +80,11 @@ trait ColorHelper
         $rgb['b'] = ($Value & 0xFF);
 
         return $rgb;
+    }
+
+    private function HUEConvertToHSB($HUE)
+    {
+        $Factor = 65535 / 360; //Max HUE Werte ist 65535
+        return $HUE * $Factor;
     }
 }
