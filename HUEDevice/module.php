@@ -12,6 +12,7 @@ class HUEDevice extends IPSModule
         //Never delete this line!
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
+        $this->RegisterPropertyBoolean('ActivateNewPushApi', false);
         $this->RegisterPropertyString('HUEDeviceID', '');
         $this->RegisterPropertyString('DeviceType', '');
         $this->RegisterPropertyString('SensorType', '');
@@ -165,6 +166,34 @@ class HUEDevice extends IPSModule
             $CreateVariableReachable = false;
         }
         $this->MaintainVariable('HUE_Reachable', $this->Translate('Reachable'), 0, 'HUE.Reachable', 0, $CreateVariableReachable);
+
+        ##New PushAPI
+        if ($this->ReadPropertyBoolean('ActivateNewPushApi')) {
+            if ($this->ReadPropertyString('DeviceType') == 'groups') {
+                IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Brightness'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_Color'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorMode'), true);
+            }
+            ## ReceiveDataFilter for new PushAPI
+            switch ($this->ReadPropertyString('DeviceType')) {
+                case 'groups':
+                    $filter = '"id_v1":"\/groups\/' . $this->ReadPropertyString('HUEDeviceID') . '"';
+                    break;
+                case 'lights':
+                    $filter = '"id_v1":"\/lights\/' . $this->ReadPropertyString('HUEDeviceID') . '"';
+                    break;
+                case 'sensors':
+                    $this->SendDebug('SetReceiveDataFilter :: Sensors', 'ToDo', 0);
+                    break;
+            }
+
+            $this->SendDebug('SetReceiveDataFilter :: Filter', '.*' . preg_quote($filter) . '.*', 0);
+            $this->SetReceiveDataFilter('.*' . preg_quote($filter) . '.*');
+        } else {
+            $this->SetReceiveDataFilter('.*');
+        }
     }
 
     public function GetConfigurationForm()
@@ -196,13 +225,23 @@ class HUEDevice extends IPSModule
 
     public function ReceiveData($JSONString)
     {
-        $this->SendDebug(__FUNCTION__ . ' Device Type', $this->ReadPropertyString('DeviceType'), 0);
-        $this->SendDebug(__FUNCTION__ . ' Device ID', $this->ReadPropertyString('HUEDeviceID'), 0);
-        $this->SendDebug(__FUNCTION__, $JSONString, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Device Type', $this->ReadPropertyString('DeviceType'), 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Device ID', $this->ReadPropertyString('HUEDeviceID'), 0);
+        $this->SendDebug(__FUNCTION__ . ' :: JSON', $JSONString, 0);
         $Data = json_decode($JSONString);
-        $Buffer = json_decode($Data->Buffer);
 
-        $this->SendDebug(__FUNCTION__ . ' Data Buffer', $Data->Buffer, 0);
+        if ($this->ReadPropertyBoolean('ActivateNewPushApi')) {
+            $DataNEW = json_decode($JSONString, true);
+
+            //New Push API
+            if ($DataNEW['DataID'] == '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}') {
+                //$Buffer = json_decode($Data->Buffer, true);
+                $this->NewAPIParser($DataNEW['Buffer']);
+                return;
+            }
+        }
+        $Buffer = json_decode($Data->Buffer);
+        $this->SendDebug(__FUNCTION__ . ' Old API :: Data Buffer', $Data->Buffer, 0);
 
         $DeviceConfig = new stdClass();
         $GroupState = new stdClass();
@@ -418,7 +457,7 @@ class HUEDevice extends IPSModule
             $Value = hexdec($Value);
         }
 
-        $this->SendDebug(__FUNCTION__, $Value, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Value', $Value, 0);
 
         $rgb = $this->decToRGB($Value);
 
@@ -445,7 +484,7 @@ class HUEDevice extends IPSModule
             $Value = hexdec($Value);
         }
 
-        $this->SendDebug(__FUNCTION__, $Value, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Value', $Value, 0);
 
         $rgb = $this->decToRGB($Value);
 
@@ -639,7 +678,7 @@ class HUEDevice extends IPSModule
                 break;
             case 'HUE_GroupScenes':
                 $scenes = json_decode($this->ReadAttributeString('Scenes'), true);
-                $this->SendDebug(__FUNCTION__ . ' Scene Value', $scenes[$Value]['name'], 0);
+                $this->SendDebug(__FUNCTION__ . ' :: Scene Value', $scenes[$Value]['name'], 0);
                 $this->SceneSetKey($scenes[$Value]['key']);
                 break;
             case 'HUE_PresenceState':
@@ -713,6 +752,36 @@ class HUEDevice extends IPSModule
         }
     }
 
+    private function NewAPIParser(array $Buffer)
+    {
+        $this->SendDebug(__FUNCTION__ . ' Push API :: Buffer', json_encode($Buffer), 0);
+        $data = $Buffer['data'][0];
+
+        ## State
+        if (array_key_exists('on', $data)) {
+            $this->SetValue('HUE_State', $data['on']['on']);
+        }
+        ## Brightness
+        if (array_key_exists('dimming', $data)) {
+            $this->SetValue('HUE_Brightness', $data['dimming']['brightness'] * 2.54);
+        }
+        ## Color
+        if (array_key_exists('color', $data)) {
+            ## Color XY
+            if (array_key_exists('xy', $data['color'])) {
+                $brightness = $this->GetValue('HUE_Brightness');
+                ## Convert Color XY to RGB and HEX
+                $RGB = $this->convertXYToRGB($data['color']['xy']['x'], $data['color']['xy']['y'], $brightness);
+                $Color = $RGB['red'] * 256 * 256 + $RGB['green'] * 256 + $RGB['blue'];
+                $this->SetValue('HUE_Color', $Color);
+            }
+        }
+        ## Color Temperature
+        if (array_key_exists('color_temperature', $data)) {
+            $this->SetValue('HUE_ColorTemperature', $data['color_temperature']['mirek']);
+        }
+    }
+
     private function SceneSetKey(string $Value)
     {
         $params = ['scene' => $Value];
@@ -741,7 +810,7 @@ class HUEDevice extends IPSModule
                 IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), false);
                 break;
             default:
-                $this->SendDebug(__FUNCTION__, 'Invalid Color Mode: ' . $Value, 0);
+                $this->SendDebug(__FUNCTION__ . ' :: Invalid Color Mode: ', $Value, 0);
                 break;
         }
     }
@@ -766,9 +835,9 @@ class HUEDevice extends IPSModule
             return [];
         }
 
-        $this->SendDebug(__FUNCTION__, $Data, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Data', $Data, 0);
         $result = $this->SendDataToParent($Data);
-        $this->SendDebug(__FUNCTION__, $result, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Result', $result, 0);
 
         if (!$result) {
             return [];

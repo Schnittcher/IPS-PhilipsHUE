@@ -8,6 +8,8 @@ class HUEBridge extends IPSModule
     {
         //Never delete this line!
         parent::Create();
+        $this->ConnectParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');
+        $this->RegisterPropertyBoolean('Open', true);
         $this->RegisterPropertyString('Host', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
 
@@ -26,7 +28,61 @@ class HUEBridge extends IPSModule
             $this->SetTimerInterval('PHUE_UpdateState', 0);
             return;
         }
-        $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
+        if ($this->ReadPropertyBoolean('Open')) {
+            $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
+            $this->PushAPILogin();
+        } else {
+            $this->SetTimerInterval('PHUE_UpdateState', 0);
+            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+            IPS_SetProperty($ParentID, 'Open', false);
+            @IPS_ApplyChanges($ParentID);
+        }
+    }
+
+    public function ReceiveData($JSONString)
+    {
+        $Data = json_decode($JSONString);
+        $response = explode("\r\n", $Data->Buffer);
+        $this->SendDebug('New Push API :: Response', json_encode($response), 0);
+
+        $payload = json_decode($response[6], true);
+        $this->SendDebug('New Push API :: Response Payload', json_encode($payload), 0);
+        //IPS_LogMessage('Payload', print_r($payload, true));
+
+        if (is_array($payload)) {
+            foreach ($payload as $key => $device) {
+                //IPS_LogMessage('Payload' . $key, print_r($device, true));
+                //$deviceJSON = json_encode($device);
+                $SendData = [];
+                $SendData['DataID'] = '{6C33FAE0-8FF8-4CAE-B5E9-89A2D24D067D}';
+                $SendData['Buffer'] = $device;
+                $SendData = json_encode($SendData);
+                $this->SendDebug('JSON Send to Device', $SendData, 0);
+                $this->SendDataToChildren($SendData);
+            }
+        }
+    }
+
+    public function PushAPILogin()
+    {
+        $Header[] = 'GET /eventstream/clip/v2 HTTP/1.1';
+        $Header[] = 'Host: 10.10.0.80';
+        $Header[] = 'hue-application-key: QnMMD0edkUGyPqOfcSxbetEjeluijAwWTzzs9552';
+        $Header[] = 'Accept: multipart/mixed';
+        $Payload = implode("\r\n", $Header);
+
+        $Data['DataID'] = '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}';
+        $Data['Buffer'] = $Payload . "\r\n\r\n";
+
+        $Data = json_encode($Data);
+
+        if (!$this->HasActiveParent()) {
+            $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+            IPS_SetProperty($ParentID, 'Open', true);
+            @IPS_ApplyChanges($ParentID);
+        }
+        $this->SendDebug(__FUNCTION__, $Data, 0);
+        $this->SendDataToParent($Data);
     }
 
     public function ForwardData($JSONString)
@@ -178,15 +234,14 @@ class HUEBridge extends IPSModule
             return false;
         }
 
-        $this->SendDebug('User', $User, 0);
         $ch = curl_init();
         if ($User != '' && $endpoint != '') {
-            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
+            $this->SendDebug(__FUNCTION__ . ' :: URL', $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $User . '/' . $endpoint);
         } elseif ($endpoint != '') {
             return [];
         } else {
-            $this->SendDebug(__FUNCTION__ . ' URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
+            $this->SendDebug(__FUNCTION__ . ' :: URL', $this->ReadPropertyString('Host') . '/api/' . $endpoint, 0);
             curl_setopt($ch, CURLOPT_URL, $this->ReadPropertyString('Host') . '/api/' . $endpoint);
         }
 
@@ -206,7 +261,7 @@ class HUEBridge extends IPSModule
         }
 
         $apiResult = curl_exec($ch);
-        $this->SendDebug(__FUNCTION__ . ' Result', $apiResult, 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Result', $apiResult, 0);
         $headerInfo = curl_getinfo($ch);
         if ($headerInfo['http_code'] == 200) {
             if ($apiResult != false) {

@@ -33,7 +33,8 @@
       "Sensor State": "Sensor Status",
       "Color mode variable active": "Farbmodus Variable aktiv",
       "Color variable active": "Farb Variable aktiv",
-      "Saturation variable active": "Sättigungs Variable aktiv"
+      "Saturation variable active": "Sättigungs Variable aktiv",
+      "Use new Push API": "Nutze neue Push API"
     }
   }
 }

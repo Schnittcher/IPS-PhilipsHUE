@@ -43,9 +43,9 @@ class HUEConfigurator extends IPSModule
             return $Form;
         }
 
-        $this->SendDebug(__FUNCTION__ . ' Lights', json_encode($Lights), 0);
-        $this->SendDebug(__FUNCTION__ . ' Groups', json_encode($Groups), 0);
-        $this->SendDebug(__FUNCTION__ . ' Sensors', json_encode($Sensors), 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Lights', json_encode($Lights), 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Groups', json_encode($Groups), 0);
+        $this->SendDebug(__FUNCTION__ . ' :: Sensors', json_encode($Sensors), 0);
 
         $Values = [];
         $ValuesAllDevices = [];

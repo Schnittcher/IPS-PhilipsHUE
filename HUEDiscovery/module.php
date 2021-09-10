@@ -49,6 +49,16 @@ class HUEDiscovery extends IPSModule
                     'moduleID'      => '{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}',
                     'configuration' => [
                         'Host' => $Bridge['IPv4']
+                    ],
+                ],
+                [
+                    'moduleID'      => '{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}',
+                    'configuration' => [
+                        'Host' => $Bridge['IPv4'],
+                        'Port' => 443,
+                        'UseSSL' => true,
+                        'VerifyPeer' => false,
+                        'VerifyHost' => true,
                     ]
                 ]
 
@@ -64,13 +74,13 @@ class HUEDiscovery extends IPSModule
     {
         $mDNSInstanceIDs = IPS_GetInstanceListByModuleID('{780B2D48-916C-4D59-AD35-5A429B2355A5}');
         $resultServiceTypes = ZC_QueryServiceType($mDNSInstanceIDs[0], '_hue._tcp', '');
-        $this->SendDebug('mDNS resultServiceTypes', print_r($resultServiceTypes, true), 0);
+        $this->SendDebug('mDNS :: ResultServiceTypes', print_r($resultServiceTypes, true), 0);
         $bridges = [];
         foreach ($resultServiceTypes as $key => $device) {
             $hue = [];
             $deviceInfo = ZC_QueryService($mDNSInstanceIDs[0], $device['Name'], '_hue._tcp', 'local.');
-            $this->SendDebug('mDNS QueryService', $device['Name'] . ' ' . $device['Type'] . ' ' . $device['Domain'] . '.', 0);
-            $this->SendDebug('mDNS QueryService Result', print_r($deviceInfo, true), 0);
+            $this->SendDebug('mDNS :: QueryService', $device['Name'] . ' ' . $device['Type'] . ' ' . $device['Domain'] . '.', 0);
+            $this->SendDebug('mDNS :: QueryService :: Result', print_r($deviceInfo, true), 0);
             if (!empty($deviceInfo)) {
                 $hue['Hostname'] = $deviceInfo[0]['Host'];
                 if (empty($deviceInfo[0]['IPv4'])) { //IPv4 und IPv6 sind vertauscht

@@ -1,6 +1,7 @@
 {
   "translations": {
     "de": {
+      "Active": "Aktiv",
       "Seconds": "Sekunden",
       "Register IP-Symcon": "Registriere IP-Symcon",
       "Invalid JSON": "Ungültiges JSON",

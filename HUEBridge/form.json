@@ -1,5 +1,7 @@
 {
-  "elements": [{
+  "elements": [
+    { "type": "CheckBox", "name": "Open", "caption": "Active" },
+    {
     "name": "Host",
     "type": "ValidationTextBox",
     "caption": "IP-Adresse der HUE Bridge"
@@ -22,7 +24,7 @@
     },
     { "code": 200,
       "icon": "error",
-      "caption": "Registration complete, more Information in IP-Symcon Log"
+      "caption": "Registration incomplete, more Information in IP-Symcon Log"
     },
     { "code": 201,
       "icon": "error",
