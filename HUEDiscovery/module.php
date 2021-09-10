@@ -54,9 +54,9 @@ class HUEDiscovery extends IPSModule
                 [
                     'moduleID'      => '{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}',
                     'configuration' => [
-                        'Host' => $Bridge['IPv4'],
-                        'Port' => 443,
-                        'UseSSL' => true,
+                        'Host'       => $Bridge['IPv4'],
+                        'Port'       => 443,
+                        'UseSSL'     => true,
                         'VerifyPeer' => false,
                         'VerifyHost' => true,
                     ]
