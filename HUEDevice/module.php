@@ -201,17 +201,17 @@ class HUEDevice extends IPSModule
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
         IPS_LogMessage('Form', print_r($jsonForm, true));
-        if ($this->ReadAttributeString('DeviceType') == 'sensors') {
+        if ($this->ReadPropertyString('DeviceType') == 'sensors') {
             $jsonForm['elements'][2]['visible'] = true;
         } else {
             $jsonForm['elements'][2]['visible'] = false;
         }
-        if ($this->ReadAttributeString('DeviceType') == 'groups') {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
             $jsonForm['elements'][3]['visible'] = true;
         } else {
             $jsonForm['elements'][3]['visible'] = false;
         }
-        if ($this->ReadAttributeString('DeviceType') == 'lights') {
+        if ($this->ReadPropertyString('DeviceType') == 'lights') {
             $jsonForm['elements'][3]['visible'] = true;
             $jsonForm['elements'][4]['visible'] = true;
             $jsonForm['elements'][5]['visible'] = true;
