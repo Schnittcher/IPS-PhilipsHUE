@@ -8,7 +8,7 @@ class HUEBridge extends IPSModule
     {
         //Never delete this line!
         parent::Create();
-        $this->ConnectParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');
+        $this->RequireParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');
         $this->RegisterPropertyBoolean('Open', true);
         $this->RegisterPropertyString('Host', '');
         $this->RegisterPropertyInteger('UpdateInterval', 10);
@@ -226,6 +226,17 @@ class HUEBridge extends IPSModule
     public function getAllScenes()
     {
         return $this->sendRequest($this->ReadAttributeString('User'), 'scenes', [], 'GET');
+    }
+
+    public function GetConfigurationForParent()
+    {
+        $Form['Host'] = $this->ReadPropertyString('Host');
+        $Form['Port'] = 443;
+        $Form['UseSSL'] = true;
+        $Form['VerifyPeer'] = false;
+        $Form['VerifyHost'] = true;
+
+        return json_encode($Form);
     }
 
     private function sendRequest(string $User, string $endpoint, array $params = [], string $method = 'GET')
