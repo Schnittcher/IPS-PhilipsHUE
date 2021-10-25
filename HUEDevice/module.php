@@ -185,7 +185,7 @@ class HUEDevice extends IPSModule
                     $filter = '"id_v1":"\/lights\/' . $this->ReadPropertyString('HUEDeviceID') . '"';
                     break;
                 case 'sensors':
-                    $this->SendDebug('SetReceiveDataFilter :: Sensors', 'ToDo', 0);
+                    $filter = '"id_v1":"\/sensors\/' . $this->ReadPropertyString('HUEDeviceID') . '"';
                     break;
             }
 
