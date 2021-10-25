@@ -795,6 +795,10 @@ class HUEDevice extends IPSModule
         if (array_key_exists('color_temperature', $data)) {
             $this->SetValue('HUE_ColorTemperature', $data['color_temperature']['mirek']);
         }
+        ## Motion
+        if (array_key_exists('color_temperature', $data)) {
+            $this->SetValue('HUE_Presence', $data['motion']['motion']);
+        }
     }
 
     private function SceneSetKey(string $Value)
