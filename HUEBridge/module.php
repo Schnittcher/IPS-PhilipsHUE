@@ -66,8 +66,8 @@ class HUEBridge extends IPSModule
     public function PushAPILogin()
     {
         $Header[] = 'GET /eventstream/clip/v2 HTTP/1.1';
-        $Header[] = 'Host: '.$this->ReadPropertyString('Host');
-        $Header[] = 'hue-application-key: QnMMD0edkUGyPqOfcSxbetEjeluijAwWTzzs9552';
+        $Header[] = 'Host: ' . $this->ReadPropertyString('Host');
+        $Header[] = 'hue-application-key: ' . $this->ReadPropertyString('User');
         $Header[] = 'Accept: multipart/mixed';
         $Payload = implode("\r\n", $Header);
 
