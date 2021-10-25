@@ -67,7 +67,7 @@ class HUEBridge extends IPSModule
     {
         $Header[] = 'GET /eventstream/clip/v2 HTTP/1.1';
         $Header[] = 'Host: ' . $this->ReadPropertyString('Host');
-        $Header[] = 'hue-application-key: ' . $this->ReadPropertyString('User');
+        $Header[] = 'hue-application-key: ' . $this->ReadAttributeString('User');
         $Header[] = 'Accept: multipart/mixed';
         $Payload = implode("\r\n", $Header);
 
