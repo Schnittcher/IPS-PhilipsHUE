@@ -799,6 +799,11 @@ class HUEDevice extends IPSModule
         if (array_key_exists('motion', $data)) {
             $this->SetValue('HUE_Presence', $data['motion']['motion']);
         }
+
+        ## Button
+        if (array_key_exists('button', $data)) {
+            $this->SetValue('HUE_Buttonevent', $data['button']['last_event']);
+        }
     }
 
     private function SceneSetKey(string $Value)
