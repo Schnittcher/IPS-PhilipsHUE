@@ -120,7 +120,6 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_ButtoneventPushAPI', $this->Translate('Buttonevent'), 3, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == true);
         $this->MaintainVariable('HUE_ButtoneventID', $this->Translate('Buttonevent ID'), 3, '', 0, ($this->ReadPropertyString('SensorType') == 'ZGPSwitch' || $this->ReadPropertyString('SensorType') == 'ZLLSwitch') && $sensor == true);
 
-
         //Lights and Groups
         $this->MaintainVariable('HUE_ColorMode', $this->Translate('Color Mode'), 1, 'HUE.ColorMode', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('ColorModeActive') == true);
 
@@ -806,7 +805,7 @@ class HUEDevice extends IPSModule
         ## Button
         if (array_key_exists('button', $data)) {
             $this->SetValue('HUE_ButtoneventPushAPI', $data['button']['last_event']);
-            $this->SetValue('HUE_ButtoneventID', $data['id']);           
+            $this->SetValue('HUE_ButtoneventID', $data['id']);
         }
     }
 
