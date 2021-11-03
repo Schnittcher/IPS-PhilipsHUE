@@ -26,8 +26,7 @@
     { "type": "CheckBox", "name": "ColorModeActive", "caption": "Color mode variable active", "visible": false },
     { "type": "CheckBox", "name": "ColorActive", "caption": "Color variable active", "visible": false },
     { "type": "CheckBox", "name": "SaturationActive", "caption": "Saturation variable active", "visible": false },
-    { "type": "CheckBox", "name": "GroupStateAnyOn", "caption": "Group State (Any on)", "visible": false },
-    { "type": "CheckBox", "name": "ActivateNewPushApi", "caption": "Use new Push API" }
+    { "type": "CheckBox", "name": "GroupStateAnyOn", "caption": "Group State (Any on)", "visible": false }
   ],
   "actions": [
     {
