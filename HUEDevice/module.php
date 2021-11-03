@@ -190,11 +190,8 @@ class HUEDevice extends IPSModule
                     break;
             }
 
-            $this->SendDebug('SetReceiveDataFilter :: Filter', '.*' . preg_quote($filter) . '.*', 0);
-            $this->SetReceiveDataFilter('.*' . preg_quote($filter) . '.*');
-        } else {
-            $this->SetReceiveDataFilter('.*');
-        }
+        $this->SendDebug('SetReceiveDataFilter :: Filter', '.*' . preg_quote($filter) . '.*', 0);
+        $this->SetReceiveDataFilter('.*' . preg_quote($filter) . '.*');
     }
 
     public function GetConfigurationForm()
