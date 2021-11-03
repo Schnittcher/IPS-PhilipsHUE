@@ -31,15 +31,15 @@ class HUEConfigurator extends IPSModule
         $Sensors = $this->getHUESensors();
 
         if (array_key_exists('error', $Lights)) {
-            IPS_LogMessage('HUE Configuration Error', $Lights['error']['type'] . ': ' . $Lights['error']['description']);
+            $this->LogMessage('HUE Configuration Error: ' . $Lights['error']['type'] . ': ' . $Lights['error']['description'], KL_ERROR);
             return $Form;
         }
         if (array_key_exists('error', $Groups)) {
-            IPS_LogMessage('HUE Configuration Error', $Groups['error']['type'] . ': ' . $Groups['error']['description']);
+            $this->LogMessage('HUE Configuration Error: ' . $Groups['error']['type'] . ': ' . $Groups['error']['description'], KL_ERROR);
             return $Form;
         }
         if (array_key_exists('error', $Sensors)) {
-            IPS_LogMessage('HUE Configuration Error', $Sensors['error']['type'] . ': ' . $Sensors['error']['description']);
+            $this->LogMessage('HUE Configuration Error: ' . $Sensors['error']['type'] . ': ' . $Sensors['error']['description'], KL_ERROR);
             return $Form;
         }
 
@@ -657,14 +657,14 @@ class HUEConfigurator extends IPSModule
     private function parseError($result)
     {
         if (array_key_exists('error', $result[0])) {
-            IPS_LogMessage('Philips HUE Error', $result[0]['error']['type'] . ': ' . $result[0]['error']['address'] . ' - ' . $result[0]['error']['description']);
+            $this->LogMessage('Philips HUE Error: ' . $result[0]['error']['type'] . ': ' . $result[0]['error']['address'] . ' - ' . $result[0]['error']['description'], KL_ERROR);
             $this->UpdateFormField('PopupFailed', 'visible', true);
             return false;
         } elseif (array_key_exists('success', $result[0])) {
             $this->UpdateFormField('PopupSuccess', 'visible', true);
             return true;
         } else {
-            IPS_LogMessage('Philips HUE unknown Error', print_r($result, true));
+            $this->LogMessage('Philips HUE unknown Error: ' . print_r($result, true), KL_ERROR);
             $this->UpdateFormField('PopupFailed', 'visible', true);
             return false;
         }

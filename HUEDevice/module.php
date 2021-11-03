@@ -171,7 +171,6 @@ class HUEDevice extends IPSModule
     {
         $jsonForm = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
 
-        IPS_LogMessage('Form', print_r($jsonForm, true));
         if ($this->ReadAttributeString('DeviceType') == 'sensors') {
             $jsonForm['elements'][2]['visible'] = true;
         } else {
