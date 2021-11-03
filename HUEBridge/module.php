@@ -11,9 +11,7 @@ class HUEBridge extends IPSModule
         $this->RequireParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');
         $this->RegisterPropertyBoolean('Open', true);
         $this->RegisterPropertyString('Host', '');
-        $this->RegisterPropertyInteger('UpdateInterval', 10);
 
-        $this->RegisterTimer('PHUE_UpdateState', 0, 'PHUE_UpdateState($_IPS[\'TARGET\']);');
         $this->RegisterAttributeString('User', '');
     }
 
@@ -26,14 +24,11 @@ class HUEBridge extends IPSModule
             $this->SetStatus(200);
 
             $this->LogMessage('Error: Registration incomplete, please pair IP-Symcon with the Philips HUE Bridge.', KL_ERROR);
-            $this->SetTimerInterval('PHUE_UpdateState', 0);
             return;
         }
         if ($this->ReadPropertyBoolean('Open')) {
-            $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
             $this->PushAPILogin();
         } else {
-            $this->SetTimerInterval('PHUE_UpdateState', 0);
             $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
             IPS_SetProperty($ParentID, 'Open', false);
             @IPS_ApplyChanges($ParentID);
@@ -206,7 +201,6 @@ class HUEBridge extends IPSModule
         if (@isset($result[0]->success->username)) {
             $this->SendDebug('Register User', 'OK: ' . $result[0]->success->username, 0);
             $this->WriteAttributeString('User', $result[0]->success->username);
-            $this->SetTimerInterval('PHUE_UpdateState', $this->ReadPropertyInteger('UpdateInterval') * 1000);
             $this->PushAPILogin();
             $this->SetStatus(102);
         } else {

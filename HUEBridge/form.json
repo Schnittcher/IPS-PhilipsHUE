@@ -5,12 +5,7 @@
     "name": "Host",
     "type": "ValidationTextBox",
     "caption": "IP-Adresse der HUE Bridge"
-  },
-    {
-      "name": "UpdateInterval",
-      "type": "IntervalBox",
-      "caption": "Seconds"
-    }
+  }
   ],
   "actions":
   [
