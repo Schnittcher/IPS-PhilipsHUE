@@ -12,7 +12,6 @@ class HUEDevice extends IPSModule
         //Never delete this line!
         parent::Create();
         $this->ConnectParent('{6EFF1F3C-DF5F-43F7-DF44-F87EFF149566}');
-        $this->RegisterPropertyBoolean('ActivateNewPushApi', false);
         $this->RegisterPropertyString('HUEDeviceID', '');
         $this->RegisterPropertyString('DeviceType', '');
         $this->RegisterPropertyString('SensorType', '');
