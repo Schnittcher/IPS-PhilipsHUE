@@ -170,16 +170,15 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Reachable', $this->Translate('Reachable'), 0, 'HUE.Reachable', 0, $CreateVariableReachable);
 
         ##New PushAPI
-        if ($this->ReadPropertyBoolean('ActivateNewPushApi')) {
-            if ($this->ReadPropertyString('DeviceType') == 'groups') {
-                IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), true);
-                IPS_SetHidden($this->GetIDForIdent('HUE_Brightness'), true);
-                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), true);
-                IPS_SetHidden($this->GetIDForIdent('HUE_Color'), true);
-                IPS_SetHidden($this->GetIDForIdent('HUE_ColorMode'), true);
-            }
-            ## ReceiveDataFilter for new PushAPI
-            switch ($this->ReadPropertyString('DeviceType')) {
+        if ($this->ReadPropertyString('DeviceType') == 'groups') {
+            IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), true);
+            IPS_SetHidden($this->GetIDForIdent('HUE_Brightness'), true);
+            IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), true);
+            IPS_SetHidden($this->GetIDForIdent('HUE_Color'), true);
+            IPS_SetHidden($this->GetIDForIdent('HUE_ColorMode'), true);
+        }
+        ## ReceiveDataFilter for new PushAPI
+        switch ($this->ReadPropertyString('DeviceType')) {
                 case 'groups':
                     $filter = '"id_v1":"\/groups\/' . $this->ReadPropertyString('HUEDeviceID') . '"';
                     break;
