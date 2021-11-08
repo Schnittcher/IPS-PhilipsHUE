@@ -7,6 +7,7 @@
       "Color": "Farbe",
       "HUE Device ID": "HUE Geräte ID",
       "Color Temperature": "Farbtemperatur",
+      "Color Temperature Kelvin": "Farbtemperatur Kelvin",
       "Color Mode": "Farbmodus",
       "Saturation": "Sättigung",
       "Battery": "Batterie",
@@ -32,7 +33,8 @@
       "Update Scene Profile": "Szenenprofil aktualisieren",
       "Sensor State": "Sensor Status",
       "Color mode variable active": "Farbmodus Variable aktiv",
-      "Color variable active": "Farb Variable aktiv",
+      "ColIPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), false);or variable active": "Farb Variable aktiv",
+      "Kelvin variable active": "Kelvin Variable aktiv",
       "Saturation variable active": "Sättigungs Variable aktiv"
     }
   }
