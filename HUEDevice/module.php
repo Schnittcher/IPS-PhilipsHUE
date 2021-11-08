@@ -18,6 +18,7 @@ class HUEDevice extends IPSModule
 
         $this->RegisterPropertyBoolean('ColorModeActive', true);
         $this->RegisterPropertyBoolean('ColorActive', true);
+        $this->RegisterPropertyBoolean('KelvinActive', true);
         $this->RegisterPropertyBoolean('SaturationActive', true);
 
         $this->RegisterPropertyBoolean('GroupStateAnyOn', false);
@@ -49,6 +50,15 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileIcon('HUE.ColorTemperature', 'Bulb');
         IPS_SetVariableProfileText('HUE.ColorTemperature', '', ' Mired');
         IPS_SetVariableProfileValues('HUE.ColorTemperature', 153, 500, 1);
+
+
+        if (!IPS_VariableProfileExists('HUE.ColorTemperatureKelvin')) {
+            IPS_CreateVariableProfile('HUE.ColorTemperatureKelvin', 1);
+        }
+        IPS_SetVariableProfileDigits('HUE.ColorTemperatureKelvin', 0);
+        IPS_SetVariableProfileIcon('HUE.ColorTemperatureKelvin', 'Bulb');
+        IPS_SetVariableProfileText('HUE.ColorTemperatureKelvin', '', ' Kelvin');
+        IPS_SetVariableProfileValues('HUE.ColorTemperatureKelvin', 2000, 6535, 1);
 
         if (!IPS_VariableProfileExists('HUE.Intensity')) {
             IPS_CreateVariableProfile('HUE.Intensity', 1);
@@ -131,6 +141,7 @@ class HUEDevice extends IPSModule
         $this->MaintainVariable('HUE_Saturation', $this->Translate('Saturation'), 1, 'HUE.Intensity', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('SaturationActive') == true);
 
         $this->MaintainVariable('HUE_ColorTemperature', $this->Translate('Color Temperature'), 1, 'HUE.ColorTemperature', 0, $this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups');
+        $this->MaintainVariable('HUE_ColorTemperatureKelvin', $this->Translate('Color Temperature Kelvin'), 1, 'HUE.ColorTemperatureKelvin', 0, ($this->ReadPropertyString('DeviceType') == 'lights' || $this->ReadPropertyString('DeviceType') == 'groups') && $this->ReadPropertyBoolean('KelvinActive') == true);
 
         //Groups
         $ParentID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
@@ -149,6 +160,7 @@ class HUEDevice extends IPSModule
                 $this->EnableAction('HUE_Saturation');
             }
             $this->EnableAction('HUE_ColorTemperature');
+            $this->EnableAction('HUE_ColorTemperatureKelvin');
 
             if (@$this->GetIDForIdent('HUE_ColorMode') != false) {
                 $ColorMode = GetValue(IPS_GetObjectIDByIdent('HUE_ColorMode', $this->InstanceID));
@@ -504,6 +516,16 @@ class HUEDevice extends IPSModule
                 $result = $this->CTSet($Value);
                 if (array_key_exists('success', $result[0])) {
                     $this->SetValue($Ident, $Value);
+                    if ($this->ReadPropertyBoolean('KelvinActive')) {
+                        $this->SetValue('HUE_ColorTemperatureKelvin', intval(round(1000000 / $Value, 0)));
+                    }
+                }
+                break;
+            case 'HUE_ColorTemperatureKelvin':
+                $result = $this->CTSet(intval(round(1000000 / $Value, 0)));
+                if (array_key_exists('success', $result[0])) {
+                    $this->SetValue($Ident, $Value);
+                    $this->SetValue('HUE_ColorTemperature', intval(round(1000000 / $Value, 0)));
                 }
                 break;
             case 'HUE_ColorMode':
@@ -657,6 +679,7 @@ class HUEDevice extends IPSModule
             case 0:
                 IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), true);
                 IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), true);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperatureKelvin'), true);
 
                 IPS_SetHidden($this->GetIDForIdent('HUE_Color'), false);
                 break;
@@ -665,6 +688,7 @@ class HUEDevice extends IPSModule
 
                 IPS_SetHidden($this->GetIDForIdent('HUE_Saturation'), false);
                 IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperature'), false);
+                IPS_SetHidden($this->GetIDForIdent('HUE_ColorTemperatureKelvin'), false);
                 break;
             default:
                 $this->SendDebug(__FUNCTION__ . ' :: Invalid Color Mode: ', $Value, 0);
