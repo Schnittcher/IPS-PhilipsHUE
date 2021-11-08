@@ -51,7 +51,6 @@ class HUEDevice extends IPSModule
         IPS_SetVariableProfileText('HUE.ColorTemperature', '', ' Mired');
         IPS_SetVariableProfileValues('HUE.ColorTemperature', 153, 500, 1);
 
-
         if (!IPS_VariableProfileExists('HUE.ColorTemperatureKelvin')) {
             IPS_CreateVariableProfile('HUE.ColorTemperatureKelvin', 1);
         }
