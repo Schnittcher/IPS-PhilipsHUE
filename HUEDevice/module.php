@@ -187,19 +187,16 @@ class HUEDevice extends IPSModule
         } else {
             $jsonForm['elements'][2]['visible'] = false;
         }
-        if ($this->ReadAttributeString('DeviceType') == 'groups') {
-            $jsonForm['elements'][3]['visible'] = true;
-        } else {
-            $jsonForm['elements'][3]['visible'] = false;
-        }
-        if ($this->ReadAttributeString('DeviceType') == 'lights') {
+        if ($this->ReadAttributeString('DeviceType') == 'lights' || $this->ReadAttributeString('DeviceType') == 'groups') {
             $jsonForm['elements'][3]['visible'] = true;
             $jsonForm['elements'][4]['visible'] = true;
             $jsonForm['elements'][5]['visible'] = true;
+            $jsonForm['elements'][6]['visible'] = true;
         } else {
             $jsonForm['elements'][3]['visible'] = false;
             $jsonForm['elements'][4]['visible'] = false;
             $jsonForm['elements'][5]['visible'] = false;
+            $jsonForm['elements'][6]['visible'] = false;
         }
         return json_encode($jsonForm);
     }
@@ -720,14 +717,16 @@ class HUEDevice extends IPSModule
         } else {
             $this->UpdateFormField('SensorType', 'visible', false);
         }
-        if ($DeviceType == 'lights') {
+        if ($DeviceType == 'lights' || $DeviceType == 'groups') {
             $this->UpdateFormField('ColorModeActive', 'visible', true);
             $this->UpdateFormField('ColorActive', 'visible', true);
             $this->UpdateFormField('SaturationActive', 'visible', true);
+            $this->UpdateFormField('KelvinActive', 'visible', true);
         } else {
             $this->UpdateFormField('ColorModeActive', 'visible', false);
             $this->UpdateFormField('ColorActive', 'visible', false);
             $this->UpdateFormField('SaturationActive', 'visible', false);
+            $this->UpdateFormField('KelvinActive', 'visible', false);
         }
     }
 
